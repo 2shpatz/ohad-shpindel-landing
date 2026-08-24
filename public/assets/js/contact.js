@@ -1,5 +1,5 @@
 /* ==================== CONTACT ====================
- * Validation, Web3Forms submit, WhatsApp handoff, copy-to-clipboard.
+ * Validation, Web3Forms submit, copy-to-clipboard.
  * Every path reports the real outcome — a failed send says so.
  * ================================================= */
 
@@ -77,34 +77,7 @@ const Contact = (() => {
     if (Render.has(m.email)) {
       bits.push(`<a href="mailto:${Render.esc(m.email)}" class="ltr">${Render.esc(m.email)}</a>`);
     }
-    // Same as the aside row: a button, so the number stays out of the markup.
-    if (Render.whatsapp()) {
-      bits.push('<button type="button" class="link-btn" data-wa="plain">וואטסאפ</button>');
-    }
     return bits.join(' · ');
-  }
-
-  /* ---------- WhatsApp handoff ---------- */
-
-  function whatsappUrl(form) {
-    const wa = C.contact.whatsapp;
-    let text = wa.defaultMessage;
-
-    if (form) {
-      const name = form.elements.name?.value.trim();
-      const message = form.elements.message?.value.trim();
-      const email = form.elements.email?.value.trim();
-      // Only build a rich message if they actually typed something.
-      if (name || message) {
-        const lines = [];
-        if (name) lines.push(`היי אוהד, אני ${name}.`);
-        else lines.push('היי אוהד,');
-        if (message) lines.push('', message);
-        if (email) lines.push('', `אימייל לחזרה: ${email}`);
-        text = lines.join('\n');
-      }
-    }
-    return `https://wa.me/${Render.whatsapp()}?text=${encodeURIComponent(text)}`;
   }
 
   /* ---------- submit ---------- */
@@ -122,8 +95,8 @@ const Contact = (() => {
 
     if (!validateForm(form)) return;
 
-    // No key configured yet — say so plainly and route to WhatsApp instead of
-    // firing a request that would 400.
+    // No key configured yet — say so plainly instead of firing a request
+    // that would 400.
     if (!hasKey()) {
       setStatus('error',
         `הטופס עדיין לא חובר לשירות השליחה. אפשר לפנות אליי ישירות: ${fallbackContacts()}`);
@@ -192,19 +165,6 @@ const Contact = (() => {
         }
       });
     }
-
-    // Every WhatsApp affordance goes through here. Delegated because some of them
-    // (the error-message fallback) are written into the DOM after this runs, and
-    // because the number only exists for the instant it takes to open the tab:
-    //   data-wa="form"  — the big CTA, carries whatever is typed in the form
-    //   data-wa="plain" — the direct row and the fallback, default message only
-    document.addEventListener('click', (e) => {
-      const trigger = e.target.closest('[data-wa]');
-      if (!trigger) return;
-      e.preventDefault();
-      const form = trigger.dataset.wa === 'form' ? document.getElementById('contact-form') : null;
-      open(whatsappUrl(form), '_blank', 'noopener');
-    });
 
     // Copy buttons (Bit / PayBox numbers).
     document.addEventListener('click', async (e) => {

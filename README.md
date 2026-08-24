@@ -17,7 +17,7 @@ same conventions as the other sites under `landing_pages/`.
 | מה | איפה ב‑`content.js` | איך משיגים |
 |---|---|---|
 | מפתח לטופס יצירת קשר | `contact.web3formsKey` | נכנסים ל‑[web3forms.com](https://web3forms.com), מקלידים אימייל, מקבלים מפתח. ללא הרשמה, 30 שניות. |
-| מספר וואטסאפ | `meta.whatsapp` | פורמט בינלאומי, ספרות בלבד: `050-559-5538` ← `972505595538` |
+| קבוצות וואטסאפ | `contact.whatsapp.groups` | שורה לכל אפליקציה: `app`, `note`, וקישור הצטרפות `chat.whatsapp.com`. שורה עם `url` ריק פשוט לא מוצגת. |
 | אימייל | `meta.email` | |
 | PayPal | `support.options[paypal].url` | קישור `paypal.me/...` |
 | Buy Me a Coffee | `support.options[bmc].url` | קישור מהפרופיל שלך |

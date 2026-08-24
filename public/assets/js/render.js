@@ -17,21 +17,6 @@ const Render = (() => {
   const isTodo = (v) => typeof v === 'string' && v.startsWith('TODO_');
   const has = (v) => v && !isTodo(v);
 
-  /* The WhatsApp number is stored base64-of-reversed in content.js, never in the
-   * clear, and is decoded here on demand. Callers use it to build a wa.me URL at
-   * click time — it is deliberately never written into the markup or shown as
-   * text, so neither the served files nor the rendered DOM carry the digits.
-   * Obfuscation, not security: whatever the page can decode, so can a person. */
-  const whatsapp = () => {
-    const enc = C.meta.whatsappEnc;
-    if (!has(enc)) return '';
-    try {
-      return atob(enc).split('').reverse().join('');
-    } catch {
-      return ''; // malformed base64 — treat it as "no number" rather than throw
-    }
-  };
-
   // A newline inside a paragraph string is an intentional line break, not a
   // new paragraph. Escaping happens first, so the <br> we add is the only tag.
   const nl2br = (s) => s.replace(/\r\n|[\r\n]/g, '<br>');
@@ -39,8 +24,10 @@ const Render = (() => {
   // Markdown-style [text](url) inside paragraph copy. Runs on already-escaped
   // text and only accepts http(s) URLs, so no markup can come in from content.
   const links = (s) => s.replace(
-    /\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g,
-    (_, text, url) => `<a class="text-link" href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`,
+    /\[([^\]\n]+)\]\((https?:\/\/[^\s)]+|#[a-z][\w-]*)\)/g,
+    (_, text, url) => url.startsWith('#')
+      ? `<a class="text-link" href="${url}">${text}</a>`
+      : `<a class="text-link" href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`,
   );
 
   /* `:joy:` and friends inside copy become that icon, sitting inline with the
@@ -54,6 +41,11 @@ const Render = (() => {
   );
 
   const rich = (s) => inlineIcons(nl2br(links(esc(s))));
+
+  const summaryHtml = (s) => rich(s).replace(
+    /לגמרי בחינם!/g,
+    '<strong class="summary-free">🤑 לגמרי בחינם!</strong>',
+  );
 
   /* A title may carry a deliberate break — 'Spill It Out\nלמדריכות הורים'. What
    * follows it is a subtitle rather than a second headline, so it gets its own
@@ -69,6 +61,47 @@ const Render = (() => {
   const oneLine = (s) => String(s ?? '').replace(/\s*[\r\n]+\s*/g, ' ');
 
   const paras = (arr) => (arr || []).map((p) => `<p>${rich(p)}</p>`).join('');
+
+  const bodyCarousel = (arr) => {
+    const cards = arr || [];
+    return `<div class="body-carousel" data-body-carousel>
+      <div class="body-carousel-controls">
+        <button class="carousel-button is-next" type="button" data-carousel-prev aria-label="לפסקה הקודמת">${icon('arrow')}</button>
+        <span class="body-carousel-count" data-carousel-count aria-live="polite">1 / ${cards.length}</span>
+        <button class="carousel-button" type="button" data-carousel-next aria-label="לפסקה הבאה">${icon('arrow')}</button>
+      </div>
+      <p class="body-carousel-hint">דפדפו להמשך קריאה</p>
+      <div class="body-carousel-viewport">
+        <div class="body-carousel-track">
+          ${cards.map((p, i) => `<article class="body-carousel-card${i === 0 ? ' is-active' : ''}" data-carousel-card aria-hidden="${i === 0 ? 'false' : 'true'}"><p>${rich(p)}</p></article>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  };
+
+  function setupBodyCarousel(root) {
+    const cards = [...root.querySelectorAll('[data-carousel-card]')];
+    const previous = root.querySelector('[data-carousel-prev]');
+    const next = root.querySelector('[data-carousel-next]');
+    const count = root.querySelector('[data-carousel-count]');
+    let active = 0;
+
+    const show = (index) => {
+      active = Math.max(0, Math.min(index, cards.length - 1));
+      cards.forEach((card, i) => {
+        const isActive = i === active;
+        card.classList.toggle('is-active', isActive);
+        card.setAttribute('aria-hidden', String(!isActive));
+      });
+      count.textContent = `${active + 1} / ${cards.length}`;
+      previous.disabled = active === 0;
+      next.disabled = active === cards.length - 1;
+    };
+
+    previous.addEventListener('click', () => show(active - 1));
+    next.addEventListener('click', () => show(active + 1));
+    show(0);
+  }
 
   const ICONS = {
     user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
@@ -373,7 +406,7 @@ const Render = (() => {
               ${c.price ? `
                 <p class="plan-price">
                   <span class="plan-price-num">${esc(c.price)}</span>
-                  ${c.priceUnit ? `<span class="plan-price-unit">${esc(c.priceUnit)}</span>` : ''}
+                  ${c.priceUnit ? `<span class="plan-price-unit">${esc(c.priceUnit)}${c.personalNoteLink ? ` <button class="plan-personal-link" type="button" data-scroll-to-personal aria-label="לקריאת הבקשה האישית"><span class="plan-personal-arrow" aria-hidden="true">👇</span></button>` : ''}</span>` : ''}
                 </p>` : ''}
               <ul class="plan-list">
                 ${(c.items || []).map((it) => `
@@ -404,18 +437,41 @@ const Render = (() => {
         ${p.tags?.length ? `<div class="tag-row" style="margin-block-end:12px">${p.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
         <h2>${titleHtml(p.title)}</h2>
       </div>
-      <div class="project-detail-body">${paras(p.body?.length ? p.body : [p.blurb])}</div>
+      ${has(p.summary) ? `<div class="project-summary"><p>${summaryHtml(p.summary)}</p></div>` : ''}
+      ${bodyCarousel(p.body?.length ? p.body : [p.blurb])}
       ${plansBlock(p.plans)}
+      ${has(p.note) ? `<div class="project-note">
+        ${p.noteEmoji ? `<span class="project-note-icon" aria-hidden="true">${esc(p.noteEmoji)}</span>` : ''}
+        <p>${rich(p.note)}</p>
+      </div>` : ''}
+      ${has(p.licenseNote) ? `<div class="project-note">
+        ${p.licenseNoteEmoji ? `<span class="project-note-icon" aria-hidden="true">${esc(p.licenseNoteEmoji)}</span>` : ''}
+        <p>${rich(p.licenseNote)}</p>
+      </div>` : ''}
       ${downloadBlock(p.download)}
       ${p.links?.length ? `
         <div class="project-links">
           ${p.links.map((l) => `
             <a class="btn ${l.primary ? 'btn-primary' : 'btn-ghost'} magnetic"
                href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label)}</a>`).join('')}
-        </div>` : ''}`;
+        </div>` : ''}
+      ${has(p.launchNote) ? `<section class="launch-note" aria-label="מבצע השקה">
+        <div class="launch-note-lights" aria-hidden="true">💡 ✨ 💡 ✨ 💡</div>
+        <h3>🎺 ${rich(p.launchNote.split(/\r?\n/)[0])} 🎺</h3>
+        <div class="launch-note-copy">${paras(p.launchNote.split(/\r?\n/).slice(1))}</div>
+        <div class="launch-note-lights" aria-hidden="true">🎉 💡 🎉 💡 🎉</div>
+      </section>` : ''}
+      ${has(p.personalNote) ? `<section class="personal-note" id="personal-note" aria-label="בקשה אישית מאוהד">
+        <div>${paras(p.personalNote.split(/\r?\n/))}</div>
+      </section>` : ''}
+      `;
 
     pane.hidden = false;
     index.hidden = true;
+    setupBodyCarousel(pane.querySelector('[data-body-carousel]'));
+    const scrollTrigger = pane.querySelector('[data-scroll-to-personal]');
+    const personalNote = pane.querySelector('#personal-note');
+    scrollTrigger?.addEventListener('click', () => personalNote?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
     return true;
   }
 
@@ -512,9 +568,12 @@ const Render = (() => {
         <a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a></div>`);
     });
 
-    // With no WhatsApp number and no direct details, the aside would be an
+    // Groups without a join link yet are parked in content.js, not shown.
+    const waGroups = (c.whatsapp?.groups || []).filter((g) => has(g.url));
+
+    // With no groups and no direct details, the aside would be an
     // empty column — collapse to one column instead of leaving dead space.
-    const hasAside = !!whatsapp() || direct.length > 0;
+    const hasAside = waGroups.length > 0 || direct.length > 0;
 
     document.getElementById('view-contact').innerHTML = `
       <div class="container">
@@ -531,7 +590,7 @@ const Render = (() => {
               <div class="setup-notice">
                 <strong>הטופס עדיין לא מחובר.</strong> כדי להפעיל אותו, קבל מפתח חינמי ב־<code>web3forms.com</code>
                 והחלף את <code>web3formsKey</code> בקובץ <code>assets/js/content.js</code>.
-                עד אז ההודעות יישלחו דרך וואטסאפ.
+                עד אז אפשר לפנות אליי במייל או דרך קבוצת הוואטסאפ של האפליקציה.
               </div>` : ''}
 
             <form class="form-grid" id="contact-form" novalidate>
@@ -582,13 +641,22 @@ const Render = (() => {
 
           ${!hasAside ? '' : `
           <aside class="contact-aside">
-            ${whatsapp() ? `
+            ${waGroups.length ? `
               <div class="card wa-card reveal">
                 <h3>${esc(c.whatsapp.title)}</h3>
                 <p>${rich(c.whatsapp.text)}</p>
-                <button class="btn btn-whatsapp magnetic" type="button" id="wa-btn" data-wa="form">
-                  ${icon('whatsapp')}<span>${esc(c.whatsapp.cta)}</span>
-                </button>
+                <ul class="wa-groups">
+                  ${waGroups.map((g) => `
+                    <li>
+                      <a class="wa-group" href="${esc(g.url)}" target="_blank" rel="noopener noreferrer">
+                        ${icon('whatsapp')}
+                        <span class="wa-group-text">
+                          <strong>${esc(g.app)}</strong>
+                          ${g.note ? `<small>${esc(oneLine(g.note))}</small>` : ''}
+                        </span>
+                      </a>
+                    </li>`).join('')}
+                </ul>
               </div>` : ''}
             ${direct.length ? `<div class="card direct-card reveal">${direct.join('')}</div>` : ''}
           </aside>`}
@@ -621,5 +689,5 @@ const Render = (() => {
     contact();
   }
 
-  return { all, projectDetail, showProjectIndex, icon, esc, has, whatsapp };
+  return { all, projectDetail, showProjectIndex, icon, esc, has };
 })();
