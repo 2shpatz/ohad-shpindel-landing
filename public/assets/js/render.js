@@ -84,7 +84,9 @@ const Render = (() => {
     const previous = root.querySelector('[data-carousel-prev]');
     const next = root.querySelector('[data-carousel-next]');
     const count = root.querySelector('[data-carousel-count]');
+    const viewport = root.querySelector('.body-carousel-viewport');
     let active = 0;
+    let gestureStart = null;
 
     const show = (index) => {
       active = Math.max(0, Math.min(index, cards.length - 1));
@@ -100,6 +102,23 @@ const Render = (() => {
 
     previous.addEventListener('click', () => show(active - 1));
     next.addEventListener('click', () => show(active + 1));
+
+    viewport.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      gestureStart = { x: event.clientX, y: event.clientY, id: event.pointerId };
+      viewport.setPointerCapture?.(event.pointerId);
+    });
+
+    viewport.addEventListener('pointerup', (event) => {
+      if (!gestureStart || gestureStart.id !== event.pointerId) return;
+      const deltaX = event.clientX - gestureStart.x;
+      const deltaY = event.clientY - gestureStart.y;
+      gestureStart = null;
+      if (Math.abs(deltaX) < 45 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+      show(deltaX < 0 ? active + 1 : active - 1);
+    });
+
+    viewport.addEventListener('pointercancel', () => { gestureStart = null; });
     show(0);
   }
 
@@ -406,12 +425,15 @@ const Render = (() => {
               ${c.price ? `
                 <p class="plan-price">
                   <span class="plan-price-num">${esc(c.price)}</span>
-                  ${c.priceUnit ? `<span class="plan-price-unit">${esc(c.priceUnit)}${c.personalNoteLink ? ` <button class="plan-personal-link" type="button" data-scroll-to-personal aria-label="לקריאת הבקשה האישית"><span class="plan-personal-arrow" aria-hidden="true">👇</span></button>` : ''}</span>` : ''}
+                  ${c.priceUnit ? `<span class="plan-price-unit">${esc(c.priceUnit)}</span>` : ''}
                 </p>` : ''}
               <ul class="plan-list">
                 ${(c.items || []).map((it) => `
                   <li>${bullet(c)}<span>${rich(it)}</span></li>`).join('')}
               </ul>
+              ${c.personalNoteLink ? `<button class="plan-personal-link plan-personal-list-link" type="button" data-scroll-to-personal aria-label="לחצו למעבר לבקשה האישית">
+                <span>לחצו למעבר לבקשה האישית</span><span class="plan-personal-arrow" aria-hidden="true">👇</span>
+              </button>` : ''}
             </article>`).join('')}
         </div>
         ${pl.note ? `<p class="plans-note">

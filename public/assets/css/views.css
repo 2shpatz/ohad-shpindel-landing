@@ -827,7 +827,13 @@
   text-align: center;
 }
 
-.body-carousel-viewport { overflow: hidden; }
+.body-carousel-viewport {
+  overflow: hidden;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.body-carousel-viewport:active { cursor: grabbing; }
 
 .body-carousel-track { display: grid; }
 
@@ -975,6 +981,13 @@
   color: var(--success);
   background: transparent;
   cursor: pointer;
+}
+
+.plan-personal-list-link {
+  align-self: center;
+  margin-block-start: -4px;
+  font: inherit;
+  font-weight: 800;
 }
 
 .plan-personal-arrow {
