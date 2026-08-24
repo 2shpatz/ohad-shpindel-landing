@@ -115,7 +115,7 @@ const Render = (() => {
       const deltaY = event.clientY - gestureStart.y;
       gestureStart = null;
       if (Math.abs(deltaX) < 45 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
-      show(deltaX < 0 ? active + 1 : active - 1);
+      show(deltaX > 0 ? active + 1 : active - 1);
     });
 
     viewport.addEventListener('pointercancel', () => { gestureStart = null; });
