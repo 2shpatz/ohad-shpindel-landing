@@ -406,12 +406,15 @@ const Render = (() => {
               ${c.price ? `
                 <p class="plan-price">
                   <span class="plan-price-num">${esc(c.price)}</span>
-                  ${c.priceUnit ? `<span class="plan-price-unit">${esc(c.priceUnit)}${c.personalNoteLink ? ` <button class="plan-personal-link" type="button" data-scroll-to-personal aria-label="לקריאת הבקשה האישית"><span class="plan-personal-arrow" aria-hidden="true">👇</span></button>` : ''}</span>` : ''}
+                  ${c.priceUnit ? `<span class="plan-price-unit">${esc(c.priceUnit)}</span>` : ''}
                 </p>` : ''}
               <ul class="plan-list">
                 ${(c.items || []).map((it) => `
                   <li>${bullet(c)}<span>${rich(it)}</span></li>`).join('')}
               </ul>
+              ${c.personalNoteLink ? `<button class="plan-personal-link plan-personal-card-link" type="button" data-scroll-to-personal aria-label="בקשה אישית מאוהד">
+                <span>בקשה אישית מאוהד</span><span class="plan-personal-arrow" aria-hidden="true">👇</span>
+              </button>` : ''}
             </article>`).join('')}
         </div>
         ${pl.note ? `<p class="plans-note">
