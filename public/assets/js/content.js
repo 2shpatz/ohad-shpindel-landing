@@ -432,7 +432,7 @@ const SITE_CONTENT = {
   ],
 
   footer: {
-    text: '"גדול יותר זה לא תמיד טוב יותר,\nאבל זה תמיד גדול יותר."\nפומבה [שם,שם]',
+    text: '"גדול יותר זה לא תמיד טוב יותר,\nאבל זה תמיד גדול יותר."\nפומבה [שם,שם]\n[הצהרת פרטיות · privacy-policy](privacy-policy.html)',
   },
 
   /* ---------- The retro arcade layer ----------

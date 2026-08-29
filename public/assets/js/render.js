@@ -24,8 +24,8 @@ const Render = (() => {
   // Markdown-style [text](url) inside paragraph copy. Runs on already-escaped
   // text and only accepts http(s) URLs, so no markup can come in from content.
   const links = (s) => s.replace(
-    /\[([^\]\n]+)\]\((https?:\/\/[^\s)]+|#[a-z][\w-]*)\)/g,
-    (_, text, url) => url.startsWith('#')
+    /\[([^\]\n]+)\]\((https?:\/\/[^\s)]+|\/?[\w./#?&=%-]+|#[a-z][\w-]*)\)/g,
+    (_, text, url) => url.startsWith('#') || !/^https?:\/\//i.test(url)
       ? `<a class="text-link" href="${url}">${text}</a>`
       : `<a class="text-link" href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`,
   );
