@@ -381,19 +381,24 @@
   .hero-actions { margin-block-start: 36px; }
 
   .project-hero-img {
+    display: block;
     width: 100vw;
     max-width: none;
-    margin-inline: calc(50% - 50vw);
+    min-height: min(82vw, 420px);
     aspect-ratio: 1 / 1;
+    margin-inline: calc(50% - 50vw);
     border-radius: 0;
     background: #000000;
     object-fit: contain;
-    padding: clamp(8px, 3vw, 18px);
+    object-position: center;
+    padding: clamp(10px, 5vw, 24px);
+    transform: scale(1.18);
+    transform-origin: center;
   }
 
   .project-hero-img.is-contain {
     object-fit: contain;
-    padding: clamp(12px, 4vw, 28px);
+    padding: clamp(12px, 6vw, 30px);
     background: #000000;
   }
 }
