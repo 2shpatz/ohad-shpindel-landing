@@ -417,7 +417,7 @@ const Render = (() => {
         <div class="download-warning-panel" role="dialog" aria-modal="true" aria-labelledby="download-warning-title">
           <button class="download-warning-close" type="button" aria-label="סגירה" data-close-download-modal>×</button>
           <h3 id="download-warning-title">הערה לפני הפעלת הקובץ</h3>
-          <div class="download-warning-actions">
+          <div class="download-warning-actions" hidden>
             <button class="btn btn-ghost" type="button" data-close-download-modal>ביטול</button>
             <button class="btn btn-primary magnetic" type="button" data-confirm-download>המשך והורדה</button>
           </div>
