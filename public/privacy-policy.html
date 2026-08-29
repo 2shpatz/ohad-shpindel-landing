@@ -110,19 +110,38 @@
       margin: 1.2rem 0;
     }
 
-    .meta-grid {
-      list-style: none;
-      padding: 0;
-      margin: 1rem 0 0;
-      display: grid;
-      gap: 0.7rem;
+    .lang-toolbar {
+      display: flex;
+      justify-content: flex-start;
+      gap: 10px;
+      margin: 0 0 18px;
+      flex-wrap: wrap;
     }
 
-    .meta-grid li {
-      background: rgba(255,255,255,0.02);
+    .lang-button {
+      appearance: none;
       border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 0.8rem 1rem;
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 0.5rem 0.9rem;
+      font: inherit;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .lang-button.is-active {
+      background: linear-gradient(135deg, rgba(158,122,247,0.3), rgba(201,169,255,0.2));
+      border-color: rgba(201,169,255,0.7);
+      box-shadow: 0 0 0 1px rgba(201,169,255,0.2);
+    }
+
+    .lang-block {
+      display: none;
+    }
+
+    .lang-block.is-active {
+      display: block;
     }
 
     @media (max-width: 640px) {
@@ -137,109 +156,223 @@
     <a class="back-link" href="/" aria-label="חזרה לעמוד הבית">← חזרה לעמוד הבית</a>
 
     <article class="privacy-shell" aria-labelledby="privacy-heading">
-      <p class="eyebrow">Privacy Statement</p>
-      <h1 id="privacy-heading">הצהרת פרטיות</h1>
-
-      <p>
-        אתר זה, בבעלות ובניהול של <strong>אוהד שפינדל</strong>, נועד לספק מידע על השירותים, הפרויקטים, התקשורת עם הלקוח והזדמנויות הקשר. אנו מקפידים לשמור על פרטיות המידע של המבקרים והלקוחות, ולהסביר בצורה ברורה מה נאסף, למה, למי הוא מועבר, וכיצד אפשר לדרוש לעדכן, למחוק או לבקש גישה למידע.
-      </p>
-
-      <div class="note">
-        <strong>מבט קצר:</strong> האתר אינו מצריך יצירת חשבון, אינו מבקש פרטי כרטיס אשראי, ואינו משתמש במערכות מעקב/פרסום מסחריות שמטרתן מימוש מסחרי באמצעות נתוני משתמשים. עם זאת, כאשר המשתמש משתמש בטופס יצירת הקשר, נאסף מידע אישי לצורך עיבוד הפנייה והתגובה אליה.
+      <div class="lang-toolbar" aria-label="Language selector">
+        <button class="lang-button is-active" type="button" data-lang="he" aria-pressed="true">עברית</button>
+        <button class="lang-button" type="button" data-lang="en" aria-pressed="false">English</button>
       </div>
 
-      <h2>1. מי אחראי על הנתונים?</h2>
-      <p>
-        האחראי על עיבוד הנתונים הוא <strong>אוהד שפינדל</strong> (בעל האתר), באמצעות כתובת הדוא"ל: <a href="mailto:shpatz.apps@gmail.com">shpatz.apps@gmail.com</a>.
-      </p>
+      <div class="lang-block is-active" data-lang-block="he" lang="he" dir="rtl">
+        <p class="eyebrow">Privacy Statement</p>
+        <h1 id="privacy-heading">הצהרת פרטיות</h1>
 
-      <h2>2. אילו נתונים אנו אוספים?</h2>
-      <p>הנתונים שנאספים תלויים בדרך השימוש באתר:</p>
-      <ul>
-        <li><strong>כאשר ממלאים טופס יצירת קשר:</strong> שם מלא, כתובת דוא"ל, מספר טלפון (אם נמסר), תוכן ההודעה, פרטי הפנייה וההקשר שלה.</li>
-        <li><strong>מידע טכני אוטומטי:</strong> כתובת IP, סוג דפדפן, מערכת הפעלה, שפת הדפדפן, עמודי האתר שנצפו, תאריך ושעת הגישה, כתובת מקור ההפניה, וקודי שגיאה או תקלות שהתרחשו בשרת או בדפדפן.</li>
-        <li><strong>מידע שהמשתמש מספק מרצונו:</strong> כל פריט שנכתב בטופס, כולל בקשה, שאלה, תיאור בעיה, הצעה, או הערה.</li>
-      </ul>
-      <p>
-        חשוב לציין: האתר אינו דורש פרטי זהות, מסמכי זיהוי, פרטי תשלום, סיסמאות, או מידע רפואי או פיננסי מהמשתמש, אלא אם המשתמש בוחר למסור זאת מתוך רצון אישי לצורך פנייה ספציפית.
-      </p>
+        <p>
+          אתר זה, בבעלות ובניהול של <strong>אוהד שפינדל</strong>, נועד לספק מידע על השירותים, הפרויקטים, התקשורת עם הלקוח והזדמנויות הקשר. אנו מקפידים לשמור על פרטיות המידע של המבקרים והלקוחות, ולהסביר בצורה ברורה מה נאסף, למה, למי הוא מועבר, וכיצד אפשר לדרוש לעדכן, למחוק או לבקש גישה למידע.
+        </p>
 
-      <h2>3. למה אנו אוספים את המידע?</h2>
-      <p>המידע נועד בעיקר לצורך:</p>
-      <ul>
-        <li>עיבוד פניות, שאלות, בקשות לתמיכה או הצעות.</li>
-        <li>החזרת תשובה, עדכון או קישור לשירות/מוצר הרלוונטיים.</li>
-        <li>שיפור איכות השירות והתגובה למשתמשים.</li>
-        <li>הבטחת אבטחת האתר, איתור תקלות, מניעת שימוש לרעה, ומעקב אחר פעילות חריגה או ניסיונות גישה בלתי מורשים.</li>
-        <li>עמידה בדרישות חוקיות, אם וכאשר הן חלות.</li>
-      </ul>
+        <div class="note">
+          <strong>מבט קצר:</strong> האתר אינו מצריך יצירת חשבון, אינו מבקש פרטי כרטיס אשראי, ואינו משתמש במערכות מעקב/פרסום מסחריות שמטרתן מימוש מסחרי באמצעות נתוני משתמשים. עם זאת, כאשר המשתמש משתמש בטופס יצירת הקשר, נאסף מידע אישי לצורכי עיבוד הפנייה והתגובה אליה.
+        </div>
 
-      <h2>4. האם נשמרים עוגיות או נתוני מעקב?</h2>
-      <p>
-        האתר אינו משתמש בדרך כלל בעוגיות פרסום, עוגיות מעקב, או כלי ניתוחי משתמשים לצורך פרסום/מסחר. אם בעתיד תתווסף פונקציונליות כזו, תתווסף גם הודעה מפורשת לגבי כך, עם אפשרות להסכמה/ביטול, בהתאם לחוק החל.
-      </p>
-      <p>
-        עם זאת, השרת או ספקי אינטרנט/ה-hosting עשויים לשמור יומני גישה ונתוני אבטחה אוטומטיים לצורך תפעול האתר ולשיפור היציבות והביטחון.
-      </p>
+        <h2>1. מי אחראי על הנתונים?</h2>
+        <p>
+          האחראי על עיבוד הנתונים הוא <strong>אוהד שפינדל</strong> (בעל האתר), באמצעות כתובת הדוא"ל: <a href="mailto:shpatz.apps@gmail.com">shpatz.apps@gmail.com</a>.
+        </p>
 
-      <h2>5. עם מי הוא משותף?</h2>
-      <p>אנו עשויים לשתף מידע עם ספקי שירותים הכרחיים להפעלת האתר, לרבות:</p>
-      <ul>
-        <li>ספקי שירותי שליחת דוא"ל/טופס יצירת קשר, כגון Web3Forms או שירות דומה, לצורך קבלת והעברת ההודעות מהאתר.</li>
-        <li>ספקי אירוח/הפעלת אתר (למשל Cloudflare, hosting), לצורך תפעול, אבטחה ויציבות האתר.</li>
-        <li>רשויות או גופים משפטיים, אם נדרש על פי דין או לצורך מניעת נזק / אבטחה / בירור של פעילות בלתי חוקית.</li>
-      </ul>
-      <p>
-        אין אנו מוכרים, משכירים או מעבירים את המידע האישי של הלקוחות למי שלא נדרשת לו לצורך הפעלת האתר או עיבוד פנייה, אלא אם הדבר מתבצע בעקבות אישור מפורש מהמשתמש או אם נדרש על פי דין.
-      </p>
+        <h2>2. אילו נתונים אנו אוספים?</h2>
+        <p>הנתונים שנאספים תלויים בדרך השימוש באתר:</p>
+        <ul>
+          <li><strong>כאשר ממלאים טופס יצירת קשר:</strong> שם מלא, כתובת דוא"ל, מספר טלפון (אם נמסר), תוכן ההודעה, פרטי הפנייה וההקשר שלה.</li>
+          <li><strong>מידע טכני אוטומטי:</strong> כתובת IP, סוג דפדפן, מערכת הפעלה, שפת הדפדפן, עמודי האתר שנצפו, תאריך ושעת הגישה, כתובת מקור ההפניה, וקודי שגיאה או תקלות שהתרחשו בשרת או בדפדפן.</li>
+          <li><strong>מידע שהמשתמש מספק מרצונו:</strong> כל פריט שנכתב בטופס, כולל בקשה, שאלה, תיאור בעיה, הצעה, או הערה.</li>
+        </ul>
+        <p>
+          חשוב לציין: האתר אינו דורש פרטי זהות, מסמכי זיהוי, פרטי תשלום, סיסמאות, או מידע רפואי או פיננסי מהמשתמש, אלא אם המשתמש בוחר למסור זאת מתוך רצון אישי לצורך פנייה ספציפית.
+        </p>
 
-      <h2>6. כיצד מאוחסן המידע וכמה זמן הוא נשמר?</h2>
-      <p>
-        המידע נשמר במערכות מאובטחות, במידה המינימלית הדרושה לצורך השימוש הרלוונטי. נתוני יצירת קשר נשמרים בדרך כלל רק במשך הזמן הנדרש כדי לטפל בפנייה, לענות, לעדכן, או לשמור תיעוד עסקי סביר. אם המידע אינו נחוץ יותר, הוא נמחק או הופך ללא מזוהה במידת האפשר.
-      </p>
-      <p>
-        נתוני גישה/יומני שרת עשויים להישמר לזמן קצר יותר או בהתאם למדיניות הספקים המפעילים את האתר.
-      </p>
+        <h2>3. למה אנו אוספים את המידע?</h2>
+        <p>המידע נועד בעיקר לצורך:</p>
+        <ul>
+          <li>עיבוד פניות, שאלות, בקשות לתמיכה או הצעות.</li>
+          <li>החזרת תשובה, עדכון או קישור לשירות/מוצר הרלוונטיים.</li>
+          <li>שיפור איכות השירות והתגובה למשתמשים.</li>
+          <li>הבטחת אבטחת האתר, איתור תקלות, מניעת שימוש לרעה, ומעקב אחר פעילות חריגה או ניסיונות גישה בלתי מורשים.</li>
+          <li>עמידה בדרישות חוקיות, אם וכאשר הן חלות.</li>
+        </ul>
 
-      <h2>7. אבטחה</h2>
-      <p>
-        אנו נוקטים אמצעי זהירות סבירים למניעת אובדן, שימוש לרעה, שינוי או גישה בלתי מורשית למידע. עם זאת, אין דרך להעברה דרך האינטרנט או אחסון מחשב שמבטיחה 100% אבטחה, ולכן יש להיחשב שהסיכון הקיים תמיד קיים, גם אם המערכת מאובטחת ככל הניתן.
-      </p>
+        <h2>4. האם נשמרים עוגיות או נתוני מעקב?</h2>
+        <p>
+          האתר אינו משתמש בדרך כלל בעוגיות פרסום, עוגיות מעקב, או כלי ניתוחי משתמשים לצורך פרסום/מסחר. אם בעתיד תתווסף פונקציונליות כזו, תתווסף גם הודעה מפורשת לגבי כך, עם אפשרות להסכמה/ביטול, בהתאם לחוק החל.
+        </p>
+        <p>
+          עם זאת, השרת או ספקי אינטרנט/ה-hosting עשויים לשמור יומני גישה ונתוני אבטחה אוטומטיים לצורך תפעול האתר ולשיפור היציבות והביטחון.
+        </p>
 
-      <h2>8. זכויות המשתמש</h2>
-      <p>למשתמש/לקוח עומדות הזכויות הבאות:</p>
-      <ul>
-        <li>לדרוש גישה למידע האישי המצוי בידינו.</li>
-        <li>לדרוש תיקון של מידע שגוי, חלקי או לא עדכני.</li>
-        <li>לדרוש מחיקה של המידע, במקרים המותרים על פי הדין.</li>
-        <li>לדרוש הגבלה של עיבוד המידע, במקרים המותרים בחוק.</li>
-        <li>לבקש התנגדות לעיבוד המידע, לרבות מסחר/שיווק, אם וכאשר הדבר חל.</li>
-        <li>לשלוח בקשה בכתב או בדוא"ל, במידת הצורך.</li>
-      </ul>
-      <p>
-        אם ברצונך לעדכן, למחוק או לבקש גישה למידע שנמסר דרך האתר, שלח הודעה לכתובת: <a href="mailto:shpatz.apps@gmail.com">shpatz.apps@gmail.com</a>.
-      </p>
+        <h2>5. עם מי הוא משותף?</h2>
+        <p>אנו עשויים לשתף מידע עם ספקי שירותים הכרחיים להפעלת האתר, לרבות:</p>
+        <ul>
+          <li>ספקי שירותי שליחת דוא"ל/טופס יצירת קשר, כגון Web3Forms או שירות דומה, לצורך קבלת והעברת ההודעות מהאתר.</li>
+          <li>ספקי אירוח/הפעלת אתר (למשל Cloudflare, hosting), לצורך תפעול, אבטחה ויציבות האתר.</li>
+          <li>רשויות או גופים משפטיים, אם נדרש על פי דין או לצורך מניעת נזק / אבטחה / בירור של פעילות בלתי חוקית.</li>
+        </ul>
+        <p>
+          אין אנו מוכרים, משכירים או מעבירים את המידע האישי של הלקוחות למי שלא נדרשת לו לצורך הפעלת האתר או עיבוד פנייה, אלא אם הדבר מתבצע בעקבות אישור מפורש מהמשתמש או אם נדרש על פי דין.
+        </p>
 
-      <h2>9. ילדים ומבוגרים</h2>
-      <p>
-        האתר אינו מיועד במיוחד לילדים, ואינו מבקש באופן מכוון איסוף מידע מחייב מאנשים מתחת לגיל 13, אלא אם הדבר נדרש על פי החוק המקומי וההורה/האחראי מספק את ההסכמה הנדרשת. אם ידוע לנו כי נמסר מידע של ילד, אנו נמחק אותו בהקדם האפשרי.
-      </p>
+        <h2>6. כיצד מאוחסן המידע וכמה זמן הוא נשמר?</h2>
+        <p>
+          המידע נשמר במערכות מאובטחות, במידה המינימלית הדרושה לצורך השימוש הרלוונטי. נתוני יצירת קשר נשמרים בדרך כלל רק במשך הזמן הנדרש כדי לטפל בפנייה, לענות, לעדכן, או לשמור תיעוד עסקי סביר. אם המידע אינו נחוץ יותר, הוא נמחק או הופך ללא מזוהה במידת האפשר.
+        </p>
+        <p>
+          נתוני גישה/יומני שרת עשויים להישמר לזמן קצר יותר או בהתאם למדיניות הספקים המפעילים את האתר.
+        </p>
 
-      <h2>10. שינויי מדיניות</h2>
-      <p>
-        מדיניות זו עשויה להתעדכן מעת לעת, במיוחד אם מתווספת פונקציונליות חדשה, שירותים חדשים או שינויי הפעלה. עדכונים יופיעו בעמוד זה, והגרסה העדכנית תישאר זמינה בבחירה.
-      </p>
+        <h2>7. אבטחה</h2>
+        <p>
+          אנו נוקטים אמצעי זהירות סבירים למניעת אובדן, שימוש לרעה, שינוי או גישה בלתי מורשית למידע. עם זאת, אין דרך להעברה דרך האינטרנט או אחסון מחשב שמבטיחה 100% אבטחה, ולכן יש להיחשב שהסיכון הקיים תמיד קיים, גם אם המערכת מאובטחת ככל הניתן.
+        </p>
 
-      <h2>11. יצירת קשר</h2>
-      <p>
-        בכל שאלה לגבי פרטיות, אבטחה, שימוש במידע, בקשה למחיקה, או נושאים נוספים, ניתן לפנות אלינו בכתובת:<br>
-        <a href="mailto:shpatz.apps@gmail.com">shpatz.apps@gmail.com</a>
-      </p>
+        <h2>8. זכויות המשתמש</h2>
+        <p>למשתמש/לקוח עומדות הזכויות הבאות:</p>
+        <ul>
+          <li>לדרוש גישה למידע האישי המצוי בידינו.</li>
+          <li>לדרוש תיקון של מידע שגוי, חלקי או לא עדכני.</li>
+          <li>לדרוש מחיקה של המידע, במקרים המותרים על פי הדין.</li>
+          <li>לדרוש הגבלה של עיבוד המידע, במקרים המותרים בחוק.</li>
+          <li>לבקש התנגדות לעיבוד המידע, לרבות מסחר/שיווק, אם וכאשר הדבר חל.</li>
+          <li>לשלוח בקשה בכתב או בדוא"ל, במידת הצורך.</li>
+        </ul>
+        <p>
+          אם ברצונך לעדכן, למחוק או לבקש גישה למידע שנמסר דרך האתר, שלח הודעה לכתובת: <a href="mailto:shpatz.apps@gmail.com">shpatz.apps@gmail.com</a>.
+        </p>
 
-      <p>
-        <strong>תאריך עדכון אחרון:</strong> 30 באוגוסט 2026
-      </p>
+        <h2>9. ילדים ומבוגרים</h2>
+        <p>
+          האתר אינו מיועד במיוחד לילדים, ואינו מבקש באופן מכוון איסוף מידע מחייב מאנשים מתחת לגיל 13, אלא אם הדבר נדרש על פי החוק המקומי וההורה/האחראי מספק את ההסכמה הנדרשת. אם ידוע לנו כי נמסר מידע של ילד, אנו נמחק אותו בהקדם האפשרי.
+        </p>
+
+        <h2>10. שינויי מדיניות</h2>
+        <p>
+          מדיניות זו עשויה להתעדכן מעת לעת, במיוחד אם מתווספת פונקציונליות חדשה, שירותים חדשים או שינויי הפעלה. עדכונים יופיעו בעמוד זה, והגרסה העדכנית תישאר זמינה בבחירה.
+        </p>
+
+        <h2>11. יצירת קשר</h2>
+        <p>
+          בכל שאלה לגבי פרטיות, אבטחה, שימוש במידע, בקשה למחיקה, או נושאים נוספים, ניתן לפנות אלינו בכתובת:<br>
+          <a href="mailto:shpatz.apps@gmail.com">shpatz.apps@gmail.com</a>
+        </p>
+
+        <p>
+          <strong>תאריך עדכון אחרון:</strong> 30 באוגוסט 2026
+        </p>
+      </div>
+
+      <div class="lang-block" data-lang-block="en" lang="en" dir="ltr">
+        <p class="eyebrow">Privacy Statement</p>
+        <h1>Privacy Policy</h1>
+
+        <p>
+          This website, owned and operated by <strong>Ohad Shpindel</strong>, is designed to provide information about services, projects, customer communication, and contact opportunities. We strive to protect the privacy of visitors and clients and to explain clearly what is collected, why it is collected, who it may be shared with, and how a person may request updates, deletion, or access to their information.
+        </p>
+
+        <div class="note">
+          <strong>Quick overview:</strong> The website does not require account creation, does not request credit card details, and does not use commercial advertising or tracking systems for monetization. However, when a user submits the contact form, personal information is collected to process the inquiry and respond to it.
+        </div>
+
+        <h2>1. Who is responsible for the data?</h2>
+        <p>
+          The data controller is <strong>Ohad Shpindel</strong>, the owner of the website, reachable at: <a href="mailto:shpatz.apps@gmail.com">shpatz.apps@gmail.com</a>.
+        </p>
+
+        <h2>2. What data do we collect?</h2>
+        <p>The data collected depends on how the site is used:</p>
+        <ul>
+          <li><strong>When completing the contact form:</strong> full name, email address, phone number (if provided), message content, and the context of the inquiry.</li>
+          <li><strong>Automatic technical information:</strong> IP address, browser type, operating system, browser language, pages visited, date and time of access, referrer address, and error codes or technical issues that occurred on the server or in the browser.</li>
+          <li><strong>Information voluntarily provided by the user:</strong> any content entered into the form, including requests, questions, problem descriptions, suggestions, or comments.</li>
+        </ul>
+        <p>
+          It is important to note that the website does not require identity documents, payment details, passwords, or medical or financial information from users unless the user chooses to provide such information voluntarily for a specific inquiry.
+        </p>
+
+        <h2>3. Why do we collect this information?</h2>
+        <p>The information is mainly used for:</p>
+        <ul>
+          <li>Processing inquiries, questions, support requests, and suggestions.</li>
+          <li>Responding with answers, updates, or relevant service/product information.</li>
+          <li>Improving service quality and responsiveness to users.</li>
+          <li>Protecting website security, identifying errors, preventing misuse, and monitoring abnormal activity or unauthorized access attempts.</li>
+          <li>Complying with legal requirements where applicable.</li>
+        </ul>
+
+        <h2>4. Are cookies or tracking data stored?</h2>
+        <p>
+          The website generally does not use advertising cookies, tracking cookies, or user analytics tools for commercial advertising. If such functionality is added in the future, a clear notice will also be provided, including consent or opt-out options as required by applicable law.
+        </p>
+        <p>
+          At the same time, the server or hosting providers may store access logs and automatic security data to operate the site and improve stability and security.
+        </p>
+
+        <h2>5. With whom is the information shared?</h2>
+        <p>We may share information with service providers necessary to operate the website, including:</p>
+        <ul>
+          <li>Email/contact form service providers, such as Web3Forms or a similar service, to receive and forward messages sent through the website.</li>
+          <li>Hosting and website operation providers, such as Cloudflare or similar services, for operation, security, and website stability.</li>
+          <li>Authorities or legal bodies, if required by law or to prevent harm, protect security, or investigate unlawful activity.</li>
+        </ul>
+        <p>
+          We do not sell, lease, or transfer personal information of clients to parties who do not need it for the operation of the website or processing of inquiries, unless this is done after explicit user consent or as required by law.
+        </p>
+
+        <h2>6. How is the information stored and for how long?</h2>
+        <p>
+          Information is stored in secure systems to the minimum extent necessary for the relevant use. Contact data is generally retained only for the time needed to handle the inquiry, reply, update, or maintain reasonable business records. If the information is no longer needed, it is deleted or made non-identifiable where possible.
+        </p>
+        <p>
+          Access logs and server records may be retained for a shorter period or according to the policies of the providers operating the website.
+        </p>
+
+        <h2>7. Security</h2>
+        <p>
+          We take reasonable precautions to prevent loss, misuse, alteration, or unauthorized access to information. However, there is no method of transmission over the internet or storage on a computer that is 100% secure, and therefore some risk always exists even when the system is protected as well as possible.
+        </p>
+
+        <h2>8. User rights</h2>
+        <p>The user/customer has the following rights:</p>
+        <ul>
+          <li>Request access to personal information held by us.</li>
+          <li>Request correction of inaccurate, incomplete, or outdated information.</li>
+          <li>Request deletion of the information where permitted by law.</li>
+          <li>Request restriction of processing where applicable under the law.</li>
+          <li>Object to processing of information, including for marketing, when applicable.</li>
+          <li>Submit a request in writing or via email as needed.</li>
+        </ul>
+        <p>
+          If you would like to update, delete, or request access to information submitted through the website, please send a message to: <a href="mailto:shpatz.apps@gmail.com">shpatz.apps@gmail.com</a>.
+        </p>
+
+        <h2>9. Children and adults</h2>
+        <p>
+          The website is not specifically intended for children and does not intentionally collect mandatory information from individuals under the age of 13 unless required by local law and the parent or guardian provides the required consent. If we become aware that information from a child has been provided, we will delete it as quickly as possible.
+        </p>
+
+        <h2>10. Policy changes</h2>
+        <p>
+          This policy may be updated from time to time, particularly if new functionality, services, or operational changes are added. Updates will appear on this page and the latest version will remain available.
+        </p>
+
+        <h2>11. Contact</h2>
+        <p>
+          If you have any questions about privacy, security, use of information, deletion requests, or other matters, you can contact us at:<br>
+          <a href="mailto:shpatz.apps@gmail.com">shpatz.apps@gmail.com</a>
+        </p>
+
+        <p>
+          <strong>Last updated:</strong> August 30, 2026
+        </p>
+      </div>
     </article>
   </main>
+
+  <script src="assets/js/privacy-policy.js"></script>
 </body>
 </html>
