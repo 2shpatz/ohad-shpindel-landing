@@ -456,18 +456,22 @@ const Render = (() => {
     const modal = document.getElementById('download-warning-modal');
     const title = document.getElementById('download-warning-title');
     const body = document.getElementById('download-warning-body');
+    const actions = modal?.querySelector('.download-warning-actions');
     if (!modal || !url) return;
 
+    const isWindows = /Windows/i.test(navigator.userAgent || '') || /Windows/i.test(navigator.platform || '');
     const warning = getDownloadWarningContent();
     if (title) title.textContent = warning.title;
     if (body) {
-      const isWindows = /Windows/i.test(navigator.userAgent || '') || /Windows/i.test(navigator.platform || '');
       body.innerHTML = isWindows
         ? `${warning.body}<div class="download-warning-image"><img src="assets/img/windows-defender-warning.png" alt="Windows Defender warning" /></div>`
         : warning.body;
     }
+    if (actions) {
+      actions.hidden = !isWindows;
+    }
 
-    modal.dataset.pendingUrl = url;
+    modal.dataset.pendingUrl = isWindows ? url : '';
     modal.hidden = false;
   }
 

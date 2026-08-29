@@ -379,6 +379,21 @@
   /* A paragraph running straight into the buttons under it reads as one block
      and is easy to mis-tap; give the row its own air. */
   .hero-actions { margin-block-start: 36px; }
+
+  .project-hero-img {
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    aspect-ratio: 1 / 1;
+    border-radius: 0;
+    background: #000000;
+    object-fit: cover;
+  }
+
+  .project-hero-img.is-contain {
+    object-fit: cover;
+    padding: 0;
+    background: #000000;
+  }
 }
 
 /* ==================== ABOUT ==================== */
