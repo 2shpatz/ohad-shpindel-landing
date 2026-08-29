@@ -382,16 +382,18 @@
 
   .project-hero-img {
     width: 100vw;
+    max-width: none;
     margin-inline: calc(50% - 50vw);
     aspect-ratio: 1 / 1;
     border-radius: 0;
     background: #000000;
-    object-fit: cover;
+    object-fit: contain;
+    padding: clamp(8px, 3vw, 18px);
   }
 
   .project-hero-img.is-contain {
-    object-fit: cover;
-    padding: 0;
+    object-fit: contain;
+    padding: clamp(12px, 4vw, 28px);
     background: #000000;
   }
 }
