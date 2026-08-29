@@ -1145,6 +1145,33 @@
   margin-block-start: 30px;
 }
 
+.plan-report-samples {
+  margin-block-start: 18px;
+  padding: 14px 16px;
+  border: 1px solid rgba(200, 116, 178, 0.5);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.plan-report-title {
+  margin: 0 0 10px;
+  color: var(--text-primary);
+  font-size: 0.93rem;
+  font-weight: 800;
+}
+
+.plan-report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.plan-report-button {
+  min-width: 110px;
+  justify-content: center;
+  padding-inline: 14px;
+}
+
 /* ---- Plans: free vs licensed ---- */
 
 .plans { margin-block-start: 38px; }

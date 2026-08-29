@@ -393,7 +393,7 @@ const Render = (() => {
           <p>תופיע הודעת ההגנה של Windows Defender, כפי שאתם רואים בתמונה.</p>
           <p>בחרו <strong>More info</strong> / <strong>מידע נוסף</strong> ואז <strong>Run anyway</strong> / <strong>הרץ בכל זאת</strong>.</p>
           <p>הודעה זו היא של מערכת ההפעלה, ומופיעה כי ספק התוכנה (אני) עדיין לא מוכר על ידי Microsoft.</p>
-          <p class="download-warning-quote">איך ששמשון ויובב אומרים... "סמוך עלינו פינוקיו... אנחנו חברים שלך!"</p>
+          <p class="download-warning-quote">איך ששמשון ויובב אומרים... "סמוך עלינו פינוקיו! אנחנו חברים שלך..."</p>
         `,
       };
     }
@@ -476,6 +476,21 @@ const Render = (() => {
     modal.hidden = false;
   }
 
+  function reportSamplesBlock(samples, variant = 'project') {
+    if (!samples?.length) return '';
+    const isPlan = variant === 'plan';
+    return `
+      <div class="${isPlan ? 'plan-report-samples' : 'project-report-samples'}" aria-label="דוחות לדוגמה">
+        <p class="${isPlan ? 'plan-report-title' : 'project-report-title'}">דוחות לדוגמה</p>
+        <div class="${isPlan ? 'plan-report-actions' : 'project-report-actions'}">
+          ${samples.map((sample) => `
+            <a class="btn btn-ghost ${isPlan ? 'plan-report-button' : 'project-report-button'}" href="${esc(sample.file)}" target="_blank" rel="noopener noreferrer">
+              ${esc(sample.label)}
+            </a>`).join('')}
+        </div>
+      </div>`;
+  }
+
   function downloadBlock(d) {
     if (!d) return '';
     const ready = has(d.file);
@@ -499,7 +514,7 @@ const Render = (() => {
    * they carry their own colour, so the two columns are told apart at a glance
    * instead of by a tint difference. They are decoration, so each is
    * aria-hidden and the list still reads as plain items to a screen reader. */
-  function plansBlock(pl) {
+  function plansBlock(pl, reportSamples) {
     if (!pl?.columns?.length) return '';
     const bullet = (c) => (c.bullet
       ? `<span class="plan-bullet" aria-hidden="true">${esc(c.bullet)}</span>`
@@ -528,6 +543,7 @@ const Render = (() => {
                 ${(c.items || []).map((it) => `
                   <li>${bullet(c)}<span>${rich(it)}</span></li>`).join('')}
               </ul>
+              ${c.featured ? reportSamplesBlock(reportSamples, 'plan') : ''}
               ${c.personalNoteLink ? `<button class="plan-personal-link plan-personal-card-link" type="button" data-scroll-to-personal aria-label="בקשה אישית מאוהד">
                 <span>בקשה אישית מאוהד</span><span class="plan-personal-arrow" aria-hidden="true">👇</span>
               </button>` : ''}
@@ -566,7 +582,7 @@ const Render = (() => {
       </div>
       ${has(p.summary) ? `<div class="project-summary"><p>${summaryHtml(p.summary)}</p></div>` : ''}
       ${bodyCarousel(p.body?.length ? p.body : [p.blurb])}
-      ${plansBlock(p.plans)}
+      ${plansBlock(p.plans, p.reportSamples)}
       ${has(p.note) ? `<div class="project-note">
         ${p.noteEmoji ? `<span class="project-note-icon" aria-hidden="true">${esc(p.noteEmoji)}</span>` : ''}
         <p>${rich(p.note)}</p>
