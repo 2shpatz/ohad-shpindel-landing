@@ -155,6 +155,8 @@ const Render = (() => {
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
   };
 
+  const downloadIcon = () => '<span class="download-badge-icon" aria-hidden="true">📥</span>';
+
   // Marks each direct child with --i so CSS can stagger the reveal.
   const stagger = (nodes) => nodes.forEach((el, i) => el.style.setProperty('--i', i));
 
@@ -379,16 +381,106 @@ const Render = (() => {
    * "not yet" beats a link that downloads a 404 page, so with no `file` the
    * same block renders disabled — the visitor still learns the app exists and
    * what it needs to run. */
+  function getDownloadWarningContent() {
+    const isWindows = /Windows/i.test(navigator.userAgent || '') || /Windows/i.test(navigator.platform || '');
+
+    if (isWindows) {
+      return {
+        title: 'הערה לפני הפעלת הקובץ',
+        body: `
+          <p></p>
+          <p>לאחר הורדת הקובץ, הפעילו את ההתקנה שתמצא בתיקיית ההורדות.</p>
+          <p>תופיע הודעת ההגנה של Windows Defender, כפי שאתם רואים בתמונה.</p>
+          <p>בחרו <strong>More info</strong> / <strong>מידע נוסף</strong> ואז <strong>Run anyway</strong> / <strong>הרץ בכל זאת</strong>.</p>
+          <p>הודעה זו היא של מערכת ההפעלה, ומופיעה כי ספק התוכנה (אני) עדיין לא מוכר על ידי Microsoft.</p>
+          <p class="download-warning-quote">איך ששמשון ויובב אומרים... "סמוך עלינו פינוקיו... אנחנו חברים שלך!"</p>
+        `,
+      };
+    }
+
+    return {
+      title: 'זו תוכנת Windows',
+      body: `
+        <p>התוכנה הזו מיועדת למערכות הפעלה Windows בלבד.</p>
+        <p>אם אתם מנסים להוריד ממכשיר כמו טלפון או מחשב שאינו Windows, יש לנסות שוב ממחשב עם מערכת הפעלה Windows.</p>
+        <p>הורידו את הקובץ מהמחשב המתאים, ואז הפעילו את ההתקנה בתיקיית ההורדות.</p>
+      `,
+    };
+  }
+
+  function ensureDownloadWarningModal() {
+    if (document.getElementById('download-warning-modal')) return;
+
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="download-warning-modal" id="download-warning-modal" hidden>
+        <div class="download-warning-backdrop" data-close-download-modal></div>
+        <div class="download-warning-panel" role="dialog" aria-modal="true" aria-labelledby="download-warning-title">
+          <button class="download-warning-close" type="button" aria-label="סגירה" data-close-download-modal>×</button>
+          <h3 id="download-warning-title">הערה לפני הפעלת הקובץ</h3>
+          <div class="download-warning-actions">
+            <button class="btn btn-ghost" type="button" data-close-download-modal>ביטול</button>
+            <button class="btn btn-primary magnetic" type="button" data-confirm-download>המשך והורדה</button>
+          </div>
+          <div id="download-warning-body"></div>
+        </div>
+      </div>`);
+
+    const modal = document.getElementById('download-warning-modal');
+    const closeButtons = modal.querySelectorAll('[data-close-download-modal]');
+    const confirm = modal.querySelector('[data-confirm-download]');
+
+    closeButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        modal.hidden = true;
+        modal.dataset.pendingUrl = '';
+      });
+    });
+
+    confirm?.addEventListener('click', () => {
+      const url = modal.dataset.pendingUrl || '';
+      modal.hidden = true;
+      modal.dataset.pendingUrl = '';
+      if (!url) return;
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', '');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    });
+  }
+
+  function openDownloadWarning(url) {
+    ensureDownloadWarningModal();
+    const modal = document.getElementById('download-warning-modal');
+    const title = document.getElementById('download-warning-title');
+    const body = document.getElementById('download-warning-body');
+    if (!modal || !url) return;
+
+    const warning = getDownloadWarningContent();
+    if (title) title.textContent = warning.title;
+    if (body) {
+      const isWindows = /Windows/i.test(navigator.userAgent || '') || /Windows/i.test(navigator.platform || '');
+      body.innerHTML = isWindows
+        ? `${warning.body}<div class="download-warning-image"><img src="assets/img/windows-defender-warning.png" alt="Windows Defender warning" /></div>`
+        : warning.body;
+    }
+
+    modal.dataset.pendingUrl = url;
+    modal.hidden = false;
+  }
+
   function downloadBlock(d) {
     if (!d) return '';
     const ready = has(d.file);
     return `
       <div class="project-download">
         ${ready
-          ? `<a class="btn btn-primary magnetic" href="${esc(d.file)}" download>
-               ${icon('download')}<span>${esc(d.label)}</span></a>`
+          ? `<a class="btn btn-primary magnetic download-trigger" href="${esc(d.file)}" data-download-url="${esc(d.file)}" download>
+               ${downloadIcon()}<span>${esc(d.label)}</span></a>`
           : `<button class="btn btn-primary" type="button" disabled aria-disabled="true">
-               ${icon('download')}<span>${esc(d.soonLabel || d.label)}</span></button>`}
+               ${downloadIcon()}<span>${esc(d.soonLabel || d.label)}</span></button>`}
         ${d.meta ? `<span class="download-meta">${esc(d.meta)}</span>` : ''}
         ${!ready && d.note ? `<p class="download-note">${rich(d.note)}</p>` : ''}
       </div>`;
@@ -448,6 +540,13 @@ const Render = (() => {
     const index = document.getElementById('projects-index');
     if (!p || !pane) return false;
 
+    const ready = has(p.download?.file);
+    const titleCta = ready
+      ? `<div class="project-title-cta"><a class="btn btn-primary magnetic" href="${esc(p.download.file)}" data-download-url="${esc(p.download.file)}" download>
+           ${downloadIcon()}<span>${esc(p.download.label || 'הורדה')}</span></a></div>`
+      : `<div class="project-title-cta"><button class="btn btn-primary" type="button" disabled aria-disabled="true">
+           ${downloadIcon()}<span>${esc(p.download?.soonLabel || p.download?.label || 'הורדה')}</span></button></div>`;
+
     pane.innerHTML = `
       <a class="back-link" href="#projects">${icon('arrow')}<span>חזרה לכל הפרויקטים</span></a>
       ${has(p.image)
@@ -458,6 +557,7 @@ const Render = (() => {
       <div class="section-head">
         ${p.tags?.length ? `<div class="tag-row" style="margin-block-end:12px">${p.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
         <h2>${titleHtml(p.title)}</h2>
+        ${titleCta}
       </div>
       ${has(p.summary) ? `<div class="project-summary"><p>${summaryHtml(p.summary)}</p></div>` : ''}
       ${bodyCarousel(p.body?.length ? p.body : [p.blurb])}
@@ -491,6 +591,12 @@ const Render = (() => {
     pane.hidden = false;
     index.hidden = true;
     setupBodyCarousel(pane.querySelector('[data-body-carousel]'));
+    pane.querySelectorAll('[data-download-url]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        openDownloadWarning(link.dataset.downloadUrl || '');
+      });
+    });
     const scrollTrigger = pane.querySelector('[data-scroll-to-personal]');
     const personalNote = pane.querySelector('#personal-note');
     scrollTrigger?.addEventListener('click', () => personalNote?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
