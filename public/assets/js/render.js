@@ -469,6 +469,7 @@ const Render = (() => {
     }
     if (actions) {
       actions.hidden = !isWindows;
+      actions.style.display = isWindows ? '' : 'none';
     }
 
     modal.dataset.pendingUrl = isWindows ? url : '';
