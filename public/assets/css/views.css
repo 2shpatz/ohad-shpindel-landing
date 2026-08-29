@@ -390,7 +390,7 @@
     border-radius: 0;
     background: #000000;
     object-fit: contain;
-    object-position: center;
+    object-position: 35% center;
     padding: clamp(18px, 6vw, 32px);
     transform: scale(1.08);
     transform-origin: center;
@@ -398,6 +398,7 @@
 
   .project-hero-img.is-contain {
     object-fit: contain;
+    object-position: 35% center;
     padding: clamp(20px, 7vw, 34px);
     background: #000000;
   }
