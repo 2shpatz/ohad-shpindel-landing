@@ -391,14 +391,14 @@
     background: #000000;
     object-fit: contain;
     object-position: center;
-    padding: clamp(10px, 5vw, 24px);
-    transform: scale(1.18);
+    padding: clamp(18px, 6vw, 32px);
+    transform: scale(1.08);
     transform-origin: center;
   }
 
   .project-hero-img.is-contain {
     object-fit: contain;
-    padding: clamp(12px, 6vw, 30px);
+    padding: clamp(20px, 7vw, 34px);
     background: #000000;
   }
 }
