@@ -1307,7 +1307,14 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 10px 16px;
+  width: fit-content;
+  max-width: 100%;
   margin-block-start: 30px;
+  padding: 18px 22px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-glass);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
 .project-download .btn svg { width: 18px; height: 18px; }

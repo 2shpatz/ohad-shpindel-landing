@@ -47,7 +47,7 @@ const SITE_CONTENT = {
     // button and no bubble. Set to null to hide it anyway.
     //
     // `:joy:` draws the joystick icon that is on that button, inline in the text.
-    photoBubble: 'יותר מדי בלגן בעיניים?\nלחיצה על כפתור הארקייד :joy: יעלים את הדמויות',
+    photoBubble: 'יותר מדי בלגן בעיניים?\nלחיצה על כפתור הארקייד :joy: תעלים את הדמויות',
 
     // No personal WhatsApp number here on purpose — contact goes through the
     // form, the email below, or a per-app WhatsApp group (see `contact.whatsapp`).
@@ -218,7 +218,7 @@ const SITE_CONTENT = {
       // in `file` — until then the page shows `soonLabel` on a dead button
       // rather than a link that 404s.
       download: {
-        file: null, // 'assets/files/SpillItOut-Setup.exe'
+        file: 'assets/files/installers/SpillItOut-Web-Setup.exe',
         label: 'הורדה למחשב',
         soonLabel: 'ההורדה תיפתח כאן בקרוב',
         meta: 'Windows 10/11 · קובץ התקנה',
