@@ -380,27 +380,21 @@
      and is easy to mis-tap; give the row its own air. */
   .hero-actions { margin-block-start: 36px; }
 
-  .project-hero-img {
+  .project-detail .project-hero-img,
+  .project-detail .project-hero-img.is-contain {
     display: block;
-    width: 100vw;
+    width: calc(100vw - 14px);
     max-width: none;
     min-height: min(82vw, 420px);
     aspect-ratio: 1 / 1;
-    margin-inline: calc(50% - 50vw);
+    margin-inline: calc(50% - 50vw + 7px);
     border-radius: 0;
     background: #000000;
     object-fit: contain;
-    object-position: 35% center;
-    padding: clamp(18px, 6vw, 32px);
-    transform: scale(1.08);
+    object-position: 24% center;
+    padding: 18px 18px 18px 14px;
+    transform: scale(1.04);
     transform-origin: center;
-  }
-
-  .project-hero-img.is-contain {
-    object-fit: contain;
-    object-position: 35% center;
-    padding: clamp(20px, 7vw, 34px);
-    background: #000000;
   }
 }
 
