@@ -62,6 +62,19 @@ const Render = (() => {
 
   const paras = (arr) => (arr || []).map((p) => `<p>${rich(p)}</p>`).join('');
 
+  const carouselHeadings = new Set([
+    'לא בקיצור...',
+    'שפכו ת\'לב - Spill It Out',
+    'מדריכת הורים',
+    'יועצת שינה',
+  ]);
+
+  const carouselCopy = (text) => {
+    const [lead, ...rest] = String(text ?? '').split(/\r?\n/);
+    if (!carouselHeadings.has(lead.trim().replace(/\s+/g, ' '))) return rich(text);
+    return `<strong class="body-carousel-lead">${rich(lead)}</strong>${rest.length ? `<br>${rich(rest.join('\n'))}` : ''}`;
+  };
+
   const bodyCarousel = (arr) => {
     const cards = arr || [];
     return `<div class="body-carousel" data-body-carousel>
@@ -73,7 +86,7 @@ const Render = (() => {
       <p class="body-carousel-hint">דפדפו להמשך קריאה</p>
       <div class="body-carousel-viewport">
         <div class="body-carousel-track">
-          ${cards.map((p, i) => `<article class="body-carousel-card${i === 0 ? ' is-active' : ''}" data-carousel-card aria-hidden="${i === 0 ? 'false' : 'true'}"><p>${rich(p)}</p></article>`).join('')}
+          ${cards.map((p, i) => `<article class="body-carousel-card${i === 0 ? ' is-active' : ''}" data-carousel-card aria-hidden="${i === 0 ? 'false' : 'true'}"><p>${carouselCopy(p)}</p></article>`).join('')}
         </div>
       </div>
     </div>`;
@@ -155,7 +168,7 @@ const Render = (() => {
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
   };
 
-  const downloadIcon = () => '<span class="download-badge-icon" aria-hidden="true">📥</span>';
+  const downloadIcon = () => '<span class="download-badge-icon" aria-hidden="true">💻</span>';
 
   // Marks each direct child with --i so CSS can stagger the reveal.
   const stagger = (nodes) => nodes.forEach((el, i) => el.style.setProperty('--i', i));
@@ -481,7 +494,7 @@ const Render = (() => {
     const isPlan = variant === 'plan';
     return `
       <div class="${isPlan ? 'plan-report-samples' : 'project-report-samples'}" aria-label="דוחות לדוגמה">
-        <p class="${isPlan ? 'plan-report-title' : 'project-report-title'}">דוחות לדוגמה</p>
+        <p class="${isPlan ? 'plan-report-title' : 'project-report-title'}"><span aria-hidden="true">📜</span> דוחות לדוגמה</p>
         <div class="${isPlan ? 'plan-report-actions' : 'project-report-actions'}">
           ${samples.map((sample) => `
             <a class="btn btn-ghost ${isPlan ? 'plan-report-button' : 'project-report-button'}" href="${esc(sample.file)}" target="_blank" rel="noopener noreferrer">
@@ -498,9 +511,9 @@ const Render = (() => {
       <div class="project-download">
         ${ready
           ? `<a class="btn btn-primary magnetic download-trigger" href="${esc(d.file)}" data-download-url="${esc(d.file)}" download>
-               ${downloadIcon()}<span>${esc(d.label)}</span></a>`
+               ${downloadIcon()}<span class="download-button-label">${esc(d.label)}</span></a>`
           : `<button class="btn btn-primary" type="button" disabled aria-disabled="true">
-               ${downloadIcon()}<span>${esc(d.soonLabel || d.label)}</span></button>`}
+               ${downloadIcon()}<span class="download-button-label">${esc(d.soonLabel || d.label)}</span></button>`}
         ${d.meta ? `<span class="download-meta">${esc(d.meta)}</span>` : ''}
         ${!ready && d.note ? `<p class="download-note">${rich(d.note)}</p>` : ''}
       </div>`;
@@ -519,6 +532,7 @@ const Render = (() => {
     const bullet = (c) => (c.bullet
       ? `<span class="plan-bullet" aria-hidden="true">${esc(c.bullet)}</span>`
       : '');
+    const [noteLead, ...noteRest] = (pl.note || '').split(/\r?\n/);
     return `
       <section class="plans">
         ${pl.title ? `<h3 class="plans-title">${esc(pl.title)}</h3>` : ''}
@@ -549,8 +563,13 @@ const Render = (() => {
               </button>` : ''}
             </article>`).join('')}
         </div>
-        ${pl.note ? `<p class="plans-note">
-          ${pl.noteEmoji ? `<span aria-hidden="true">${esc(pl.noteEmoji)}</span> ` : ''}${rich(pl.note)}</p>` : ''}
+        ${pl.note ? `<div class="plans-note">
+          ${pl.noteEmoji ? `<span class="plans-note-emoji" aria-hidden="true">${esc(pl.noteEmoji)}</span>` : ''}
+          <div class="plans-note-copy">
+            <strong class="plans-note-lead">${rich(noteLead)}</strong>
+            ${noteRest.length ? `<p>${rich(noteRest.join('\n'))}</p>` : ''}
+          </div>
+        </div>` : ''}
       </section>`;
   }
 
@@ -561,12 +580,14 @@ const Render = (() => {
     const index = document.getElementById('projects-index');
     if (!p || !pane) return false;
 
+    const [summaryLead, ...summaryRest] = String(p.summary || '').split(/\r?\n/);
+
     const ready = has(p.download?.file);
     const titleCta = ready
       ? `<div class="project-title-cta"><a class="btn btn-primary magnetic" href="${esc(p.download.file)}" data-download-url="${esc(p.download.file)}" download>
-           ${downloadIcon()}<span>${esc(p.download.label || 'הורדה')}</span></a></div>`
+           ${downloadIcon()}<span class="download-button-label">${esc(p.download.label || 'הורדה')}</span></a></div>`
       : `<div class="project-title-cta"><button class="btn btn-primary" type="button" disabled aria-disabled="true">
-           ${downloadIcon()}<span>${esc(p.download?.soonLabel || p.download?.label || 'הורדה')}</span></button></div>`;
+           ${downloadIcon()}<span class="download-button-label">${esc(p.download?.soonLabel || p.download?.label || 'הורדה')}</span></button></div>`;
 
     pane.innerHTML = `
       <a class="back-link" href="#projects">${icon('arrow')}<span>חזרה לכל הפרויקטים</span></a>
@@ -580,16 +601,25 @@ const Render = (() => {
         <h2>${titleHtml(p.title)}</h2>
         ${titleCta}
       </div>
-      ${has(p.summary) ? `<div class="project-summary"><p>${summaryHtml(p.summary)}</p></div>` : ''}
+      ${has(p.summary) ? `<div class="project-summary"><p>
+        <strong class="project-summary-lead">${summaryHtml(summaryLead)}</strong>
+        ${summaryRest.length ? `<br>${summaryHtml(summaryRest.join('\n'))}` : ''}
+      </p></div>` : ''}
       ${bodyCarousel(p.body?.length ? p.body : [p.blurb])}
       ${plansBlock(p.plans, p.reportSamples)}
-      ${has(p.note) ? `<div class="project-note">
-        ${p.noteEmoji ? `<span class="project-note-icon" aria-hidden="true">${esc(p.noteEmoji)}</span>` : ''}
-        <p>${rich(p.note)}</p>
+      ${has(p.note) ? `<div class="plans-note price-note-card">
+        ${p.noteEmoji ? `<span class="plans-note-emoji" aria-hidden="true">${esc(p.noteEmoji)}</span>` : ''}
+        <div class="plans-note-copy">
+          <strong class="plans-note-lead">${esc(p.noteTitle || '')}</strong>
+          <p>${rich(p.note)}</p>
+        </div>
       </div>` : ''}
-      ${has(p.licenseNote) ? `<div class="project-note">
-        ${p.licenseNoteEmoji ? `<span class="project-note-icon" aria-hidden="true">${esc(p.licenseNoteEmoji)}</span>` : ''}
-        <p>${rich(p.licenseNote)}</p>
+      ${has(p.licenseNote) ? `<div class="plans-note">
+        ${p.licenseNoteEmoji ? `<span class="plans-note-emoji" aria-hidden="true">${esc(p.licenseNoteEmoji)}</span>` : ''}
+        <div class="plans-note-copy">
+          <strong class="plans-note-lead">${esc(p.licenseNoteTitle || '')}</strong>
+          <p>${rich(p.licenseNote)}</p>
+        </div>
       </div>` : ''}
       ${downloadBlock(p.download)}
       ${p.links?.length ? `

@@ -764,7 +764,7 @@
 .title-sub {
   display: block;
   margin-block-start: 5px;
-  font-size: 0.56em;
+  font-size: 1.5em;
   font-weight: 600;
   line-height: 1.35;
   letter-spacing: 0;
@@ -772,18 +772,28 @@
 }
 
 .project-title-cta {
-  display: inline-block;
-  margin-block-start: 14px;
+  display: block;
+  width: fit-content;
+  margin: 14px auto 0;
   padding: 4px;
   border-radius: var(--radius-pill);
   overflow: hidden;
 }
 
 .project-title-cta .btn {
-  padding-block: 11px;
-  min-height: 42px;
-  font-size: 1rem;
+  padding: 17px 32px;
+  min-height: 58px;
+  font-size: 1.18rem;
   overflow: hidden;
+}
+
+.project-detail .section-head h2 {
+  font-size: 6rem;
+  text-align: center;
+}
+
+.project-detail .section-head h2 .title-sub {
+  font-size: 3rem;
 }
 
 /* ---- Project detail ---- */
@@ -835,6 +845,7 @@
 
 .project-summary {
   max-width: 68ch;
+  margin-inline: auto;
   padding: 18px 20px;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
@@ -842,10 +853,21 @@
   margin-block-end: 24px;
 }
 
-.project-summary p { color: var(--text-primary); }
+.project-summary p {
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.project-summary-lead {
+  display: block;
+  font-size: 2em;
+  line-height: 1.2;
+  text-align: center;
+}
 
 .body-carousel {
   max-width: 68ch;
+  margin-inline: auto;
   padding: 18px;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
@@ -881,6 +903,13 @@
 .body-carousel-card.is-active {
   display: block;
   animation: body-card-in 280ms ease both;
+}
+
+.body-carousel-lead {
+  display: block;
+  font-size: 2em;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .body-carousel-card p { color: var(--text-secondary); }
@@ -1021,8 +1050,11 @@
 .plan-personal-card-link {
   align-self: center;
   margin-block-start: auto;
+  margin-block-end: 10px;
   font: inherit;
+  font-size: 1.5rem;
   font-weight: 800;
+  padding: 16px 24px;
 }
 
 .plan-personal-arrow {
@@ -1060,7 +1092,7 @@
 .personal-note p { margin: 0 0 12px; }
 .personal-note > div > p:first-child {
   color: var(--text-primary);
-  font-size: 1.35em;
+  font-size: 2em;
   font-weight: 900;
 }
 .personal-note p:last-child { margin-block-end: 0; color: var(--text-primary); font-weight: 700; }
@@ -1129,11 +1161,12 @@
 }
 
 .summary-free {
-  display: inline-block;
+  display: block;
   color: var(--success);
   font-size: 1.9em;
   font-weight: 800;
   line-height: 1.15;
+  text-align: center;
 }
 
 .project-detail-body p { color: var(--text-secondary); }
@@ -1151,12 +1184,13 @@
   border: 1px solid rgba(200, 116, 178, 0.5);
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.03);
+  text-align: center;
 }
 
 .plan-report-title {
   margin: 0 0 10px;
   color: var(--text-primary);
-  font-size: 0.93rem;
+  font-size: 1.5rem;
   font-weight: 800;
 }
 
@@ -1164,6 +1198,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: center;
 }
 
 .plan-report-button {
@@ -1177,14 +1212,17 @@
 .plans { margin-block-start: 38px; }
 
 .plans-title {
-  font-size: var(--fs-h3);
+  font-size: 1.5em;
   margin-block-end: 8px;
+  text-align: center;
 }
 
 .plans-intro {
   max-width: 68ch;
+  margin-inline: auto;
   color: var(--text-secondary);
   margin-block-end: 20px;
+  text-align: center;
 }
 
 /* Two equal columns; one per column on a narrow screen. The paid card must not
@@ -1195,12 +1233,14 @@
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 16px;
   align-items: stretch;
+  min-width: 0;
 }
 
 .plan-card {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
   overflow: hidden; /* keeps the ::before ribbon inside the rounded corner */
 }
 
@@ -1237,11 +1277,11 @@
 /* Sits on its own tinted tile so the emoji reads as part of the design rather
  * than as a character that wandered into the heading. */
 .plan-emoji {
-  font-size: 1.5rem;
+  font-size: 2.25rem;
   line-height: 1;
   display: grid;
   place-items: center;
-  width: 46px; height: 46px;
+  width: 69px; height: 69px;
   border-radius: var(--radius-md);
   background: var(--sheen-strong);
   border: 1px solid var(--border-subtle);
@@ -1252,17 +1292,21 @@
   border-color: var(--border-strong);
 }
 
-.plan-titles { min-width: 0; }
+.plan-titles {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
 
 .plan-head h4 {
-  font-size: var(--fs-body);
+  font-size: calc(var(--fs-body) * 1.5);
   margin: 0;
 }
 
 .plan-tagline {
-  margin: 3px 0 0;
+  margin: 0;
   color: var(--text-muted);
-  font-size: var(--fs-xs);
+  font-size: calc(var(--fs-xs) * 1.5);
   line-height: 1.5;
 }
 
@@ -1272,7 +1316,7 @@
 }
 
 .plan-badge {
-  font-size: var(--fs-xs);
+  font-size: calc(var(--fs-xs) * 1.5);
   font-weight: 700;
   padding: 4px 11px;
   border-radius: var(--radius-pill);
@@ -1293,11 +1337,11 @@
   display: flex;
   align-items: baseline;
   gap: 7px;
-  margin: -2px 0 0;
+  margin: 0;
 }
 
 .plan-price-num {
-  font-size: clamp(1.7rem, 3.4vw, 2.1rem);
+  font-size: clamp(2.55rem, 5.1vw, 3.15rem);
   font-weight: 800;
   line-height: 1.1;
   color: var(--text-primary);
@@ -1311,7 +1355,7 @@
 }
 
 .plan-price-unit {
-  font-size: var(--fs-sm);
+  font-size: calc(var(--fs-sm) * 1.5);
   color: var(--text-muted);
   white-space: nowrap;
 }
@@ -1329,8 +1373,13 @@
   align-items: flex-start;
   gap: 10px;
   color: var(--text-secondary);
-  font-size: var(--fs-sm);
+  font-size: calc(var(--fs-sm) * 1.5);
   line-height: 1.55;
+}
+
+.plan-list li > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /* The tick sits on the first line of a wrapped item, not centred against the
@@ -1339,25 +1388,56 @@
 .plan-bullet {
   flex: none;
   width: 1.35em;
-  font-size: 1rem;
+  font-size: 1.5rem;
   line-height: 1.55;
   text-align: center;
 }
 
 .plans-note {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: center;
+  gap: 18px;
   max-width: 68ch;
+  margin-inline: auto;
   margin-block-start: 24px;
   padding: 16px 18px;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background: var(--bg-glass);
   color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.plans-note-emoji {
+  flex: none;
+  font-size: 2em;
+  line-height: 1;
+}
+
+.plans-note-lead {
+  display: inline-block;
+  font-size: 2em;
+  line-height: 1.2;
+}
+
+.plans-note-copy {
+  min-width: 0;
+}
+
+.plans-note-copy p {
+  margin: 6px 0 0;
 }
 
 .plans-note { margin-block-end: 0; }
+
+.price-note-card {
+  max-width: 68ch;
+  margin-block-start: 24px;
+}
+
+.price-note-card .plan-head {
+  margin: 0;
+}
 
 /* ---- Download ---- */
 
@@ -1368,21 +1448,21 @@
   gap: 10px 16px;
   width: fit-content;
   max-width: 100%;
-  margin-block-start: 30px;
-  padding: 20px 24px 18px;
-  border: 1px solid rgba(200, 116, 178, 0.6);
-  border-radius: var(--radius-md);
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(200,116,178,0.08));
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 18px 32px rgba(200, 116, 178, 0.18);
-  overflow: hidden;
+  margin: 30px auto 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
 }
 
 .project-download .btn {
   background: linear-gradient(135deg, #f7df8d 0%, #d8aa2d 42%, #b77a00 100%);
   border: 1px solid rgba(255, 227, 151, 0.9);
-  color: #2b1900;
+  color: #fff;
+  padding: 17px 32px;
+  min-height: 58px;
   box-shadow: 0 12px 28px rgba(216, 170, 45, 0.34);
   overflow: hidden;
 }
@@ -1393,17 +1473,24 @@
 
 .download-badge-icon {
   display: inline-block;
-  font-size: 1.1rem;
+  font-size: 2em;
   line-height: 1;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.35));
 }
 
-.project-download .btn svg { width: 18px; height: 18px; color: #2b1900; }
+.download-button-label {
+  font-size: 2em;
+  line-height: 1.15;
+}
+
+.project-download .btn svg { width: 18px; height: 18px; color: #fff; }
 
 .project-title-cta .btn {
   background: linear-gradient(135deg, #f7df8d 0%, #d8aa2d 42%, #b77a00 100%);
   border: 1px solid rgba(255, 227, 151, 0.9);
-  color: #2b1900;
+  color: #fff;
+  padding: 17px 32px;
+  min-height: 58px;
   box-shadow: 0 12px 28px rgba(216, 170, 45, 0.34);
   overflow: hidden;
 }
@@ -1414,7 +1501,7 @@
 
 .project-title-cta .btn svg {
   width: 18px; height: 18px;
-  color: #2b1900;
+  color: #fff;
 }
 
 .download-warning-modal {
