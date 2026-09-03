@@ -16,6 +16,7 @@
   var W = 720, H = 300;
   var PAD_TOP = 14, PAD_BOTTOM = 34;
   var sel = D.activeSel;
+  D.visible = Array.isArray(D.visible) ? D.visible : ['attempt', 'fell', 'delta'];
   var visible = {};
   ['attempt', 'fell', 'delta', 'events'].forEach(function (k) {
     visible[k] = D.visible.indexOf(k) !== -1;

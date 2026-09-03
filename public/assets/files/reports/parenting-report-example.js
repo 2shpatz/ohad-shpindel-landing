@@ -1,7 +1,11 @@
 
 (function () {
   var stateEl = document.getElementById('spillitout-report-state');
-  var state = JSON.parse(stateEl.textContent);
+  if (!stateEl) return;
+  var state;
+  try { state = JSON.parse(stateEl.textContent || '{}'); } catch (e) { return; }
+  if (!state || !state.sessionId) return;
+  state.items = state.items || [];
   var LOCAL_KEY = 'spillitout-report-' + state.sessionId;
   try {
     var cachedRaw = localStorage.getItem(LOCAL_KEY);
@@ -432,7 +436,7 @@
   // already autosaved locally via persistLocal(), so this isn't needed just
   // to keep progress from being lost) ----
   var saveBtn = document.getElementById('save-btn');
-  saveBtn.addEventListener('click', function () {
+  if (saveBtn) saveBtn.addEventListener('click', function () {
     state.savedAt = new Date().toISOString();
     stateEl.textContent = JSON.stringify(state).replace(/</g, '\\u003c');
     saveBtn.className += ' saved';
