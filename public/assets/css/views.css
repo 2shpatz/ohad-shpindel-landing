@@ -1985,3 +1985,134 @@
   direction: ltr;
   display: inline-block;
 }
+
+/* ==================== PROJECT DETAIL — MOBILE ====================
+ * The project page's type scale was tuned on a wide screen: a fixed 6rem
+ * headline, and a stack of `2em` leads / `--fs-* × 1.5` plan text that all
+ * cascade off it. None of it was conditional, so a 390px phone got the desktop
+ * sizes verbatim — the title alone ran wider than the viewport and every card
+ * turned into a column of two-word lines.
+ *
+ * Everything here only shrinks type and padding, plus a few rules that stop a
+ * fixed-width element (the price unit, the plan badge, the sparkle decorations)
+ * from forcing horizontal scroll. Desktop is untouched.
+ * ================================================================ */
+@media (max-width: 860px) {
+  /* ---- Title ---- */
+  .project-detail .section-head h2 {
+    font-size: clamp(2.2rem, 9vw, 4rem);
+    line-height: 1.1;
+    /* The headline now breaks over two lines ("שפכו ת'לב" / "Spill It Out"),
+       so it needs the tighter leading a single line never asked for. */
+    text-wrap: balance;
+  }
+
+  .project-detail .section-head h2 .title-sub {
+    font-size: clamp(1.2rem, 4.4vw, 2rem);
+    margin-block-start: 10px;
+    line-height: 1.3;
+  }
+
+  .project-detail .section-head { margin-block-end: 26px; }
+
+  /* ---- The two gold download buttons ---- */
+  .project-title-cta {
+    max-width: 100%;
+    margin-block-start: 18px;
+  }
+
+  .project-title-cta .btn,
+  .project-download .btn {
+    max-width: 100%;
+    padding: 13px 20px;
+    min-height: 52px;
+    font-size: 1rem;
+    /* A single long Hebrew label on one line is what pushed these past the
+       viewport; let it wrap instead of widening the button. */
+    white-space: normal;
+    text-align: center;
+  }
+
+  .download-button-label { font-size: 1.15em; line-height: 1.25; }
+  .download-badge-icon { font-size: 1.45em; }
+  .project-download { margin-block-start: 24px; }
+
+  /* ---- Summary + body carousel ---- */
+  .project-summary { padding: 14px 15px; margin-block-end: 20px; }
+  .project-summary-lead { font-size: 1.45em; }
+  .summary-free { font-size: 1.3em; }
+
+  .body-carousel { padding: 14px; }
+  .body-carousel-card { padding: 15px; }
+  .body-carousel-lead { font-size: 1.4em; }
+
+  /* ---- Plans ---- */
+  .plans-title { font-size: 1.3em; }
+  .plan-grid { gap: 14px; }
+  .plan-card { gap: 14px; padding: 18px 16px; }
+
+  /* Emoji tile / title / badge do not fit on one row at this width. Drop to two
+     columns and let the badge fall underneath the title rather than squeezing
+     the heading into a two-word column. */
+  .plan-head {
+    grid-template-columns: auto 1fr;
+    gap: 8px 10px;
+  }
+
+  .plan-badge {
+    grid-column: 2;
+    justify-self: start;
+    font-size: var(--fs-xs);
+  }
+
+  .plan-emoji {
+    width: 50px; height: 50px;
+    font-size: 1.7rem;
+  }
+
+  .plan-head h4 { font-size: calc(var(--fs-body) * 1.05); }
+  .plan-tagline { font-size: var(--fs-xs); }
+
+  /* `nowrap` on the unit kept "לשנה ללא כל התחייבות" on one line next to a
+     3rem number — together wider than the card. */
+  .plan-price { flex-wrap: wrap; }
+  .plan-price-num { font-size: clamp(2rem, 8vw, 2.55rem); }
+  .plan-price-unit { font-size: var(--fs-sm); white-space: normal; }
+
+  .plan-list { gap: 10px; }
+  .plan-list li { font-size: var(--fs-sm); line-height: 1.5; }
+  .plan-bullet { font-size: 1.15rem; width: 1.3em; }
+
+  .plan-personal-card-link {
+    font-size: 1.05rem;
+    padding: 12px 16px;
+  }
+
+  .plan-personal-arrow { font-size: 1.5em; }
+
+  .plan-report-samples { padding: 12px; }
+  .plan-report-title { font-size: 1.15rem; }
+  .plan-report-button { min-width: 0; flex: 1 1 130px; }
+
+  /* ---- Notes ---- */
+  .plans-note { gap: 12px; padding: 14px 15px; }
+  .plans-note-emoji { font-size: 1.5em; }
+  .plans-note-lead { font-size: 1.35em; }
+
+  .launch-note { padding: 22px 16px; }
+  .launch-note-arrow { font-size: 1.4em; }
+  .launch-note-lights { font-size: 1rem; letter-spacing: 0.16em; }
+
+  .personal-note { padding: 24px 16px 18px; }
+  .personal-note > div > p:first-child { font-size: 1.4em; }
+  .personal-note .text-link { font-size: 1.15em; }
+
+  /* The "✨ • ✨" runs are absolutely positioned outside the pill on both
+     sides. At this width they hang off the screen, and being decorative they
+     are the right thing to drop rather than shrink. */
+  .personal-note .text-link::before,
+  .personal-note .text-link::after { content: none; }
+
+  /* ---- Project index cards ---- */
+  .project-card h3 .title-sub { font-size: 1.15em; }
+}

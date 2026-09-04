@@ -1,8 +1,45 @@
+# Security headers that are safe as a catch-all. CSP is NOT here — see below.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
+
+# ---------------------------------------------------------------------------
+# Content-Security-Policy is declared per HTML document, not on `/*`.
+#
+# Cloudflare APPENDS headers from every matching rule instead of letting a more
+# specific rule override a broader one. Two CSP headers on one response is not
+# "the narrower rule wins" — the browser enforces the INTERSECTION of both, so a
+# `/*` policy can only ever be tightened by a second rule, never relaxed. The
+# sample reports need a *looser* policy than the app does, which is impossible
+# while a catch-all CSP also matches them.
+#
+# CSP only has any effect on a document, so listing the three HTML entry points
+# costs nothing in coverage. NOTE: a new HTML page needs its own block here or
+# it ships with no CSP at all.
+# ---------------------------------------------------------------------------
+
+/
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Cloudflare 307s /index.html to /, so `/` above is what actually carries the
+# policy; this is here so a direct hit is covered too.
+/index.html
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'
+  Cache-Control: public, max-age=0, must-revalidate
+
+/privacy-policy.html
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'
+
+# The downloadable sample reports are self-contained artifacts: the chart code is
+# an inline <script> and the Heebo subsets are data: URIs, because the file has to
+# keep working after a parent saves it and opens it from their desktop. Served
+# over HTTP under the app's policy, `script-src 'self'` silently killed the chart
+# and every control, and `font-src 'self'` dropped the Hebrew to a system font —
+# which is why they only ever looked right opened locally.
+/assets/files/reports/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'
 
 # Font files are versioned by their content (Heebo v28 subsets) and never
 # change in place, so they're safe to cache forever.
@@ -22,7 +59,4 @@
   Cache-Control: public, max-age=0, must-revalidate
 
 /assets/js/*
-  Cache-Control: public, max-age=0, must-revalidate
-
-/index.html
   Cache-Control: public, max-age=0, must-revalidate

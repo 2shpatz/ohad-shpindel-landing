@@ -51,11 +51,24 @@ const Render = (() => {
    * follows it is a subtitle rather than a second headline, so it gets its own
    * line and its own size instead of the heading's. In an attribute or the
    * browser's tab title a newline has nowhere to go, so it collapses to a space
-   * instead of silently disappearing. */
+   * instead of silently disappearing.
+   *
+   * A headline that needs a break of its own ("שפכו ת'לב" over "Spill It Out")
+   * separates itself from the subtitle with a BLANK line; single newlines
+   * before it are then breaks inside the headline. With no blank line the old
+   * rule still holds — first line is the headline, the rest is the subtitle —
+   * so two-line titles written the original way are unaffected. */
   const titleHtml = (s) => {
-    const [head, ...rest] = String(s ?? '').split(/[\r\n]+/);
-    const sub = rest.join(' ').trim();
-    return esc(head) + (sub ? `<span class="title-sub">${esc(sub)}</span>` : '');
+    const raw = String(s ?? '');
+    const [headBlock, ...subBlocks] = raw.split(/[\r\n][ \t]*[\r\n]+/);
+    const headLines = subBlocks.length
+      ? headBlock.split(/[\r\n]+/)
+      : headBlock.split(/[\r\n]+/).slice(0, 1);
+    const sub = (subBlocks.length
+      ? subBlocks.join(' ')
+      : headBlock.split(/[\r\n]+/).slice(1).join(' ')).replace(/\s+/g, ' ').trim();
+    return headLines.map(esc).join('<br>')
+      + (sub ? `<span class="title-sub">${esc(sub)}</span>` : '');
   };
 
   const oneLine = (s) => String(s ?? '').replace(/\s*[\r\n]+\s*/g, ' ');
