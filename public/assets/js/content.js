@@ -200,7 +200,7 @@ const SITE_CONTENT = {
             bullet: '⭐',
             // Says the thing the two columns side by side don't: the paid tier
             // is the free one plus, never instead of.
-            tagline: 'כל מה שבחינם\nובנוסף:',
+            tagline: 'כל מה שבחינם ובנוסף:',
             price: '460 ₪',
             priceUnit: 'לשנה ללא כל התחייבות',
             items: [

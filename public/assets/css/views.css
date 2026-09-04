@@ -866,6 +866,7 @@
 }
 
 .body-carousel {
+  position: relative;
   max-width: 68ch;
   margin-inline: auto;
   padding: 18px;
@@ -944,6 +945,14 @@
 .carousel-button:disabled { opacity: 0.35; cursor: default; }
 .body-carousel-count { min-width: 48px; color: var(--text-muted); text-align: center; }
 
+.body-carousel-shovel {
+  position: absolute;
+  inset-block-start: 14px;
+  inset-inline-start: 14px;
+  font-size: 4rem;
+  line-height: 1;
+}
+
 .project-note {
   display: flex;
   align-items: flex-start;
@@ -987,12 +996,25 @@
 .launch-note > * { position: relative; z-index: 1; }
 
 .launch-note h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   margin-block: 8px 18px;
   color: var(--success);
   font-size: clamp(1.45rem, 5vw, 2.15rem);
   font-weight: 900;
   line-height: 1.15;
 }
+
+.launch-note-trumpet {
+  display: inline-block;
+  flex: none;
+  font-size: 1.15em;
+  line-height: 1;
+}
+
+.launch-note-title { display: inline-block; }
 
 .launch-note-copy {
   display: grid;
@@ -1394,9 +1416,8 @@
 }
 
 .plans-note {
-  display: flex;
-  align-items: center;
-  gap: 18px;
+  position: relative;
+  display: block;
   max-width: 68ch;
   margin-inline: auto;
   margin-block-start: 24px;
@@ -1406,10 +1427,14 @@
   background: var(--bg-glass);
   color: var(--text-secondary);
   line-height: 1.45;
+  direction: rtl;
 }
 
 .plans-note-emoji {
-  flex: none;
+  position: absolute;
+  inset-inline-start: 18px;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
   font-size: 2em;
   line-height: 1;
 }
@@ -1422,6 +1447,8 @@
 
 .plans-note-copy {
   min-width: 0;
+  text-align: center;
+  padding-inline: 72px;
 }
 
 .plans-note-copy p {

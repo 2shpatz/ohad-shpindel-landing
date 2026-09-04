@@ -85,12 +85,13 @@ const Render = (() => {
   const carouselCopy = (text) => {
     const [lead, ...rest] = String(text ?? '').split(/\r?\n/);
     if (!carouselHeadings.has(lead.trim().replace(/\s+/g, ' '))) return rich(text);
-    return `<strong class="body-carousel-lead">${rich(lead)}</strong>${rest.length ? `<br>${rich(rest.join('\n'))}` : ''}`;
+    return `<strong class="body-carousel-lead">${rich(lead.replace(/\s*🪏\s*$/, ''))}</strong>${rest.length ? `<br>${rich(rest.join('\n'))}` : ''}`;
   };
 
   const bodyCarousel = (arr) => {
     const cards = arr || [];
     return `<div class="body-carousel" data-body-carousel>
+      <span class="body-carousel-shovel" aria-hidden="true">🪏</span>
       <div class="body-carousel-controls">
         <button class="carousel-button is-next" type="button" data-carousel-prev aria-label="לפסקה הקודמת">${icon('arrow')}</button>
         <span class="body-carousel-count" data-carousel-count aria-live="polite">1 / ${cards.length}</span>
@@ -643,7 +644,7 @@ const Render = (() => {
         </div>` : ''}
       ${has(p.launchNote) ? `<section class="launch-note" aria-label="מבצע השקה">
         <div class="launch-note-lights" aria-hidden="true">💡 ✨ 💡 ✨ 💡</div>
-        <h3>🎺 ${rich(p.launchNote.split(/\r?\n/)[0])} 🎺</h3>
+        <h3><span class="launch-note-trumpet" aria-hidden="true">🎺</span><span class="launch-note-title">${rich(p.launchNote.split(/\r?\n/)[0])}</span><span class="launch-note-trumpet" aria-hidden="true">🎺</span></h3>
         <div class="launch-note-copy">${paras(p.launchNote.split(/\r?\n/).slice(1))}</div>
         <div class="launch-note-lights" aria-hidden="true">🎉 💡 🎉 💡 🎉</div>
       </section>` : ''}
