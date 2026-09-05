@@ -675,7 +675,7 @@
   padding: 0;
   overflow: hidden;
   cursor: pointer;
-  text-align: start;
+  text-align: center;
 }
 
 .project-thumb {
@@ -684,6 +684,8 @@
   overflow: hidden;
   background: var(--gradient-primary);
 }
+
+.project-thumb.is-logo { background: transparent; }
 
 .project-thumb img {
   width: 100%;
@@ -714,9 +716,19 @@
   flex-direction: column;
   gap: 9px;
   flex: 1;
+  align-items: center;
 }
 
-.project-body h3 { margin: 0; }
+.project-body h3,
+.project-body p { width: 100%; }
+
+.project-body h3 {
+  margin: 0;
+  font-size: calc(var(--fs-body) * 2.7);
+  line-height: 1.1;
+}
+
+.project-card .project-body h3 .title-sub { font-size: 0.6666667em; }
 
 .project-body p {
   color: var(--text-secondary);
@@ -729,6 +741,7 @@
   flex-wrap: wrap;
   gap: 7px;
   margin-block-start: 4px;
+  justify-content: center;
 }
 
 .tag {
@@ -748,6 +761,7 @@
   align-items: center;
   gap: 6px;
   margin-block-start: 6px;
+  justify-content: center;
 }
 
 .project-more svg {
@@ -1430,6 +1444,58 @@
   color: var(--text-secondary);
   line-height: 1.45;
   direction: rtl;
+}
+
+.plans-trial-card {
+  min-height: 190px;
+  padding: 0;
+  cursor: pointer;
+  perspective: 1000px;
+  touch-action: pan-y;
+}
+
+.plans-trial-flipper {
+  display: grid;
+  min-height: 190px;
+  transform-style: preserve-3d;
+  transition: transform 650ms var(--ease-in-out);
+}
+
+.plans-trial-card.is-flipped .plans-trial-flipper {
+  transform: rotateY(180deg);
+}
+
+.plans-trial-face {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 88px;
+  backface-visibility: hidden;
+  text-align: center;
+}
+
+.plans-trial-front .plans-note-emoji {
+  position: static;
+  transform: none;
+  margin-block-end: 10px;
+  font-size: 3rem;
+}
+
+.plans-trial-back {
+  transform: rotateY(180deg);
+}
+
+.plans-trial-back p { margin: 8px 0 0; }
+
+.plans-trial-card:focus-visible {
+  outline: 3px solid var(--accent-primary);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plans-trial-flipper { transition: none; }
 }
 
 .plans-note-emoji {
@@ -2146,5 +2212,5 @@
   .personal-note .text-link::after { margin-inline-start: 8px; }
 
   /* ---- Project index cards ---- */
-  .project-card h3 .title-sub { font-size: 1.15em; }
+  .project-card h3 .title-sub { font-size: 0.6666667em; }
 }

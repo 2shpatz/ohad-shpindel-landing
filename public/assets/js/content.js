@@ -212,7 +212,8 @@ const SITE_CONTENT = {
           },
         ],
         noteEmoji: '🎁',
-        note: '30 ימי ניסיון עם כל היכולות\nבסיומם (גם בלי רישיון), האפליקציה ממשיכה לעבוד בליבה החופשית וכל הנתונים שלכם נשארים נגישים במלואם.',
+        noteTitle: '30\nימי ניסיון\nעם כל היכולות',
+        note: 'בסיומם (גם בלי רישיון), האפליקציה ממשיכה לעבוד בליבה החופשית וכל הנתונים שלכם נשארים נגישים במלואם.',
       },
 
       // The installer. Drop the file in public/assets/files/ and put its path
@@ -227,10 +228,10 @@ const SITE_CONTENT = {
       },
 
       noteEmoji: '💲',
-      noteTitle: 'מחיר קבוע לתמיד',
+      noteTitle: 'מחיר קבוע\nלתמיד',
       note: 'המחיר ישתנה בהתאם לביקוש, אך ישאר קבוע עבורך לפי ערכו בזמן הרכישה, כל עוד נשמר הרצף.',
       licenseNoteEmoji: '🖥️',
-      licenseNoteTitle: 'מחשב אחד רישיון אחד',
+      licenseNoteTitle: 'מחשב אחד\nרישיון אחד',
       licenseNote: 'כל רשיון שנרכש הוא עבור מחשב אחד בלבד\nולא ניתן להעברה.',
       reportSamples: [
         {

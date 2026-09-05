@@ -149,6 +149,86 @@ const Render = (() => {
     show(0);
   }
 
+  function setupTrialCard(root) {
+    if (!root) return;
+    const flipper = root.querySelector('[data-trial-flipper]');
+    if (!flipper) return;
+    let startX = null;
+    let suppressClick = false;
+    let manuallyControlled = false;
+
+    const setFlipped = (flipped) => {
+      root.classList.toggle('is-flipped', flipped);
+      root.setAttribute('aria-pressed', String(flipped));
+      flipper.querySelector('.plans-trial-front').setAttribute('aria-hidden', String(flipped));
+      flipper.querySelector('.plans-trial-back').setAttribute('aria-hidden', String(!flipped));
+    };
+
+    root.addEventListener('click', (event) => {
+      if (suppressClick) {
+        suppressClick = false;
+        return;
+      }
+      manuallyControlled = true;
+      setFlipped(!root.classList.contains('is-flipped'));
+    });
+    root.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      manuallyControlled = true;
+      setFlipped(!root.classList.contains('is-flipped'));
+    });
+    root.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      manuallyControlled = true;
+      startX = event.clientX;
+      root.setPointerCapture?.(event.pointerId);
+    });
+    root.addEventListener('pointerup', (event) => {
+      if (startX === null) return;
+      const deltaX = event.clientX - startX;
+      startX = null;
+      if (Math.abs(deltaX) < 45) return;
+      suppressClick = true;
+      setFlipped(!root.classList.contains('is-flipped'));
+    });
+    root.addEventListener('pointercancel', () => { startX = null; });
+
+    if ('IntersectionObserver' in window) {
+      let observedInitialState = false;
+      let previousTop = null;
+      const autoFlipObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const currentTop = entry.boundingClientRect.top;
+          if (!observedInitialState) {
+            observedInitialState = true;
+            previousTop = currentTop;
+            return;
+          }
+          const scrollingDown = currentTop < previousTop;
+          previousTop = currentTop;
+          if (manuallyControlled) return;
+          if (entry.isIntersecting && !scrollingDown) setFlipped(false);
+          if (!entry.isIntersecting && scrollingDown) setFlipped(true);
+        });
+      }, { rootMargin: '-50% 0px 0px 0px', threshold: 0 });
+      autoFlipObserver.observe(root);
+    }
+  }
+
+  const flipNoteCard = (emoji, title, body) => `<div class="plans-note plans-trial-card" data-trial-card role="button" tabindex="0" aria-pressed="false" aria-label="הצגת פרטי ${esc(title)}">
+    <div class="plans-trial-flipper" data-trial-flipper>
+      <div class="plans-trial-face plans-trial-front" aria-hidden="false">
+        <span class="plans-note-emoji" aria-hidden="true">${esc(emoji)}</span>
+        <strong class="plans-note-lead">${rich(title)}</strong>
+      </div>
+      <div class="plans-trial-face plans-trial-back" aria-hidden="true">
+        <strong class="plans-note-lead">${rich(title)}</strong>
+        <p>${rich(body)}</p>
+      </div>
+    </div>
+  </div>`;
+
   const ICONS = {
     user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
     grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
@@ -374,7 +454,7 @@ const Render = (() => {
         ${list.map((p) => `
           <article class="card project-card tilt reveal" data-project="${esc(p.id)}"
                    role="link" tabindex="0" aria-label="${esc(oneLine(p.title))}">
-            <div class="project-thumb"${p.imageBg ? ` style="background:${esc(p.imageBg)}"` : ''}>
+            <div class="project-thumb${p.imageFit === 'contain' ? ' is-logo' : ''}"${p.imageBg ? ` style="background:${esc(p.imageBg)}"` : ''}>
               ${has(p.image)
                 ? `<img class="${p.imageFit === 'contain' ? 'is-contain' : ''}" src="${esc(p.image)}"
                      alt="" loading="lazy" decoding="async" width="400" height="250">`
@@ -577,13 +657,7 @@ const Render = (() => {
               </button>` : ''}
             </article>`).join('')}
         </div>
-        ${pl.note ? `<div class="plans-note">
-          ${pl.noteEmoji ? `<span class="plans-note-emoji" aria-hidden="true">${esc(pl.noteEmoji)}</span>` : ''}
-          <div class="plans-note-copy">
-            <strong class="plans-note-lead">${rich(noteLead)}</strong>
-            ${noteRest.length ? `<p>${rich(noteRest.join('\n'))}</p>` : ''}
-          </div>
-        </div>` : ''}
+        ${pl.note ? flipNoteCard(pl.noteEmoji || '', pl.noteTitle || noteLead, pl.noteTitle ? pl.note : noteRest.join('\n')) : ''}
       </section>`;
   }
 
@@ -621,20 +695,8 @@ const Render = (() => {
       </p></div>` : ''}
       ${bodyCarousel(p.body?.length ? p.body : [p.blurb])}
       ${plansBlock(p.plans, p.reportSamples)}
-      ${has(p.note) ? `<div class="plans-note price-note-card">
-        ${p.noteEmoji ? `<span class="plans-note-emoji" aria-hidden="true">${esc(p.noteEmoji)}</span>` : ''}
-        <div class="plans-note-copy">
-          <strong class="plans-note-lead">${esc(p.noteTitle || '')}</strong>
-          <p>${rich(p.note)}</p>
-        </div>
-      </div>` : ''}
-      ${has(p.licenseNote) ? `<div class="plans-note">
-        ${p.licenseNoteEmoji ? `<span class="plans-note-emoji" aria-hidden="true">${esc(p.licenseNoteEmoji)}</span>` : ''}
-        <div class="plans-note-copy">
-          <strong class="plans-note-lead">${esc(p.licenseNoteTitle || '')}</strong>
-          <p>${rich(p.licenseNote)}</p>
-        </div>
-      </div>` : ''}
+      ${has(p.note) ? flipNoteCard(p.noteEmoji || '', p.noteTitle || '', p.note) : ''}
+      ${has(p.licenseNote) ? flipNoteCard(p.licenseNoteEmoji || '', p.licenseNoteTitle || '', p.licenseNote) : ''}
       ${downloadBlock(p.download)}
       ${p.links?.length ? `
         <div class="project-links">
@@ -656,6 +718,7 @@ const Render = (() => {
     pane.hidden = false;
     index.hidden = true;
     setupBodyCarousel(pane.querySelector('[data-body-carousel]'));
+    pane.querySelectorAll('[data-trial-card]').forEach(setupTrialCard);
     pane.querySelectorAll('[data-download-url]').forEach((link) => {
       link.addEventListener('click', (event) => {
         event.preventDefault();

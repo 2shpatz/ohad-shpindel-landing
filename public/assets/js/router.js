@@ -157,8 +157,25 @@
   /* ---------- clicks ---------- */
 
   function initClicks() {
-    // Tabs are <button>, not <a>, so they need an explicit handler.
+    // Route links inside rendered copy should always open at the top of the
+    // destination view, rather than letting the browser preserve an old
+    // scroll position while the hash router swaps the view.
     document.addEventListener('click', (e) => {
+      const routeLink = e.target.closest('a[href^="#"]');
+      if (routeLink) {
+        const rawHash = routeLink.getAttribute('href').replace(/^#\/?/, '');
+        const targetRoute = rawHash.split('/')[0];
+        if (ROUTES.includes(targetRoute)) {
+          e.preventDefault();
+          scrollTo({ top: 0, behavior: 'auto' });
+          if (location.hash !== routeLink.getAttribute('href')) {
+            location.hash = routeLink.getAttribute('href');
+          }
+          return;
+        }
+      }
+
+      // Tabs are <button>, not <a>, so they need an explicit handler.
       const tab = e.target.closest('.tab');
       if (tab) {
         location.hash = `#${tab.dataset.route}`;
