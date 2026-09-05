@@ -389,7 +389,7 @@
     aspect-ratio: 1 / 1;
     margin-inline: calc(50% - 50vw + 7px);
     border-radius: 0;
-    background: #000000;
+    background: transparent;
     object-fit: contain;
     object-position: 24% center;
     padding: 18px 18px 18px 14px;
@@ -830,7 +830,9 @@
  * rather than cropping into the middle of the picture. */
 .project-hero-img.is-contain {
   object-fit: contain;
-  padding: clamp(14px, 3vw, 30px);
+  aspect-ratio: 1 / 1;
+  padding: clamp(8px, 2vw, 20px);
+  background: transparent;
 }
 
 .project-detail-body {
