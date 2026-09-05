@@ -669,13 +669,24 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
+/* Every card is laid out on the SAME five rows — thumb, title, blurb, tags,
+ * "more" — so a title that runs to three lines in one card does not push its
+ * blurb below the neighbour's. `subgrid` makes each card borrow the grid's
+ * rows, which are sized once per band from the tallest card in it; the fallback
+ * below keeps the old per-card stacking where subgrid is unsupported. */
 .project-card {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
+  grid-row: span 5;
+  row-gap: 9px;
   padding: 0;
   overflow: hidden;
   cursor: pointer;
   text-align: center;
+}
+
+@supports (grid-template-rows: subgrid) {
+  .project-card { grid-template-rows: subgrid; }
 }
 
 .project-thumb {
@@ -710,30 +721,36 @@
   opacity: 0.9;
 }
 
+/* The body is only a wrapper for the four text rows — its children have to be
+ * grid items of the card itself, so its padding moves onto them. */
 .project-body {
-  padding: 20px 22px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  flex: 1;
-  align-items: center;
+  display: contents;
+}
+
+.project-body > * {
+  padding-inline: 22px;
+  margin: 0;
 }
 
 .project-body h3,
 .project-body p { width: 100%; }
 
 .project-body h3 {
-  margin: 0;
+  padding-block-start: 11px; /* + the 9px row gap under the thumb = 20px */
   font-size: calc(var(--fs-body) * 2.7);
   line-height: 1.1;
+  /* Titles differ in line count; sitting them on the row's bottom edge keeps
+   * the gap to the blurb identical across the band. */
+  align-self: end;
 }
 
-.project-card .project-body h3 .title-sub { font-size: 0.6666667em; }
+/* 0.55 rather than the detail page's 2/3: at the card's ~290px of text width
+ * that is the largest size that still sets "והנפקת חשבוניות" on one line. */
+.project-card .project-body h3 .title-sub { font-size: 0.55em; }
 
 .project-body p {
   color: var(--text-secondary);
   font-size: var(--fs-sm);
-  flex: 1;
 }
 
 .tag-row {
@@ -743,6 +760,9 @@
   margin-block-start: 4px;
   justify-content: center;
 }
+
+/* An empty tag row still holds its (zero-height) place in the shared rows. */
+.project-card .tag-row:empty { margin-block-start: 0; }
 
 .tag {
   padding: 4px 11px;
@@ -757,10 +777,11 @@
   color: var(--accent-primary);
   font-weight: 700;
   font-size: var(--fs-sm);
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
   margin-block-start: 6px;
+  padding-block-end: 24px;
   justify-content: center;
 }
 
@@ -2158,6 +2179,22 @@
   .body-carousel { padding: 14px; }
   .body-carousel-card { padding: 16px; }
   .plans-note { gap: 12px; padding: 15px; }
+
+  /* The flip cards keep their desktop look — same faces, same flip — but the
+   * 88px inline padding is desktop breathing room. On a phone it squeezes the
+   * lead into a two-word column and re-wraps lines the content already broke by
+   * hand ("מחיר קבוע / לתמיד"), so the copy runs the card's full width here. */
+  .plans-trial-card,
+  .plans-trial-flipper { min-height: 160px; }
+  .plans-trial-face { padding: 20px 16px; }
+  .plans-note-copy { padding-inline: 0; }
+
+  /* Below ~400px even the full width is short of the longest lead line
+   * ("עם כל היכולות"), which measures ~10.4px per 1px of font-size in the
+   * shipped face; the divisor is rounded up for the swap-fallback's wider
+   * metrics. Shrinking the lead keeps the hand-written line breaks intact
+   * instead of letting the browser add its own. */
+  .plans-note-lead { font-size: min(2em, (100vw - 68px) / 10.8); }
   .launch-note { padding: 24px 16px; }
   .personal-note { padding: 26px 16px 20px; }
 

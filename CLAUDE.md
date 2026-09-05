@@ -122,9 +122,11 @@ needs a `_headers` change too.
 ### Downloadable reports
 
 `public/assets/files/reports/*.html` are self-contained artifacts users download; their
-chart code is **inlined** in the HTML. The sibling `*.js` files are readable copies of
-that same inline script — they are not loaded by anything. Edits must land in the
-`.html` to take effect; keep the `.js` copy in sync or it becomes misleading.
+chart code, images and fonts are all **inlined** in the HTML, so the file keeps working
+after a parent saves it to their desktop. Each report is exported from the app and
+replaced whole — edit the `.html`, never a copy of its script. (There used to be sibling
+`*.js` copies of the inline script for readability; nothing loaded them and they went
+stale the first time the reports were re-exported, so they were removed.)
 
 ## Caching
 

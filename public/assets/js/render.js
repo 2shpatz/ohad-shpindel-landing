@@ -463,7 +463,7 @@ const Render = (() => {
             <div class="project-body">
               <h3>${titleHtml(p.title)}</h3>
               <p>${rich(p.blurb)}</p>
-              ${p.tags?.length ? `<div class="tag-row">${p.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
+              <div class="tag-row">${(p.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>
               <span class="project-more">לפרטים ${icon('arrow')}</span>
             </div>
           </article>`).join('')}
