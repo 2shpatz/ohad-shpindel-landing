@@ -990,6 +990,285 @@
   line-height: 1;
 }
 
+/* ==================== SCREENSHOT CAROUSEL ====================
+ * A balanced coverflow: the active shot centred, its two neighbours
+ * half-transparent and shrunk on either side, everything else hidden.
+ *
+ * The geometry rests on ONE number, --shot-w - the centre shot's share of the
+ * reel's width. Because the slides are absolutely positioned they contribute no
+ * height, so the reel's own aspect-ratio has to be stated, and it must equal
+ *     16 / (9 × --shot-w)
+ * or the shots overflow it. At 62% that is 2.87. **Change --shot-w and you must
+ * recompute --shot-ratio with it** - the mobile block further down does exactly
+ * that. Everything else (the sideways shift) is a percentage of a slide's own
+ * width, so it follows along for free.
+ *
+ * --shot-dir folds RTL into the sign: in Hebrew the *next* shot belongs on the
+ * left, and transforms have no logical-property equivalent to do that for us.
+ * ============================================================= */
+
+/* No card around it, by request: it sits straight on the page between the title
+   and the download button, so it gets the container's full width (a bigger
+   centre shot) and vertical margins instead of a border and a background. */
+.shot-gallery {
+  --shot-w: 62%;
+  --shot-ratio: 2.87;
+  --shot-shift: 60%;    /* neighbour's offset, as a share of its own width */
+  --shot-dir: -1;
+  position: relative;
+  width: 100%;
+  margin-block: clamp(26px, 5vw, 44px) clamp(20px, 4vw, 32px);
+}
+
+.shot-gallery-title {
+  margin: 0 0 clamp(12px, 2vw, 18px);
+  font-size: var(--fs-h3);
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.shot-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 1.2vw, 12px);
+  padding-inline: clamp(6px, 1.6vw, 14px);
+}
+
+.shot-nav {
+  flex: 0 0 auto;
+  /* Above every slide (they run z-index 10 and down), so a shot sliding past
+     can never end up on top of the control that moves it. */
+  z-index: 20;
+}
+
+.shot-nav:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-card-hover);
+}
+
+.shot-reel {
+  position: relative;
+  flex: 1 1 auto;
+  aspect-ratio: var(--shot-ratio);
+  touch-action: pan-y;
+  /* The neighbours are shifted far enough out to hang past the reel - this cuts
+     them off at its edge, which is what makes them read as continuing out of
+     frame instead of as two more small pictures. It is also what keeps them off
+     the arrow buttons, which sit outside the reel on desktop. */
+  overflow: hidden;
+}
+
+.shot-slide {
+  position: absolute;
+  inset-block: 0;
+  /* Symmetric, so inset-inline-start centres the slide either direction. */
+  inset-inline-start: calc((100% - var(--shot-w)) / 2);
+  width: var(--shot-w);
+  padding: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  overflow: hidden;
+  cursor: pointer;
+  /* --offset (signed) and --depth (its absolute value) come from render.js.
+     depth 0 → opaque and full size · 1 → half-transparent, 12% smaller ·
+     2+ → transparent, and .is-far takes it out of the layout entirely. */
+  transform:
+    translateX(calc(var(--offset) * var(--shot-dir) * var(--shot-shift)))
+    scale(calc(1 - var(--depth) * 0.12));
+  opacity: calc(1 - var(--depth) * 0.55);
+  z-index: calc(10 - var(--depth));
+  transition:
+    transform var(--dur-med) var(--ease-out-expo),
+    opacity var(--dur-med) var(--ease-out-expo),
+    box-shadow var(--dur-fast);
+}
+
+.shot-slide.is-active {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+}
+
+.shot-slide.is-side:hover {
+  opacity: 0.72;
+}
+
+/* Beyond the immediate neighbours: gone, and out of the tab order with it. */
+.shot-slide.is-far {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.shot-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* The exports run 1.81-1.88:1, so a 16/9 frame trims a couple of percent off
+     the sides and every shot ends up the same shape. */
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* A dark wash over the neighbours, so "behind" reads as depth rather than as a
+   half-loaded image. The active shot clears it. */
+.shot-slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--plum-darkest);
+  opacity: 0.35;
+  transition: opacity var(--dur-med) var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.shot-slide.is-active::after { opacity: 0; }
+
+/* Scoped through .shot-gallery, not bare `.shot-caption`: both of these are a
+   <p> inside .section-head, and `.section-head p` (components.css) is the more
+   specific selector - it was quietly winning on max-width and margin-block. */
+.shot-gallery .shot-caption {
+  max-width: 56ch;
+  margin: clamp(14px, 2.4vw, 20px) auto 0;
+  padding-inline: 16px;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  text-align: center;
+  min-height: 3em;   /* holds its box so the dots don't jump between captions */
+}
+
+.shot-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-block-start: 4px;
+}
+
+.shot-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sheen-strong);
+  cursor: pointer;
+  transition: background var(--dur-fast), width var(--dur-fast);
+}
+
+.shot-dot:hover { background: var(--accent-secondary); }
+
+.shot-dot.is-active {
+  width: 26px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-primary);
+}
+
+.shot-gallery .shot-hint {
+  margin: 12px auto 0;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  text-align: center;
+}
+
+/* ---- the enlarged view ---- */
+
+.shot-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;   /* above the download warning (1000), which it can open over */
+  display: grid;
+  place-items: center;
+  padding: clamp(12px, 3vw, 32px);
+}
+
+.shot-lightbox[hidden] { display: none; }
+
+.shot-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 3, 18, 0.86);
+  backdrop-filter: blur(6px);
+}
+
+.shot-lightbox-panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  width: min(1280px, 100%);
+  /* Room for the close button ABOVE the picture. At a corner it sat on top of
+     the screenshot, hiding the very pixels the reader opened it to see. */
+  padding-block-start: 50px;
+}
+
+.shot-lightbox-frame {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--plum-darkest);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.shot-lightbox-frame img {
+  display: block;
+  width: 100%;
+  /* contain, not cover: enlarging is the whole point, so nothing gets cropped.
+     The height cap leaves room for the caption and the arrows below it. */
+  max-height: 74vh;
+  object-fit: contain;
+}
+
+.shot-lightbox-caption {
+  max-width: 70ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.shot-lightbox-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.shot-lightbox-count {
+  min-width: 56px;
+  color: var(--text-muted);
+  text-align: center;
+  /* "5 / 7" is an LTR expression. Left to inherit the page's RTL it rendered as
+     "7 / 5" - the numbers swap and it reads as seven of five. */
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.shot-lightbox-close {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  z-index: 2;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.shot-lightbox-close:hover { background: var(--accent-secondary); color: var(--on-accent); }
+
 .project-note {
   display: flex;
   align-items: flex-start;
@@ -1898,6 +2177,222 @@
   margin-inline: auto;
 }
 
+/* ---------- the support amount picker ----------
+   Opened from a support card whose option carries an `amounts` block. Same
+   overlay language as the download warning above; the panel is narrower
+   because all it holds is a row of amounts. `--accent` comes in from the
+   option, so the picker wears the platform's colour like its card does. */
+
+.amount-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.amount-modal[hidden] { display: none; }
+
+.amount-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 14, 30, 0.62);
+  backdrop-filter: blur(4px);
+}
+
+.amount-panel {
+  position: relative;
+  z-index: 1;
+  width: min(430px, calc(100% - 32px));
+  margin: 12vh auto 0;
+  padding: 24px 24px 22px;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, rgba(255, 255, 255, 0.16));
+  background: rgba(16, 29, 52, 0.98);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5);
+  color: var(--text-primary);
+}
+
+.amount-close {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--text-primary);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.amount-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding-inline-end: 44px;
+  margin-block-end: 8px;
+}
+
+.amount-logo {
+  display: grid;
+  place-items: center;
+  width: 44px; height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  background: var(--sheen);
+  color: var(--accent);
+}
+
+.amount-logo img { width: 34px; height: 34px; border-radius: 8px; }
+.amount-logo svg { width: 24px; height: 24px; }
+
+.amount-head h3 {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.25;
+}
+
+.amount-note {
+  margin: 0 0 16px;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+
+.amount-chips {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+/* "Some other amount" gets its own row - it is a different kind of choice,
+   and side by side it would squeeze the numbers. */
+.amount-chip.is-custom {
+  grid-column: 1 / -1;
+  font-size: var(--fs-sm);
+}
+
+.amount-chip {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 3px;
+  padding: 13px 8px;
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  background: var(--sheen);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: background var(--dur-fast), border-color var(--dur-fast), transform var(--dur-fast);
+}
+
+.amount-chip:hover { background: var(--sheen-strong); }
+.amount-chip:active { transform: scale(0.97); }
+
+/* Selection is tinted rather than filled: `--accent` is whatever the platform's
+   brand colour happens to be, and light ones (BMC's yellow) would swallow any
+   text laid on top of them. */
+.amount-chip[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 6px 18px color-mix(in srgb, var(--accent) 22%, transparent);
+  font-weight: 800;
+}
+
+.amount-symbol {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+
+.amount-custom { margin-block-start: 14px; }
+
+.amount-custom label {
+  display: block;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-block-end: 7px;
+}
+
+.amount-input-wrap { position: relative; }
+
+/* The value is LTR (dir on the input) and starts right after the currency,
+   so the two read as one price the way they do on the chips - a right-aligned
+   number would sit at the far end of the field from its ₪. `start` resolves
+   against the input's own ltr direction, i.e. the side the ₪ is on. */
+.amount-input-wrap input {
+  width: 100%;
+  padding: 13px 16px;
+  padding-inline-start: 40px;
+  min-height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--sheen);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-size: 1.15rem;
+  text-align: start;
+  transition: border-color var(--dur-fast), background var(--dur-fast), box-shadow var(--dur-fast);
+}
+
+/* A donation amount is typed, not nudged one shekel at a time - and the
+   spinner sits on the digits' side of an LTR field. */
+.amount-input-wrap input {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.amount-input-wrap input::-webkit-outer-spin-button,
+.amount-input-wrap input::-webkit-inner-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.amount-input-wrap input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--sheen-mid);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+/* The number itself is LTR (dir on the input), so the currency sits at the
+   inline end of the field - the side the digits stop on in both directions. */
+.amount-input-symbol {
+  position: absolute;
+  inset-inline-end: 14px;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+/* .field-error is invisible until its .field is marked invalid; here the
+   message is the only signal, so it shows whenever there is text in it. */
+.amount-custom .field-error {
+  opacity: 1;
+  transform: none;
+}
+
+.amount-go {
+  width: 100%;
+  margin-block-start: 18px;
+}
+
+.amount-go.is-blocked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .amount-panel {
+    margin-block-start: 8vh;
+    padding: 20px 18px 18px;
+  }
+}
+
 /* ==================== CONTACT ==================== */
 
 .contact-layout {
@@ -1908,7 +2403,7 @@
 
 @media (min-width: 861px) {
   .contact-layout {
-    grid-template-columns: 1.35fr 0.65fr;
+    grid-template-columns: 1.15fr 0.85fr;
   }
   /* No contact details configured yet — don't leave an empty column. */
   .contact-layout.no-aside {
@@ -1945,6 +2440,7 @@
 .wa-groups {
   display: grid;
   gap: 9px;
+  justify-items: start;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1954,6 +2450,10 @@
 .wa-group {
   display: flex;
   align-items: center;
+  /* Sized to its own name rather than stretched across the column, so a short
+     group and a long one don't read as one wide block. */
+  width: fit-content;
+  max-width: 100%;
   gap: 11px;
   padding: 11px 13px;
   border-radius: var(--radius-md);
@@ -1990,6 +2490,72 @@
   font-size: var(--fs-xs);
   color: var(--text-muted);
   line-height: 1.45;
+}
+
+/* An app whose groups were split by profession: the community link is the lead
+   row, and the groups inside it are indented under it. The indent is on the
+   inline-start side via a logical property, so it flips with the direction. */
+.wa-community {
+  display: grid;
+  gap: 7px;
+  /* Wraps only as much as its widest row, like the rows themselves. */
+  justify-items: start;
+  max-width: 100%;
+  padding: 7px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(37, 211, 102, 0.18);
+  background: rgba(37, 211, 102, 0.04);
+}
+
+.wa-group-lead {
+  background: rgba(37, 211, 102, 0.12);
+}
+
+.wa-subgroups {
+  display: grid;
+  gap: 7px;
+  justify-items: start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  padding-inline-start: 16px;
+  position: relative;
+}
+
+/* The thread tying the groups to their community, drawn on the start edge. */
+.wa-subgroups::before {
+  content: '';
+  position: absolute;
+  inset-block: 4px;
+  inset-inline-start: 6px;
+  width: 1px;
+  background: rgba(37, 211, 102, 0.28);
+}
+
+.wa-group-sub {
+  padding: 8px 11px;
+  background: transparent;
+  border-color: rgba(37, 211, 102, 0.2);
+}
+
+.wa-group-sub svg {
+  width: 17px; height: 17px;
+}
+
+/* The community rows carry a bilingual name ("שפכו ת׳לב - Spill It Out"), long
+   enough to wrap in the aside column. Any break inside one is written into the
+   content as a \n, so an automatic one would land somewhere else and read as a
+   second title - hold the line once the column is wide enough for it. Below
+   1024px the column gets too narrow to promise that, and wrapping is better
+   than overflow. */
+.wa-community .wa-group-text strong {
+  font-size: var(--fs-xs);
+}
+
+@media (min-width: 1024px) {
+  .wa-community .wa-group-text strong {
+    white-space: nowrap;
+  }
 }
 
 .direct-card {
@@ -2173,6 +2739,67 @@
   .download-badge-icon { font-size: 1.6em; }
   .project-download { margin-block-start: 24px; }
   .plan-personal-card-link { font-size: calc(var(--fs-sm) * 1.25); padding: 13px 18px; }
+
+  /* ---- Screenshot carousel ----
+   * A wide desktop screenshot on a phone is already small, so the centre shot
+   * takes more of the reel here and the neighbours peek less. --shot-ratio has
+   * to be recomputed with it: 16 / (9 × 0.68) = 2.61.
+   *
+   * How much of a neighbour you see is (100% - --shot-w) / 2 of the reel and
+   * nothing else - past that it is behind the centre shot. 68% leaves 62px on a
+   * 390px phone, which still reads as a photo; 78% left a 43px sliver.
+   *
+   * The arrows move from beside the reel to on top of it: flanking it would eat
+   * a fifth of the width at this size. They land on the peeking neighbour, so
+   * they get a translucent pill to sit in. */
+  .shot-gallery {
+    --shot-w: 68%;
+    --shot-ratio: 2.61;
+    --shot-shift: 62%;
+  }
+
+  .shot-stage { padding-inline: 0; }
+
+  .shot-nav {
+    position: absolute;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    width: 34px;
+    height: 34px;
+    background: rgba(33, 5, 53, 0.72);
+    border-color: var(--border-strong);
+  }
+
+  /* Keyed off the data attributes, not `.is-next` - that class only means "draw
+     the arrow rotated" and is on the PREVIOUS button (see .carousel-button). */
+  .shot-nav[data-shot-prev] { inset-inline-start: 6px; }
+  .shot-nav[data-shot-next] { inset-inline-end: 6px; }
+  .shot-nav svg { width: 15px; height: 15px; }
+
+  .shot-gallery-title { font-size: 1.9em; }
+  .shot-gallery .shot-caption { font-size: var(--fs-xs); min-height: 4em; padding-inline: 12px; }
+
+  /* The enlarged view has to actually enlarge. Fitting a 1.9:1 desktop
+     screenshot into a 390px-wide phone gives a 200px-tall strip - no bigger
+     than the carousel it was opened from, and unreadable either way. So here
+     the picture is sized off the HEIGHT and allowed to run wider than the
+     screen, and the frame scrolls sideways. `direction: rtl` on the scroller
+     starts it at the right, which is where the app's own RTL interface begins. */
+  .shot-lightbox-frame {
+    direction: rtl;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .shot-lightbox-frame img {
+    height: 58vh;
+    width: auto;
+    max-width: none;
+    max-height: none;
+  }
+
+  .shot-lightbox-close { width: 38px; height: 38px; }
+  .shot-lightbox-panel { padding-block-start: 46px; }
 
   /* ---- Boxes: padding only, so the 2× heading ratio survives ---- */
   .project-summary { padding: 16px 15px; margin-block-end: 20px; }

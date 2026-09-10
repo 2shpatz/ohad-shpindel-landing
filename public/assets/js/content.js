@@ -145,6 +145,46 @@ const SITE_CONTENT = {
       tags: ['Windows', 'תוכנת מחשב', 'הורות ושינה'],
       image: 'assets/img/logo-spill-it-out.webp',
       imageFit: 'contain',
+
+      /* A coverflow strip of app screenshots, rendered under the title and above
+       * the gold download button. Clicking a shot opens it full-size.
+       *
+       * TWO files per shot on purpose. `src` (760px wide) is what the carousel
+       * shows - all eight of those together are 156KB. `full` (1600px wide) is
+       * only fetched when the lightbox opens, so the page does not pay 452KB for
+       * images most visitors never enlarge. Both are WebP resized from the
+       * 2557px PNG exports, which now live in `sources/spill-it-out-screenshots/`
+       * outside `public/` (they were 10MB and would otherwise have deployed).
+       *
+       * To re-export: drop the new PNGs in that folder and re-run the resize -
+       * 760/q74 and 1600/q78. The frame is 16/9 with `object-fit: cover`, so a
+       * shot wider than that loses a few percent off the sides.
+       *
+       * `caption` shows under the active shot and doubles as the img alt text.
+       * Delete the whole `gallery` block to hide the carousel. */
+      gallery: {
+        title: 'הצצה לאפליקציה',
+        hint: 'לחצו על תמונה להגדלה',
+        items: [
+          { src: 'assets/img/spill-it-out/home.webp', full: 'assets/img/spill-it-out/home-full.webp', caption: 'מסך הבית - כל המשפחות, המפגשים הקרובים והמשימות במקום אחד' },
+          // Padded from 1.41:1 to 16/9 before export - see the note on the frame
+          // above. Its own margins are a blurred blow-up of itself, so it drops
+          // into the strip at the same shape as the rest without being cropped.
+          { src: 'assets/img/spill-it-out/transcript-upload.webp', full: 'assets/img/spill-it-out/transcript-upload-full.webp', caption: 'הוספה מתקדמת - מעלים את תמלול המפגש, והאפליקציה מחלצת ממנו את התוצרים' },
+          { src: 'assets/img/spill-it-out/meeting-board.webp', full: 'assets/img/spill-it-out/meeting-board-full.webp', caption: 'לוח המפגש - קשיים, דגשים, מטלות והצלחות, עם תיוג נושאים' },
+          { src: 'assets/img/spill-it-out/parenting-charts.webp', full: 'assets/img/spill-it-out/parenting-charts-full.webp', caption: 'גרפי הורות - דינמיקת הקשיים לאורך התהליך ומדד המעורבות ההורית' },
+          { src: 'assets/img/spill-it-out/family-card.webp', full: 'assets/img/spill-it-out/family-card-full.webp', caption: 'כרטיס המשפחה - ציון השינה והמגמה השבועית במבט אחד' },
+          // ?v=2 because this shot was REPLACED in place after the first version
+          // was already served. public/_headers caches /assets/img/* for a week,
+          // so the same filename keeps serving the old picture to anyone who has
+          // loaded the page before. Bumping the query is enough to make it a new
+          // URL. Do this every time a screenshot is swapped without renaming it.
+          { src: 'assets/img/spill-it-out/sleep-timeline.webp?v=2', full: 'assets/img/spill-it-out/sleep-timeline-full.webp?v=2', caption: 'ציר הזמן של השינה - כל לילה כעמודה, עם פירוט מלא של הלילה שנבחר' },
+          { src: 'assets/img/spill-it-out/sleep-charts.webp', full: 'assets/img/spill-it-out/sleep-charts-full.webp', caption: 'גרפי שינה - מגמת ההירדמות ואיכות השינה לאורך התקופה' },
+          { src: 'assets/img/spill-it-out/hall-of-fame.webp', full: 'assets/img/spill-it-out/hall-of-fame-full.webp', caption: 'היכל התהילה - אוסף התודות שההורים שולחים בסוף התהליך' },
+        ],
+      },
+
       summary: 'בקיצור...\nזמן הוא משאב חשוב ביותר ואין לנו הרבה ממנו!\n מטרת האפליקציה היא לחסוך לך זמן בכל מה שמעבר למפגשי הטיפול.\nניהול ותיעוד התהליך, הפקת דוחות ויזואליים להגברת המוערבות והמוטיבציה של ההורים,\nמציגה לך תמונת מצב באמצעות מגוון גרפים\nומכינה אותך למפגש הבא בלחיצת כפתור.\nמעניקה שכבת בסיס נדיבה ביותר\n\n לגמרי בחינם!\nאהה... ומה תעשי עם הזמן שתרוויחי? תשקיעי אותו במשפחה, בלקוחות, בפיתוח העסק או בעצמך, זה כבר בידיים שלך.',
       body: [
         'לא בקיצור...\nהאפליקציה נולדה מצורך אמתי של מדריכות הורים ויועצות שינה.\nאת מקבלת עשרות הודעות וואטסאפ והקלטות קוליות מכל משפחה, ואז צריכה איכשהו להפוך את הכל ליומן מסודר ולתמונת מצב, לסכם כל מפגש ולפנק את ההורים עם דוחות עדכניים.\nבואי לא נשכח שיש גם חיים פרטיים, משפחה, ילדים, מטלות, סידורים, בישולים, ועוד ועוד...',
@@ -183,7 +223,7 @@ const SITE_CONTENT = {
               'תמלול הקלטות המפגשים וחילוץ תוצרים',
               'כל התרשימים, המדדים והגרפים',
               'סנכרון יומן שינה מ- Google Sheets\nאו ייבוא מ- Excel',
-              'חילוץ בעזרת AI — גם מקומי (Ollama) וגם Gemini',
+              'חילוץ בעזרת AI - גם מקומי (Ollama) וגם Gemini',
               'הזנה ידנית ומתקדמת של יומני ההורות והשינה',
               'סט סרטוני הדרכה',
               'גישה לקבוצת הוואטסאפ הכללית של האפליקציה לשיחה משותפת',
@@ -262,8 +302,8 @@ const SITE_CONTENT = {
       image: null,
       body: [
         'מטפלים, מאמנים ובעלי עסק קטן מבזבזים חצי מהיום על הצד המנהלי: מי הלקוח, איזה מפגש בסדרה, מה סוכם, ומי עוד לא קיבל חשבונית. שפאץ! אוסף את כל זה למקום אחד.',
-        'ניהול לקוחות מלא — פרטי קשר, היסטוריית טיפולים והערות לכל מפגש — לצד מעקב אחרי סדרות טיפולים, מפגש אחר מפגש.',
-        'ההפקה מתאימה את עצמה לסוג העוסק שלכם: עוסק פטור או עוסק מורשה, והאפליקציה מציעה את סוגי המסמכים הנכונים — חשבונית מס, חשבונית עסקה או קבלה. כל מסמך יוצא כ‑PDF מקצועי ומוכן להדפסה, ונשלח ללקוח במייל ישירות מהאפליקציה.',
+        'ניהול לקוחות מלא - פרטי קשר, היסטוריית טיפולים והערות לכל מפגש - לצד מעקב אחרי סדרות טיפולים, מפגש אחר מפגש.',
+        'ההפקה מתאימה את עצמה לסוג העוסק שלכם: עוסק פטור או עוסק מורשה, והאפליקציה מציעה את סוגי המסמכים הנכונים - חשבונית מס, חשבונית עסקה או קבלה. כל מסמך יוצא כ‑PDF מקצועי ומוכן להדפסה, ונשלח ללקוח במייל ישירות מהאפליקציה.',
         'לוח בקרה מרכזי לכל המסמכים שהופקו: חיפוש, סינון, עדכון סטטוס תשלום, ארכיון וייצוא של כמה מסמכים יחד ל‑ZIP. אפשר להגדיר את פרטי העסק, להעלות לוגו ולהתאים את המלל שמופיע על המסמכים.',
         'רץ בדפדפן, במחשב ובנייד. התחברות מאובטחת עם חשבון גוגל, והנתונים שמורים ב‑Firebase.',
       ],
@@ -298,6 +338,8 @@ const SITE_CONTENT = {
    *          the logo so the two agree.
    * qr     — optional scannable code, for links that only open in an app.
    *          Must be 984px / 41 modules; see the .qr-box note in views.css.
+   * amounts- optional. With it, the button opens a small amount picker instead
+   *          of going straight to `url`. Without it, nothing changes.
    * -------------------------------------- */
   support: {
     intro: 'תמיכה טכנית זה בלשונית הבאה...\nאם משהו כאן עזר לך, שימח אותך, או פשוט חסך לך זמן - \nאפשר להגיד תודה בכל אחת מהדרכים הבאות.',
@@ -318,6 +360,23 @@ const SITE_CONTENT = {
         // PayPal Blue, not the icon's navy — the accent tints the card border and
         // glow, and #003087 all but disappears against the dark background.
         accent: '#0070e0',
+        /* The amount picker. `urlTemplate` is what a choice turns into -
+         * {amount} is replaced by the number, and PayPal.Me reads the currency
+         * code that follows it (paypal.me/<user>/50ILS). Delete this whole
+         * block and the button goes back to being a plain link to `url`.
+         *
+         * Only PayPal has one: bit's and PayBox's links open their app on the
+         * profile and have no documented way to carry an amount. */
+        amounts: {
+          title: 'כמה בא לך לתמוך?',
+          symbol: '₪',
+          presets: [20, 50, 100],
+          defaultAmount: 50,
+          customLabel: 'סכום אחר',
+          customPlaceholder: 'סכום בשקלים',
+          submit: 'מעבר ל‑PayPal',
+          urlTemplate: 'https://paypal.me/ohadshpindel/{amount}ILS',
+        },
       },
       {
         id: 'bmc',
@@ -339,7 +398,7 @@ const SITE_CONTENT = {
         kind: 'link',
         platform: 'BIT',
         label: 'תשלום בביט',
-        note: 'מהנייד — לחיצה אחת פותחת את האפליקציה. \nמהמחשב — סרקו את הקוד.',
+        note: 'מהנייד - לחיצה אחת פותחת את האפליקציה. \nמהמחשב - סרקו את הקוד.',
         url: 'https://www.bitpay.co.il/app/me/5421115B-39D5-0DD1-5573-D9C63823AB33FB2E',
         qr: 'assets/img/bit-qr.webp',
         qrAlt: 'קוד QR לתשלום בביט לאוהד שפינדל',
@@ -390,7 +449,7 @@ const SITE_CONTENT = {
       message: { label: 'מה בא לך לספר לי?', placeholder: 'עדיף בחרוזים' },
       submit: 'שליחה',
       sending: 'שולח…',
-      success: 'ההודעה נשלחה. תודה — אחזור אליך בקרוב.',
+      success: 'ההודעה נשלחה. תודה - אחזור אליך בקרוב.',
       error: 'משהו השתבש בשליחה. אפשר לנסות שוב, או לפנות אליי ישירות:',
     },
 
@@ -401,15 +460,29 @@ const SITE_CONTENT = {
      * Add an app by adding a line: `app` is the name shown, `note` is the small
      * grey line under it (optional), `url` is the chat.whatsapp.com join link.
      * A line with an empty `url` is simply not rendered, so it's fine to park
-     * an app here before its group exists. */
+     * an app here before its group exists.
+     *
+     * An app whose groups were split by profession gets a nested `groups: []`
+     * instead of a single link: the outer `url` is then the WhatsApp *community*
+     * join link, and each nested entry is one group inside that community.
+     * Nested entries use the same `app`/`note`/`url` shape. */
     whatsapp: {
       title: 'רוצה דרך וואטסאפ?',
-      text: 'לכל אפליקציה יש קבוצה משלה — הצטרפו לזו שרלוונטית לכם,\nושאלו שם. אני עונה בקבוצה, וגם שאר המשתמשים.',
+      text: 'לכל אפליקציה יש קבוצה משלה\nהצטרפו לזו שרלוונטית לכם ושאלו שם.\nאני עונה בקבוצה, וגם שאר המשתמשים.',
       groups: [
         {
-          app: 'שפכו ת׳לב',
-          note: 'Spill It Out — למדריכות הורים ויועצות שינה',
-          url: 'https://chat.whatsapp.com/CHx6bfl2jOeB7fxq0DMJdC',
+          app: 'קהילת\nשפכו ת׳לב - Spill It Out',
+          url: 'https://chat.whatsapp.com/CcnQR0DD4xy81YP12dwhiR',
+          groups: [
+            {
+              app: 'הדרכת הורים - Spill It Out',
+              url: 'https://chat.whatsapp.com/CHx6bfl2jOeB7fxq0DMJdC',
+            },
+            {
+              app: 'ייעוץ שינה - Spill It Out',
+              url: 'https://chat.whatsapp.com/E02rdy9iOjl0yidufWtlpx',
+            },
+          ],
         },
         {
           app: 'שפאץ!',
@@ -455,10 +528,10 @@ const SITE_CONTENT = {
     density: 'normal',
     labels: {
       cast: 'דמויות',
-      castOn: 'הדמויות פעילות — לחצו לכיבוי',
-      castOff: 'הדמויות כבויות — לחצו להפעלה',
+      castOn: 'הדמויות פעילות - לחצו לכיבוי',
+      castOff: 'הדמויות כבויות - לחצו להפעלה',
       hammer: 'פטיש',
-      hammerOn: 'הפטיש פעיל — לחצו כדי להחזיר הכול',
+      hammerOn: 'הפטיש פעיל - לחצו כדי להחזיר הכול',
     },
 
     // A speech bubble beside the hammer button, shown each time the hammer is

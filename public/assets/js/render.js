@@ -583,6 +583,191 @@ const Render = (() => {
     modal.hidden = false;
   }
 
+  /* ---------- the support amount picker ----------
+   * A support option with an `amounts` block (see content.js) doesn't link
+   * straight out: the button opens this, and the choice becomes the link.
+   * Everything happens in a plain <a href> - the CSP in _headers is
+   * `default-src 'self'`, so a form posting to PayPal, an iframe or their JS
+   * SDK would all be blocked, while a navigation is not restricted at all. */
+
+  const AMOUNT_MIN = 1;
+  const AMOUNT_MAX = 10000;
+
+  // The state of the open picker. Held here rather than on the element so the
+  // custom value survives switching to a preset and back.
+  let amountState = null;
+
+  function amountUrl(template, value) {
+    return String(template || '').replace('{amount}', encodeURIComponent(value));
+  }
+
+  // '' for anything that isn't a usable amount, so the caller has one check.
+  function cleanAmount(raw) {
+    const n = Math.round(Number.parseFloat(String(raw).replace(',', '.')));
+    if (!Number.isFinite(n) || n < AMOUNT_MIN || n > AMOUNT_MAX) return '';
+    return String(n);
+  }
+
+  function closeAmountModal() {
+    const modal = document.getElementById('amount-modal');
+    if (!modal || modal.hidden) return;
+    // Focus first, hide second: hiding the panel while the focus is still
+    // inside it makes the browser reset focus to <body>, and that fixup lands
+    // after our own focus() call and undoes it.
+    amountState?.trigger?.focus?.();
+    modal.hidden = true;
+    amountState = null;
+  }
+
+  function ensureAmountModal() {
+    if (document.getElementById('amount-modal')) return;
+
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="amount-modal" id="amount-modal" hidden>
+        <div class="amount-backdrop" data-close-amount></div>
+        <div class="amount-panel" role="dialog" aria-modal="true" aria-labelledby="amount-title">
+          <button class="amount-close" type="button" aria-label="סגירה" data-close-amount>×</button>
+          <div class="amount-head">
+            <span class="amount-logo" id="amount-logo"></span>
+            <h3 id="amount-title"></h3>
+          </div>
+          <p class="amount-note" id="amount-note"></p>
+          <div class="amount-chips" id="amount-chips" role="group" aria-label="בחירת סכום"></div>
+          <div class="amount-custom" id="amount-custom" hidden>
+            <label for="amount-custom-input" id="amount-custom-label"></label>
+            <div class="amount-input-wrap">
+              <input id="amount-custom-input" type="number" inputmode="numeric"
+                     min="${AMOUNT_MIN}" max="${AMOUNT_MAX}" step="1" dir="ltr">
+              <span class="amount-input-symbol" id="amount-symbol" aria-hidden="true"></span>
+            </div>
+            <span class="field-error" id="amount-error"></span>
+          </div>
+          <a class="btn btn-primary magnetic amount-go" id="amount-go"
+             target="_blank" rel="noopener noreferrer"></a>
+        </div>
+      </div>`);
+
+    const modal = document.getElementById('amount-modal');
+    const chips = document.getElementById('amount-chips');
+    const input = document.getElementById('amount-custom-input');
+    const go = document.getElementById('amount-go');
+
+    modal.querySelectorAll('[data-close-amount]').forEach((el) => {
+      el.addEventListener('click', closeAmountModal);
+    });
+
+    chips.addEventListener('click', (event) => {
+      const chip = event.target.closest('.amount-chip');
+      if (!chip) return;
+      selectAmount(chip.dataset.amount);
+      if (chip.dataset.amount === 'custom') input.focus();
+    });
+
+    input.addEventListener('input', () => {
+      if (amountState) amountState.custom = input.value;
+      syncAmountLink();
+    });
+
+    // A blocked link is still a link, so the click has to be stopped by hand.
+    go.addEventListener('click', (event) => {
+      if (!go.classList.contains('is-blocked')) return;
+      event.preventDefault();
+      input.focus();
+    });
+  }
+
+  function selectAmount(value) {
+    if (!amountState) return;
+    amountState.choice = value;
+    document.getElementById('amount-custom').hidden = value !== 'custom';
+    document.querySelectorAll('#amount-chips .amount-chip').forEach((chip) => {
+      chip.setAttribute('aria-pressed', String(chip.dataset.amount === value));
+    });
+    syncAmountLink();
+  }
+
+  function syncAmountLink() {
+    if (!amountState) return;
+    const go = document.getElementById('amount-go');
+    const error = document.getElementById('amount-error');
+    const isCustom = amountState.choice === 'custom';
+    const value = isCustom ? cleanAmount(amountState.custom) : amountState.choice;
+
+    if (value) {
+      go.href = amountUrl(amountState.template, value);
+      go.classList.remove('is-blocked');
+      go.removeAttribute('aria-disabled');
+      error.textContent = '';
+      return;
+    }
+
+    // No href at all, so a middle-click on a blocked button goes nowhere either.
+    go.removeAttribute('href');
+    go.classList.add('is-blocked');
+    go.setAttribute('aria-disabled', 'true');
+    error.textContent = String(amountState.custom || '').trim()
+      ? `אפשר לבחור סכום בין ${AMOUNT_MIN} ל‑${AMOUNT_MAX}`
+      : 'צריך למלא סכום';
+  }
+
+  function openAmountModal(option, trigger) {
+    const a = option?.amounts;
+    if (!a?.presets?.length || !has(a.urlTemplate)) return;
+    ensureAmountModal();
+
+    const modal = document.getElementById('amount-modal');
+    const presets = a.presets.map((n) => cleanAmount(n)).filter(Boolean);
+    const fallback = cleanAmount(a.defaultAmount) || presets[0];
+
+    amountState = { template: a.urlTemplate, choice: fallback, custom: '', trigger };
+
+    modal.querySelector('.amount-panel').style.setProperty('--accent', option.accent || 'var(--accent-primary)');
+    document.getElementById('amount-logo').innerHTML = has(option.logo)
+      ? `<img src="${esc(option.logo)}" alt="" width="34" height="34" loading="lazy" decoding="async">`
+      : icon(option.icon);
+    document.getElementById('amount-title').textContent = a.title || 'בחירת סכום';
+    // No note in the content - the paragraph goes away rather than leaving its
+    // margin between the title and the amounts.
+    const note = document.getElementById('amount-note');
+    note.innerHTML = a.note ? rich(a.note) : '';
+    note.hidden = !a.note;
+    document.getElementById('amount-custom-label').textContent = a.customPlaceholder || 'סכום אחר';
+    document.getElementById('amount-symbol').textContent = a.symbol || '';
+    document.getElementById('amount-go').textContent = a.submit || option.label;
+
+    const symbol = a.symbol ? `<span class="amount-symbol">${esc(a.symbol)}</span>` : '';
+    document.getElementById('amount-chips').innerHTML = `
+      ${presets.map((n) => `
+        <button class="amount-chip" type="button" data-amount="${esc(n)}" aria-pressed="false">
+          <span class="amount-value">${esc(n)}</span>${symbol}
+        </button>`).join('')}
+      <button class="amount-chip is-custom" type="button" data-amount="custom" aria-pressed="false">
+        ${esc(a.customLabel || 'סכום אחר')}
+      </button>`;
+
+    const input = document.getElementById('amount-custom-input');
+    input.value = '';
+    modal.hidden = false;
+    selectAmount(fallback);
+    // Opens on the chip that is already chosen, so Enter is one keystroke away.
+    modal.querySelector('.amount-chip[aria-pressed="true"]')?.focus();
+  }
+
+  /* Escape closes whichever overlay is open. Both were click-only until now,
+   * which left a keyboard user with no way out of them. */
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    // The screenshot lightbox opens on top of everything, so it goes first and
+    // swallows the key rather than closing two overlays at once.
+    if (closeShotLightbox()) return;
+    const download = document.getElementById('download-warning-modal');
+    if (download && !download.hidden) {
+      download.hidden = true;
+      download.dataset.pendingUrl = '';
+    }
+    closeAmountModal();
+  });
+
   function reportSamplesBlock(samples, variant = 'project') {
     if (!samples?.length) return '';
     const isPlan = variant === 'plan';
@@ -661,6 +846,213 @@ const Render = (() => {
       </section>`;
   }
 
+  /* ---------- the screenshot carousel ("coverflow") ----------
+   * A balanced strip: the active shot is centred at full opacity, its two
+   * neighbours sit half-transparent and slightly smaller on either side, and
+   * everything further out is parked off to the same side and hidden.
+   *
+   * The offset from centre is written to each slide as `--offset` and the
+   * distance as `--depth`, and arcade-free CSS does the rest (see
+   * `.shot-slide` in views.css). Two custom properties rather than a class per
+   * position, because seven shots would mean seven classes; two numbers scale
+   * to any number of slides. `--depth` is passed separately even though it is
+   * just |offset| - CSS `abs()` is too new to rely on.
+   *
+   * Clicking the centre shot enlarges it; clicking a neighbour brings it to the
+   * centre first, which is what everyone tries anyway. */
+  function galleryCarousel(g) {
+    const items = g?.items?.filter((s) => has(s.src)) || [];
+    if (!items.length) return '';
+    return `
+      <section class="shot-gallery" data-shot-gallery aria-label="${esc(g.title || 'תמונות מהאפליקציה')}">
+        ${g.title ? `<h3 class="shot-gallery-title">${esc(g.title)}</h3>` : ''}
+        <div class="shot-stage">
+          <button class="carousel-button shot-nav is-next" type="button" data-shot-prev aria-label="לתמונה הקודמת">${icon('arrow')}</button>
+          <div class="shot-reel" data-shot-reel>
+            ${items.map((s, i) => `
+              <button class="shot-slide" type="button" data-shot-slide data-shot-index="${i}"
+                      style="--offset:${i}; --depth:${i}"
+                      aria-label="${esc(s.caption || `תמונה ${i + 1}`)} - להגדלה">
+                <img src="${esc(s.src)}" alt="${esc(s.caption || '')}" loading="lazy" decoding="async">
+              </button>`).join('')}
+          </div>
+          <button class="carousel-button shot-nav" type="button" data-shot-next aria-label="לתמונה הבאה">${icon('arrow')}</button>
+        </div>
+        <p class="shot-caption" data-shot-caption aria-live="polite">${esc(items[0].caption || '')}</p>
+        <div class="shot-dots" data-shot-dots>
+          ${items.map((s, i) => `
+            <button class="shot-dot${i === 0 ? ' is-active' : ''}" type="button" data-shot-dot="${i}"
+                    aria-label="${esc(s.caption || `תמונה ${i + 1}`)}"></button>`).join('')}
+        </div>
+        ${g.hint ? `<p class="shot-hint">${esc(g.hint)}</p>` : ''}
+      </section>`;
+  }
+
+  function setupGallery(root, items) {
+    if (!root || !items?.length) return;
+    const slides = [...root.querySelectorAll('[data-shot-slide]')];
+    const dots = [...root.querySelectorAll('[data-shot-dot]')];
+    const caption = root.querySelector('[data-shot-caption]');
+    const reel = root.querySelector('[data-shot-reel]');
+    let active = 0;
+    let gestureStart = null;
+
+    /* Wraps rather than stopping at the ends: with the neighbours visible there
+     * is always somewhere to go, so a disabled arrow would just look broken.
+     *
+     * Which means the offsets have to wrap too. Plain `i - active` puts the last
+     * shot 6 places from the first, so at either end of the list one side of the
+     * carousel sat empty - the shot that is *about* to come round was parked off
+     * screen with the far ones. Taking the short way round the ring instead
+     * keeps a neighbour on both sides at every position. Slides that cross the
+     * halfway point flip from one side to the other, which is invisible because
+     * anything that far out is hidden anyway. */
+    const half = slides.length / 2;
+    const show = (index) => {
+      active = ((index % slides.length) + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        let offset = i - active;
+        if (offset > half) offset -= slides.length;
+        else if (offset < -half) offset += slides.length;
+        const depth = Math.abs(offset);
+        slide.style.setProperty('--offset', String(offset));
+        slide.style.setProperty('--depth', String(depth));
+        slide.classList.toggle('is-active', depth === 0);
+        slide.classList.toggle('is-side', depth === 1);
+        slide.classList.toggle('is-far', depth > 1);
+        // Only the three visible shots are reachable by Tab; the dots below are
+        // the full keyboard surface, and each one carries its caption.
+        slide.tabIndex = depth > 1 ? -1 : 0;
+      });
+      dots.forEach((dot, i) => dot.classList.toggle('is-active', i === active));
+      if (caption) caption.textContent = items[active].caption || '';
+    };
+
+    root.querySelector('[data-shot-prev]')?.addEventListener('click', () => show(active - 1));
+    root.querySelector('[data-shot-next]')?.addEventListener('click', () => show(active + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => show(i)));
+
+    slides.forEach((slide, i) => {
+      slide.addEventListener('click', () => {
+        if (i === active) openShotLightbox(items, i, show);
+        else show(i);
+      });
+    });
+
+    // RTL: the next shot sits to the LEFT, so ArrowLeft advances.
+    reel?.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') { event.preventDefault(); show(active + 1); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); show(active - 1); }
+    });
+
+    // Swipe, same thresholds as the body carousel so both feel alike.
+    reel?.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'mouse') return;
+      gestureStart = { x: event.clientX, y: event.clientY, id: event.pointerId };
+    });
+
+    reel?.addEventListener('pointerup', (event) => {
+      if (!gestureStart || gestureStart.id !== event.pointerId) return;
+      const deltaX = event.clientX - gestureStart.x;
+      const deltaY = event.clientY - gestureStart.y;
+      gestureStart = null;
+      if (Math.abs(deltaX) < 45 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+      show(deltaX > 0 ? active - 1 : active + 1);
+    });
+
+    reel?.addEventListener('pointercancel', () => { gestureStart = null; });
+    show(0);
+  }
+
+  /* ---------- the screenshot lightbox ----------
+   * The enlarged view loads `full` (1600px) rather than the carousel's `src`
+   * (760px) - see the note on `gallery` in content.js for why there are two. */
+  let shotState = null;
+
+  function closeShotLightbox() {
+    const modal = document.getElementById('shot-lightbox');
+    if (!modal || modal.hidden) return false;
+    modal.hidden = true;
+    // Drop the big image so a second open re-decodes rather than holding it.
+    const img = document.getElementById('shot-lightbox-img');
+    if (img) img.removeAttribute('src');
+    shotState?.onClose?.(shotState.index);
+    shotState = null;
+    return true;
+  }
+
+  function ensureShotLightbox() {
+    if (document.getElementById('shot-lightbox')) return;
+
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="shot-lightbox" id="shot-lightbox" hidden>
+        <div class="shot-lightbox-backdrop" data-close-shot></div>
+        <div class="shot-lightbox-panel" role="dialog" aria-modal="true" aria-label="תמונה מוגדלת">
+          <button class="shot-lightbox-close" type="button" aria-label="סגירה" data-close-shot>×</button>
+          <div class="shot-lightbox-frame">
+            <img id="shot-lightbox-img" alt="" decoding="async">
+          </div>
+          <p class="shot-lightbox-caption" id="shot-lightbox-caption"></p>
+          <div class="shot-lightbox-nav">
+            <button class="carousel-button is-next" type="button" data-shot-lightbox-prev aria-label="לתמונה הקודמת">${icon('arrow')}</button>
+            <span class="shot-lightbox-count" id="shot-lightbox-count" aria-live="polite"></span>
+            <button class="carousel-button" type="button" data-shot-lightbox-next aria-label="לתמונה הבאה">${icon('arrow')}</button>
+          </div>
+        </div>
+      </div>`);
+
+    const modal = document.getElementById('shot-lightbox');
+    modal.querySelectorAll('[data-close-shot]').forEach((el) => el.addEventListener('click', closeShotLightbox));
+    modal.querySelector('[data-shot-lightbox-prev]')?.addEventListener('click', () => stepShotLightbox(-1));
+    modal.querySelector('[data-shot-lightbox-next]')?.addEventListener('click', () => stepShotLightbox(1));
+
+    document.addEventListener('keydown', (event) => {
+      if (!shotState) return;
+      if (event.key === 'ArrowLeft') { event.preventDefault(); stepShotLightbox(1); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); stepShotLightbox(-1); }
+    });
+  }
+
+  function paintShotLightbox() {
+    if (!shotState) return;
+    const { items, index } = shotState;
+    const shot = items[index];
+    const img = document.getElementById('shot-lightbox-img');
+    const caption = document.getElementById('shot-lightbox-caption');
+    const count = document.getElementById('shot-lightbox-count');
+    if (img) {
+      img.src = has(shot.full) ? shot.full : shot.src;
+      img.alt = shot.caption || '';
+    }
+    if (caption) caption.textContent = shot.caption || '';
+    if (count) count.textContent = `${index + 1} / ${items.length}`;
+  }
+
+  function stepShotLightbox(direction) {
+    if (!shotState) return;
+    const total = shotState.items.length;
+    shotState.index = ((shotState.index + direction) % total + total) % total;
+    paintShotLightbox();
+  }
+
+  /* The back button is reachable with the overlay open - leaving it there would
+   * park a full-screen image over whatever tab you landed on. Listening on
+   * hashchange rather than closing inside projectDetail(): the router only calls
+   * that for the projects route, so a jump to #about would slip past it. */
+  window.addEventListener('hashchange', closeShotLightbox);
+
+  // onClose gets the index the viewer left on, so the carousel behind the
+  // overlay is showing the same shot when the overlay goes away.
+  function openShotLightbox(items, index, onClose) {
+    ensureShotLightbox();
+    const modal = document.getElementById('shot-lightbox');
+    if (!modal) return;
+    shotState = { items, index, onClose };
+    paintShotLightbox();
+    modal.hidden = false;
+    modal.querySelector('.shot-lightbox-close')?.focus();
+  }
+
   // Renders one project's page into the detail pane. Returns false if unknown.
   function projectDetail(id) {
     const p = (C.projects || []).find((x) => x.id === id);
@@ -687,6 +1079,7 @@ const Render = (() => {
       <div class="section-head">
         ${p.tags?.length ? `<div class="tag-row" style="margin-block-end:12px">${p.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
         <h2>${titleHtml(p.title)}</h2>
+        ${galleryCarousel(p.gallery)}
         ${titleCta}
       </div>
       ${has(p.summary) ? `<div class="project-summary"><p>
@@ -718,6 +1111,7 @@ const Render = (() => {
     pane.hidden = false;
     index.hidden = true;
     setupBodyCarousel(pane.querySelector('[data-body-carousel]'));
+    setupGallery(pane.querySelector('[data-shot-gallery]'), p.gallery?.items?.filter((s) => has(s.src)));
     pane.querySelectorAll('[data-trial-card]').forEach(setupTrialCard);
     pane.querySelectorAll('[data-download-url]').forEach((link) => {
       link.addEventListener('click', (event) => {
@@ -772,8 +1166,12 @@ const Render = (() => {
                    <span class="ltr">${esc(o.handle)}</span>${icon('copy')}
                  </button>`
               : has(o.url)
-                ? `<a class="btn btn-ghost" href="${esc(o.url)}" target="_blank"
-                      rel="noopener noreferrer">${esc(o.label)}</a>`
+                // An option with an `amounts` block picks the sum first; the
+                // button is what opens that picker, not the link itself.
+                ? (o.amounts?.presets?.length
+                  ? `<button class="btn btn-ghost" type="button" data-amounts="${esc(o.id)}">${esc(o.label)}</button>`
+                  : `<a class="btn btn-ghost" href="${esc(o.url)}" target="_blank"
+                        rel="noopener noreferrer">${esc(o.label)}</a>`)
                 : ''}
             ${/* A QR next to the link: tapping works on a phone, but a visitor on
                   a desktop has no app to open — they scan this with their phone
@@ -801,6 +1199,12 @@ const Render = (() => {
       </div>`;
 
     stagger([...document.querySelectorAll('#view-support .support-grid .reveal')]);
+
+    document.querySelectorAll('#view-support [data-amounts]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        openAmountModal(live.find((o) => o.id === btn.dataset.amounts), btn);
+      });
+    });
   }
 
   /* ---------- view: contact ---------- */
@@ -825,7 +1229,20 @@ const Render = (() => {
     });
 
     // Groups without a join link yet are parked in content.js, not shown.
-    const waGroups = (c.whatsapp?.groups || []).filter((g) => has(g.url));
+    // An app whose groups were split keeps a nested `groups` list under the
+    // community link, so it survives the filter as long as *something* under
+    // it is joinable.
+    const waSubs = (g) => (g.groups || []).filter((s) => has(s.url));
+    const waGroups = (c.whatsapp?.groups || []).filter((g) => has(g.url) || waSubs(g).length);
+
+    const waLink = (g, cls) => `
+      <a class="wa-group${cls ? ` ${cls}` : ''}" href="${esc(g.url)}" target="_blank" rel="noopener noreferrer">
+        ${icon('whatsapp')}
+        <span class="wa-group-text">
+          <strong>${nl2br(esc(g.app))}</strong>
+          ${g.note ? `<small>${esc(oneLine(g.note))}</small>` : ''}
+        </span>
+      </a>`;
 
     // With no groups and no direct details, the aside would be an
     // empty column — collapse to one column instead of leaving dead space.
@@ -902,16 +1319,17 @@ const Render = (() => {
                 <h3>${esc(c.whatsapp.title)}</h3>
                 <p>${rich(c.whatsapp.text)}</p>
                 <ul class="wa-groups">
-                  ${waGroups.map((g) => `
-                    <li>
-                      <a class="wa-group" href="${esc(g.url)}" target="_blank" rel="noopener noreferrer">
-                        ${icon('whatsapp')}
-                        <span class="wa-group-text">
-                          <strong>${esc(g.app)}</strong>
-                          ${g.note ? `<small>${esc(oneLine(g.note))}</small>` : ''}
-                        </span>
-                      </a>
-                    </li>`).join('')}
+                  ${waGroups.map((g) => {
+                    const subs = waSubs(g);
+                    if (!subs.length) return `<li>${waLink(g)}</li>`;
+                    return `
+                    <li class="wa-community">
+                      ${has(g.url) ? waLink(g, 'wa-group-lead') : ''}
+                      <ul class="wa-subgroups">
+                        ${subs.map((s) => `<li>${waLink(s, 'wa-group-sub')}</li>`).join('')}
+                      </ul>
+                    </li>`;
+                  }).join('')}
                 </ul>
               </div>` : ''}
             ${direct.length ? `<div class="card direct-card reveal">${direct.join('')}</div>` : ''}

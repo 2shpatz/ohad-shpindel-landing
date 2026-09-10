@@ -27,7 +27,7 @@ const Contact = (() => {
     email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? '' : 'כתובת אימייל לא תקינה'),
     // Optional, but if filled it should look like a phone number.
     phone: (v) => (!v.trim() || /^[\d\s+()-]{7,20}$/.test(v.trim()) ? '' : 'מספר טלפון לא תקין'),
-    message: (v) => (v.trim().length >= 10 ? '' : 'ספר לי קצת יותר — לפחות 10 תווים'),
+    message: (v) => (v.trim().length >= 10 ? '' : 'ספר לי קצת יותר - לפחות 10 תווים'),
   };
 
   function validateField(input) {
@@ -115,7 +115,7 @@ const Contact = (() => {
     const payload = {
       access_key: C.contact.web3formsKey,
       subject: C.contact.emailSubject,
-      from_name: C.meta.name + ' — האתר האישי',
+      from_name: C.meta.name + ' - האתר האישי',
       name: form.elements.name.value.trim(),
       email: form.elements.email.value.trim(),
       phone: form.elements.phone.value.trim() || 'לא צוין',
