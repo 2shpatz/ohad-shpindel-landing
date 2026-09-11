@@ -351,7 +351,7 @@ const SITE_CONTENT = {
         platform: 'PayPal',
         label: 'תמיכה דרך PayPal',
         note: 'עובד מכל מקום בעולם, בכל מטבע.',
-        url: 'https://paypal.me/ohadshpindel',
+        url: 'https://www.paypal.com/donate/?business=6GKA4P9YUUZH6&currency_code=ILS',
         qr: 'assets/img/paypal-qr.webp',
         qrAlt: 'קוד QR לתשלום ב‑PayPal לאוהד שפינדל',
         qrNote: 'סריקה מהנייד לתשלום',
@@ -361,12 +361,22 @@ const SITE_CONTENT = {
         // glow, and #003087 all but disappears against the dark background.
         accent: '#0070e0',
         /* The amount picker. `urlTemplate` is what a choice turns into -
-         * {amount} is replaced by the number, and PayPal.Me reads the currency
-         * code that follows it (paypal.me/<user>/50ILS). Delete this whole
-         * block and the button goes back to being a plain link to `url`.
+         * {amount} is replaced by the number. Delete this whole block and the
+         * button goes back to being a plain link to `url`.
          *
          * Only PayPal has one: bit's and PayBox's links open their app on the
-         * profile and have no documented way to carry an amount. */
+         * profile and have no documented way to carry an amount.
+         *
+         * Why /donate and not paypal.me: paypal.me's apple-app-site-association
+         * claims *every* path ("NOT /pools/*", "/*"), and www.paypal.com claims
+         * /paypalme/* too — so on a phone with the app installed the OS hands
+         * the link to the app and the web page never loads. The app ignores the
+         * amount segment and lands on its own home screen, which is what made
+         * paypal.me/<user>/50ILS look broken. /donate is not in either app-link
+         * list, so it opens in the browser on a real checkout page with the
+         * amount, the recipient and the ₪ already filled in, and guest checkout
+         * (card, no PayPal account) enabled. `business` is the public merchant
+         * id from the PayPal.Me profile, so no email address is exposed. */
         amounts: {
           title: 'כמה בא לך לתמוך?',
           symbol: '₪',
@@ -375,7 +385,7 @@ const SITE_CONTENT = {
           customLabel: 'סכום אחר',
           customPlaceholder: 'סכום בשקלים',
           submit: 'מעבר ל‑PayPal',
-          urlTemplate: 'https://paypal.me/ohadshpindel/{amount}ILS',
+          urlTemplate: 'https://www.paypal.com/donate/?business=6GKA4P9YUUZH6&currency_code=ILS&amount={amount}',
         },
       },
       {

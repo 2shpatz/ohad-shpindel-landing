@@ -17,10 +17,10 @@ same conventions as the other sites under `landing_pages/`.
 | מה | איפה ב‑`content.js` | איך משיגים |
 |---|---|---|
 | מפתח לטופס יצירת קשר | `contact.web3formsKey` | נכנסים ל‑[web3forms.com](https://web3forms.com), מקלידים אימייל, מקבלים מפתח. ללא הרשמה, 30 שניות. |
-| חלון בחירת סכום | `support.options[].amounts` | לא חובה. עם הבלוק הזה הכפתור בכרטיס פותח חלון בחירת סכום במקום לקפוץ ישר לקישור: `presets` הם הסכומים המוצעים, `defaultAmount` הסכום המסומן מראש, ו‑`urlTemplate` הוא הקישור שנבנה - `{amount}` מוחלף במספר (למשל `https://paypal.me/ohadshpindel/{amount}ILS`). בלי הבלוק הכפתור נשאר קישור רגיל ל‑`url`. |
+| חלון בחירת סכום | `support.options[].amounts` | לא חובה. עם הבלוק הזה הכפתור בכרטיס פותח חלון בחירת סכום במקום לקפוץ ישר לקישור: `presets` הם הסכומים המוצעים, `defaultAmount` הסכום המסומן מראש, ו‑`urlTemplate` הוא הקישור שנבנה - `{amount}` מוחלף במספר (למשל `https://www.paypal.com/donate/?business=<merchant-id>&currency_code=ILS&amount={amount}`). בלי הבלוק הכפתור נשאר קישור רגיל ל‑`url`. |
 | קבוצות וואטסאפ | `contact.whatsapp.groups` | שורה לכל אפליקציה: `app`, `note`, וקישור הצטרפות `chat.whatsapp.com`. שורה עם `url` ריק פשוט לא מוצגת. אם לאפליקציה יש קהילה שמפוצלת לכמה קבוצות - `url` הוא קישור **הקהילה**, ומוסיפים לה `groups: []` פנימי באותו מבנה (`app`, `note`, `url`) לקבוצות שבתוכה. |
 | אימייל | `meta.email` | |
-| PayPal | `support.options[paypal].url` | קישור `paypal.me/...` |
+| PayPal | `support.options[paypal].url` | קישור תרומה: `https://www.paypal.com/donate/?business=<merchant-id>&currency_code=ILS`. את ה‑`merchant-id` (מזהה ציבורי, לא אימייל) אפשר לשלוף מדף ה‑PayPal.Me: `curl -sL https://paypal.me/<slug> | grep -o '"payerId":"[^"]*"'`. **לא** להחזיר קישור `paypal.me/...`: הוא רשום אצל אפליקציית PayPal כ‑app link על כל הנתיבים, ולכן בנייד עם האפליקציה מותקנת הדף לעולם לא נפתח - האפליקציה קופצת, מתעלמת מהסכום ונשארת במסך הבית. `/donate` לא נמצא ברשימה הזו, נפתח בדפדפן עם הסכום והנמען מוכנים, ותומך גם בתשלום בכרטיס בלי חשבון PayPal. |
 | Buy Me a Coffee | `support.options[bmc].url` | קישור מהפרופיל שלך |
 | ביט / PayBox | `support.options[bit/paybox].handle` | מספר הטלפון שאליו מעבירים |
 | טקסט "קצת עלי" | `about.paragraphs` | כל מחרוזת = פסקה |
