@@ -30,6 +30,35 @@ same conventions as the other sites under `landing_pages/`.
 **האתר עובד גם לפני שממלאים.** כל דבר שלא הוגדר פשוט לא מוצג — אין קישורים שבורים
 ואין טפסים שמתחזים לעבוד. הטופס אומר במפורש שהוא לא מחובר עדיין.
 
+### קודי QR
+
+כל ה‑QR ב‑`public/assets/img/*-qr.webp` בנויים על אותו גריד: **גרסה 4** (33 מודולים),
+שוליים של 4 מודולים, ו‑24px למודול - כלומר ריבוע של **984px**. זה לא שרירותי:
+`views.css` מציג אותם ב‑164px, שזה בדיוק 41 מודולים על 4px, כך שההקטנה היא 1:6 מדויק
+ואף מודול לא מטושטש. QR שנוצר בגודל אחר ייראה מרוח.
+
+לייצור או החלפה של קוד (לא צריך להתקין כלום לפרויקט, `npx` מוריד לזמן ההרצה):
+
+```bash
+npx -y qrcode -v 4 -e M -s 24 -q 4 -t png -o /tmp/qr.png "https://<הכתובת>"
+python3 -c "from PIL import Image; Image.open('/tmp/qr.png').convert('RGBA').save('public/assets/img/<שם>-qr.webp','WEBP',lossless=True,method=4)"
+```
+
+ואז **לאמת שהוא באמת נסרק** לפני שמעלים - זה נתיב תשלום, QR שבור הוא כסף שלא מגיע:
+
+```bash
+npx -y --package=jsqr --package=canvas node -e "
+const {loadImage,createCanvas}=require('canvas'), jsQR=require('jsqr').default||require('jsqr');
+loadImage('public/assets/img/<שם>-qr.webp').then(img=>{
+  const c=createCanvas(img.width,img.height), x=c.getContext('2d'); x.drawImage(img,0,0);
+  const d=x.getImageData(0,0,img.width,img.height);
+  console.log(jsQR(d.data,img.width,img.height));
+});"
+```
+
+ל‑PayPal, ה‑QR צריך להצביע על `https://<הדומיין-של-האתר>/pay` ולא על `paypal.me` -
+מאותה סיבה בדיוק שהכפתור מצביע על `/pay`. ראה את השורה של PayPal בטבלה למעלה.
+
 ### להוסיף פרויקט
 
 מוסיפים אובייקט למערך `projects`. כל פרויקט מקבל כרטיס וגם דף משלו בכתובת `#projects/<id>`:
