@@ -352,9 +352,8 @@ const SITE_CONTENT = {
         label: 'תמיכה דרך PayPal',
         note: 'עובד מכל מקום בעולם, בכל מטבע.',
         url: '/pay',
-        qr: 'assets/img/paypal-qr.webp',
-        qrAlt: 'קוד QR לתשלום ב‑PayPal לאוהד שפינדל',
-        qrNote: 'סריקה מהנייד לתשלום',
+        // No `qr` here on purpose: PayPal's codes live in the amount picker
+        // below, one per sum, so the card stays a single button.
         logo: 'assets/img/logo-paypal.webp',
         icon: 'paypal',
         // PayPal Blue, not the icon's navy — the accent tints the card border and
@@ -382,6 +381,23 @@ const SITE_CONTENT = {
           customPlaceholder: 'סכום בשקלים',
           submit: 'מעבר ל‑PayPal',
           urlTemplate: '/pay/{amount}ILS',
+          /* Optional: a code per choice, shown under the button. Keys are the
+           * preset numbers, plus `custom` for the "סכום אחר" chip — that one has
+           * no fixed sum, so it points at the bare profile and the payer types
+           * the amount on PayPal's side. A preset with no entry here simply
+           * shows no code.
+           *
+           * Four separate files rather than one image swapped in place:
+           * `_headers` caches images for a week, so a code that changes meaning
+           * under the same filename keeps sending returning visitors to the old
+           * destination. Change what a code encodes -> give it a new filename. */
+          qr: {
+            20: 'assets/img/paypal-qr-20.webp',
+            50: 'assets/img/paypal-qr-50.webp',
+            100: 'assets/img/paypal-qr-100.webp',
+            custom: 'assets/img/paypal-qr-pay.webp',
+          },
+          qrNote: 'או סריקה מהנייד',
         },
       },
       {

@@ -2239,12 +2239,18 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
+  /* The QR under the button makes the panel tall enough to run off a short
+     phone screen, so the overlay scrolls rather than clipping the button. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .amount-modal[hidden] { display: none; }
 
+/* Fixed, not absolute: the overlay scrolls now, and an absolute backdrop would
+   scroll away with it and expose the page underneath. */
 .amount-backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: rgba(10, 14, 30, 0.62);
   backdrop-filter: blur(4px);
@@ -2254,7 +2260,7 @@
   position: relative;
   z-index: 1;
   width: min(430px, calc(100% - 32px));
-  margin: 12vh auto 0;
+  margin: 12vh auto 24px;
   padding: 24px 24px 22px;
   border-radius: var(--radius-lg);
   border: 1px solid color-mix(in srgb, var(--accent) 34%, rgba(255, 255, 255, 0.16));
@@ -2436,6 +2442,17 @@
 .amount-go.is-blocked {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+/* `qr-box` already styles the image; this only gives it room. The explicit
+   [hidden] rule is not redundant — `.qr-box` sets `display: flex`, and an
+   author rule beats the browser's own `[hidden] { display: none }`. */
+.amount-qr {
+  margin-block-start: 16px;
+}
+
+.amount-qr[hidden] {
+  display: none;
 }
 
 @media (max-width: 480px) {

@@ -644,6 +644,11 @@ const Render = (() => {
           </div>
           <a class="btn btn-primary magnetic amount-go" id="amount-go"
              target="_blank" rel="noopener noreferrer"></a>
+          <figure class="qr-box amount-qr" id="amount-qr" hidden>
+            <img id="amount-qr-img" alt="" width="164" height="164"
+                 loading="lazy" decoding="async">
+            <figcaption id="amount-qr-note"></figcaption>
+          </figure>
         </div>
       </div>`);
 
@@ -683,7 +688,28 @@ const Render = (() => {
     document.querySelectorAll('#amount-chips .amount-chip').forEach((chip) => {
       chip.setAttribute('aria-pressed', String(chip.dataset.amount === value));
     });
+    syncAmountQr();
     syncAmountLink();
+  }
+
+  /* The code under the button follows the chip, not the typed value: each one
+   * is a ready-made image for a fixed sum and `custom` is the no-amount profile
+   * link, so there is nothing to redraw while someone types a number. */
+  function syncAmountQr() {
+    const fig = document.getElementById('amount-qr');
+    if (!fig || !amountState) return;
+    const src = amountState.qr?.[amountState.choice];
+    if (!has(src)) {
+      fig.hidden = true;
+      return;
+    }
+    const img = document.getElementById('amount-qr-img');
+    img.src = src;
+    img.alt = amountState.choice === 'custom'
+      ? `קוד QR לתשלום ב‑${amountState.platform}`
+      : `קוד QR לתשלום ${amountState.symbol}${amountState.choice} ב‑${amountState.platform}`;
+    document.getElementById('amount-qr-note').textContent = amountState.qrNote;
+    fig.hidden = false;
   }
 
   function syncAmountLink() {
@@ -719,7 +745,11 @@ const Render = (() => {
     const presets = a.presets.map((n) => cleanAmount(n)).filter(Boolean);
     const fallback = cleanAmount(a.defaultAmount) || presets[0];
 
-    amountState = { template: a.urlTemplate, choice: fallback, custom: '', trigger };
+    amountState = {
+      template: a.urlTemplate, choice: fallback, custom: '', trigger,
+      qr: a.qr || null, qrNote: a.qrNote || '',
+      symbol: a.symbol || '', platform: option.platform || '',
+    };
 
     modal.querySelector('.amount-panel').style.setProperty('--accent', option.accent || 'var(--accent-primary)');
     document.getElementById('amount-logo').innerHTML = has(option.logo)
