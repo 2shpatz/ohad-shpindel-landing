@@ -1172,7 +1172,16 @@
   text-align: center;
 }
 
-/* ---- the enlarged view ---- */
+/* ---- the enlarged view ----
+ * Full screen, no card: the picture itself is the surface, and the only chrome
+ * over it is the × and a caption/arrows strip along its bottom edge.
+ *
+ * The panel is `fit-content`, so it shrink-wraps the picture rather than being
+ * a box the picture sits inside. That is what puts the × on the IMAGE's corner
+ * instead of out in the letterbox beside it - a 1.85:1 screenshot on a 16:10
+ * screen leaves a wide dead band, and a viewport-corner × floats in the middle
+ * of it, attached to nothing.
+ * --------------------------- */
 
 .shot-lightbox {
   position: fixed;
@@ -1180,7 +1189,6 @@
   z-index: 1100;   /* above the download warning (1000), which it can open over */
   display: grid;
   place-items: center;
-  padding: clamp(12px, 3vw, 32px);
 }
 
 .shot-lightbox[hidden] { display: none; }
@@ -1188,44 +1196,57 @@
 .shot-lightbox-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(10, 3, 18, 0.86);
+  background: rgba(10, 3, 18, 0.92);
   backdrop-filter: blur(6px);
 }
 
 .shot-lightbox-panel {
   position: relative;
   z-index: 1;
-  display: grid;
-  gap: 14px;
-  justify-items: center;
-  width: min(1280px, 100%);
-  /* Room for the close button ABOVE the picture. At a corner it sat on top of
-     the screenshot, hiding the very pixels the reader opened it to see. */
-  padding-block-start: 50px;
+  width: fit-content;
+  height: fit-content;
+  max-width: 100vw;
+  max-height: 100vh;
+  line-height: 0;   /* no descender gap under the img, so the bar sits flush */
 }
 
 .shot-lightbox-frame {
-  width: 100%;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-strong);
-  background: var(--plum-darkest);
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.6);
-  overflow: hidden;
+  max-width: 100vw;
+  max-height: 100vh;
 }
 
 .shot-lightbox-frame img {
   display: block;
-  width: 100%;
-  /* contain, not cover: enlarging is the whole point, so nothing gets cropped.
-     The height cap leaves room for the caption and the arrows below it. */
-  max-height: 74vh;
+  /* As big as the screen allows, whole: enlarging is the point, so nothing is
+     cropped and nothing is scaled past its own pixels. */
+  max-width: 100vw;
+  max-height: 100vh;
   object-fit: contain;
 }
+
+/* Caption and arrows float over the foot of the picture. They used to sit below
+   it in flow, which cost the image ~26vh of the screen it was meant to fill. */
+.shot-lightbox-bar {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  padding: 44px 16px 14px;
+  line-height: 1.5;
+  /* Screenshots run light AND dark, so the strip brings its own scrim rather
+     than trusting whatever happens to be behind the text. */
+  background: linear-gradient(to top, rgba(10, 3, 18, 0.92) 0%, rgba(10, 3, 18, 0.76) 55%, rgba(10, 3, 18, 0) 100%);
+  pointer-events: none;   /* the gradient is decoration; only the controls click */
+}
+
+.shot-lightbox-bar > * { pointer-events: auto; }
 
 .shot-lightbox-caption {
   max-width: 70ch;
   margin: 0;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   font-size: var(--fs-sm);
   line-height: 1.5;
   text-align: center;
@@ -1238,9 +1259,14 @@
   gap: 16px;
 }
 
+.shot-lightbox-nav .carousel-button {
+  background: rgba(33, 5, 53, 0.82);
+  border-color: var(--border-strong);
+}
+
 .shot-lightbox-count {
   min-width: 56px;
-  color: var(--text-muted);
+  color: var(--text-primary);
   text-align: center;
   /* "5 / 7" is an LTR expression. Left to inherit the page's RTL it rendered as
      "7 / 5" - the numbers swap and it reads as seven of five. */
@@ -1250,24 +1276,50 @@
 
 .shot-lightbox-close {
   position: absolute;
-  inset-block-start: 0;
-  inset-inline-end: 0;
+  inset-block-start: 10px;
+  inset-inline-end: 10px;
   z-index: 2;
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   place-items: center;
   padding: 0;
   border: 1px solid var(--border-strong);
   border-radius: 50%;
-  background: var(--bg-elevated);
+  background: rgba(10, 3, 18, 0.72);
+  backdrop-filter: blur(4px);
   color: var(--text-primary);
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   line-height: 1;
   cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast);
 }
 
 .shot-lightbox-close:hover { background: var(--accent-secondary); color: var(--on-accent); }
+
+/* ---- controls stripped away (a tap on the picture) ----
+ * `visibility: hidden` rather than `display: none`, for two reasons: opacity
+ * can still transition out of it, and it takes the buttons out of the tab order
+ * so nobody can focus a control that is not on screen. */
+.shot-lightbox-frame { cursor: zoom-in; }
+.shot-lightbox.is-bare .shot-lightbox-frame { cursor: zoom-out; }
+
+.shot-lightbox-close,
+.shot-lightbox-bar {
+  transition: opacity var(--dur-med) var(--ease-out-expo), visibility var(--dur-med);
+}
+
+.shot-lightbox.is-bare .shot-lightbox-close,
+.shot-lightbox.is-bare .shot-lightbox-bar {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* The backdrop darkens too, so a screenshot read bare sits on near-black with
+   nothing at all competing with it. */
+.shot-lightbox.is-bare .shot-lightbox-backdrop {
+  background: rgba(4, 1, 8, 0.97);
+}
 
 .project-note {
   display: flex;
@@ -2779,27 +2831,28 @@
   .shot-gallery-title { font-size: 1.9em; }
   .shot-gallery .shot-caption { font-size: var(--fs-xs); min-height: 4em; padding-inline: 12px; }
 
-  /* The enlarged view has to actually enlarge. Fitting a 1.9:1 desktop
-     screenshot into a 390px-wide phone gives a 200px-tall strip - no bigger
-     than the carousel it was opened from, and unreadable either way. So here
-     the picture is sized off the HEIGHT and allowed to run wider than the
-     screen, and the frame scrolls sideways. `direction: rtl` on the scroller
-     starts it at the right, which is where the app's own RTL interface begins. */
-  .shot-lightbox-frame {
-    direction: rtl;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
+  /* The enlarged view on a phone.
+     A 1.85:1 desktop screenshot on a 390px portrait screen is 211px tall, so
+     "fill the screen" pulls two ways: scale it to the screen's HEIGHT and it is
+     1562px wide, native resolution and beautifully sharp - but you see 24% of it
+     and have to pan four screens to read one picture, starting on a fragment
+     with no idea what you are looking at. So it is fitted whole instead, edge to
+     edge, and detail comes from PINCH-ZOOM, which index.html leaves enabled (no
+     `user-scalable=no`, no `maximum-scale`). Nothing is unreachable and the
+     first thing you see is the whole shot. This is what a photo viewer does.
+
+     The panel shrink-wraps the picture, so the × rides its corner. The bar
+     cannot: over a 211px strip it would cover most of it, so on a phone it
+     leaves the panel and pins to the bottom of the screen instead. */
+  .shot-lightbox-bar {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding: 30px 14px 18px;
   }
 
-  .shot-lightbox-frame img {
-    height: 58vh;
-    width: auto;
-    max-width: none;
-    max-height: none;
-  }
-
-  .shot-lightbox-close { width: 38px; height: 38px; }
-  .shot-lightbox-panel { padding-block-start: 46px; }
+  .shot-lightbox-close { width: 40px; height: 40px; font-size: 1.5rem; }
+  .shot-lightbox-caption { font-size: var(--fs-xs); }
 
   /* ---- Boxes: padding only, so the 2× heading ratio survives ---- */
   .project-summary { padding: 16px 15px; margin-block-end: 20px; }

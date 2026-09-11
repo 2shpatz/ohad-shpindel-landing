@@ -957,7 +957,12 @@ const Render = (() => {
       const deltaY = event.clientY - gestureStart.y;
       gestureStart = null;
       if (Math.abs(deltaX) < 45 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
-      show(deltaX > 0 ? active - 1 : active + 1);
+      /* Dragging right advances. The strip puts the NEXT shot on the left (RTL),
+       * so pulling rightwards is the gesture that hauls it into the centre - the
+       * finger moves the pictures, it does not point at the one it wants. This
+       * also matches the body-paragraph carousel, which has always read deltaX
+       * this way round. */
+      show(deltaX > 0 ? active + 1 : active - 1);
     });
 
     reel?.addEventListener('pointercancel', () => { gestureStart = null; });
@@ -973,6 +978,7 @@ const Render = (() => {
     const modal = document.getElementById('shot-lightbox');
     if (!modal || modal.hidden) return false;
     modal.hidden = true;
+    modal.classList.remove('is-bare');
     // Drop the big image so a second open re-decodes rather than holding it.
     const img = document.getElementById('shot-lightbox-img');
     if (img) img.removeAttribute('src');
@@ -988,15 +994,17 @@ const Render = (() => {
       <div class="shot-lightbox" id="shot-lightbox" hidden>
         <div class="shot-lightbox-backdrop" data-close-shot></div>
         <div class="shot-lightbox-panel" role="dialog" aria-modal="true" aria-label="תמונה מוגדלת">
-          <button class="shot-lightbox-close" type="button" aria-label="סגירה" data-close-shot>×</button>
           <div class="shot-lightbox-frame">
             <img id="shot-lightbox-img" alt="" decoding="async">
           </div>
-          <p class="shot-lightbox-caption" id="shot-lightbox-caption"></p>
-          <div class="shot-lightbox-nav">
-            <button class="carousel-button is-next" type="button" data-shot-lightbox-prev aria-label="לתמונה הקודמת">${icon('arrow')}</button>
-            <span class="shot-lightbox-count" id="shot-lightbox-count" aria-live="polite"></span>
-            <button class="carousel-button" type="button" data-shot-lightbox-next aria-label="לתמונה הבאה">${icon('arrow')}</button>
+          <button class="shot-lightbox-close" type="button" aria-label="סגירה" data-close-shot>×</button>
+          <div class="shot-lightbox-bar">
+            <p class="shot-lightbox-caption" id="shot-lightbox-caption"></p>
+            <div class="shot-lightbox-nav">
+              <button class="carousel-button is-next" type="button" data-shot-lightbox-prev aria-label="לתמונה הקודמת">${icon('arrow')}</button>
+              <span class="shot-lightbox-count" id="shot-lightbox-count" aria-live="polite"></span>
+              <button class="carousel-button" type="button" data-shot-lightbox-next aria-label="לתמונה הבאה">${icon('arrow')}</button>
+            </div>
           </div>
         </div>
       </div>`);
@@ -1005,6 +1013,23 @@ const Render = (() => {
     modal.querySelectorAll('[data-close-shot]').forEach((el) => el.addEventListener('click', closeShotLightbox));
     modal.querySelector('[data-shot-lightbox-prev]')?.addEventListener('click', () => stepShotLightbox(-1));
     modal.querySelector('[data-shot-lightbox-next]')?.addEventListener('click', () => stepShotLightbox(1));
+
+    /* Tapping the picture itself strips the overlay away, so the screenshot can
+     * be read with nothing on top of it; tapping again brings it back. The same
+     * gesture both ways, as in any photo viewer.
+     *
+     * Only on a real tap: a drag is how you pan a pinch-zoomed image, and a
+     * browser does not raise `click` for a drag, so panning cannot blank the
+     * controls by accident.
+     *
+     * Deliberately NOT on the backdrop - that already closes, and one click
+     * cannot sensibly mean both. */
+    modal.querySelector('.shot-lightbox-frame')?.addEventListener('click', () => {
+      const bare = modal.classList.toggle('is-bare');
+      // The chrome goes `visibility: hidden`, which drops it out of the tab
+      // order too. Focus would otherwise be stranded on something invisible.
+      if (bare && modal.contains(document.activeElement)) document.activeElement.blur();
+    });
 
     document.addEventListener('keydown', (event) => {
       if (!shotState) return;
@@ -1049,6 +1074,9 @@ const Render = (() => {
     if (!modal) return;
     shotState = { items, index, onClose };
     paintShotLightbox();
+    // Every open starts with the controls showing - stripping them is a choice
+    // you make on the picture in front of you, not a mode you get stuck in.
+    modal.classList.remove('is-bare');
     modal.hidden = false;
     modal.querySelector('.shot-lightbox-close')?.focus();
   }
