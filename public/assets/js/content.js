@@ -350,7 +350,6 @@ const SITE_CONTENT = {
         kind: 'link',
         platform: 'PayPal',
         label: 'תמיכה דרך PayPal',
-        note: 'עובד מכל מקום בעולם, בכל מטבע.',
         url: '/pay',
         // No `qr` here on purpose: PayPal's codes live in the amount picker
         // below, one per sum, so the card stays a single button.
@@ -420,7 +419,6 @@ const SITE_CONTENT = {
         kind: 'link',
         platform: 'BIT',
         label: 'תשלום בביט',
-        note: 'מהנייד - לחיצה אחת פותחת את האפליקציה.',
         url: 'https://www.bitpay.co.il/app/me/5421115B-39D5-0DD1-5573-D9C63823AB33FB2E',
         qr: 'assets/img/bit-qr.webp',
         qrAlt: 'קוד QR לתשלום בביט לאוהד שפינדל',
@@ -444,7 +442,6 @@ const SITE_CONTENT = {
         kind: 'link',
         platform: 'PayBox',
         label: 'הצטרפות לקבוצה',
-        note: 'השימוש פייבוקס חינם!\nמחכים לך בקבוצת "בירה למפתח".',
         url: 'https://links.payboxapp.com/VLnsA59Rv5b',
         logo: 'assets/img/logo-paybox.webp',
         icon: 'paybox',
