@@ -22,7 +22,8 @@ same conventions as the other sites under `landing_pages/`.
 | אימייל | `meta.email` | |
 | PayPal | `support.options[paypal].url` + `public/_redirects` | הקישור בכרטיס הוא `/pay` - נתיב **אצלנו**, ש‑`public/_redirects` מפנה ממנו ל‑`https://www.paypal.com/paypalme/<slug>`. להחלפת החשבון עורכים את שתי השורות ב‑`_redirects`, לא את `content.js`. **לא** לשים קישור `paypal.me/...` ישירות: אפליקציית PayPal רשומה כבעלת כל הנתיבים של `paypal.me` (וגם של `www.paypal.com/paypalme/*`), ולכן בנייד עם האפליקציה מותקנת הדף לעולם לא נפתח - האפליקציה קופצת, מתעלמת מהסכום ונשארת במסך הבית. ההפניה שוברת את החטיפה הזו: דפדפן מוסר קישור לאפליקציה רק כשמקישים עליו ישירות, לא כשמגיעים אליו דרך 302 - אז הדפדפן נשאר אצלו וטוען את דף ה‑PayPal.Me האמיתי, שבו הסכום כבר מלא ונעול מעל כפתור Send. (נבדק גם מסלול `paypal.com/donate` עם מזהה הסוחר: הוא נופל על "This organization can't accept donations right now", כנראה כי תרומות לא זמינות לחשבונות בישראל.) |
 | Buy Me a Coffee | `support.options[bmc].url` | קישור מהפרופיל שלך |
-| ביט / PayBox | `support.options[bit/paybox].handle` | מספר הטלפון שאליו מעבירים |
+| ביט | `support.options[bit].url` | קישור השיתוף מתוך אפליקציית ביט (`bitpay.co.il/app/me/...`). יש לו גם `qrOn: 'desktop'` - ראה "קודי QR" למטה. |
+| PayBox | `support.options[paybox].url` | קישור ההצטרפות לקבוצה. בלי QR משלנו: דף הנחיתה של PayBox כבר מציג קוד לסריקה כשפותחים אותו במחשב. |
 | טקסט "קצת עלי" | `about.paragraphs` | כל מחרוזת = פסקה |
 | פרויקטים | `projects` | ראה למטה |
 | תמונה | `meta.photo` | שים קובץ ב‑`public/assets/img/` ורשום `'assets/img/ohad.webp'` |
@@ -55,6 +56,18 @@ loadImage('public/assets/img/<שם>-qr.webp').then(img=>{
   console.log(jsQR(d.data,img.width,img.height));
 });"
 ```
+
+**איפה הקוד מוצג.** ברירת המחדל היא על הכרטיס עצמו, מתחת לכפתור. אבל אף כרטיס
+לא עושה את זה היום, כי קוד על כרטיס אחד ליד כרטיס בלעדיו מייצר חור בפריסה
+(ראה את ההערה על `.support-card` ב‑`views.css`). שתי החלופות:
+
+- `amounts.qr` - קוד לכל סכום, בתוך חלון בחירת הסכום. כך PayPal עובד.
+- `qrOn: 'desktop'` - הקוד יורד מהכרטיס ועובר אל מאחורי הכפתור: **מהטלפון**
+  הכפתור נשאר קישור רגיל ופותח את האפליקציה, **מהמחשב** הלחיצה נעצרת ופותחת
+  את הקוד בחלון. כך ביט עובד. `qrIntro` הוא המשפט שמעל הקוד בחלון הזה.
+  הזיהוי הוא `matchMedia('(pointer: coarse)')` - מה שהדפדפן מדווח על התקן
+  ההצבעה, ולא מחרוזת user-agent. לפטופ עם מסך מגע עדיין מדווח `fine` ולכן
+  מקבל את החלון, וזו ההתנהגות הנכונה.
 
 **כשמשנים את מה שקוד מקודד - נותנים לו שם קובץ חדש.** `_headers` מחזיק תמונות
 שבוע (`max-age=604800`), אז החלפת תמונה תחת אותו שם משאירה גולשים חוזרים עם הקוד

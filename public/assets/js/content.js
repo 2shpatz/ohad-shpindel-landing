@@ -413,27 +413,32 @@ const SITE_CONTENT = {
       },
       // Bit has no public profile page, but the app's share sheet produces a
       // bitpay.co.il/app/me/... link. On a phone it opens the app straight on
-      // my name; on a desktop there is nothing to open, so the QR (the same
-      // link, scanned with a phone) is the way in. Hence both, via `qr`.
+      // my name; on a desktop there is nothing for it to open, which is what
+      // `qrOn` below is for.
       {
         id: 'bit',
         kind: 'link',
         platform: 'BIT',
         label: 'תשלום בביט',
-        note: 'מהנייד - לחיצה אחת פותחת את האפליקציה. \nמהמחשב - סרקו את הקוד.',
+        note: 'מהנייד - לחיצה אחת פותחת את האפליקציה.',
         url: 'https://www.bitpay.co.il/app/me/5421115B-39D5-0DD1-5573-D9C63823AB33FB2E',
         qr: 'assets/img/bit-qr.webp',
         qrAlt: 'קוד QR לתשלום בביט לאוהד שפינדל',
-        // Kept to one line, like the other cards' — a caption that wraps pushes
-        // this card's QR out of line with theirs.
-        qrNote: 'סריקה מהנייד לתשלום',
+        /* Where the code is shown. 'desktop' keeps it off the card and puts it
+         * behind the button: on a phone the button stays an ordinary link and
+         * opens the app, on a desktop the click opens the code in a dialog
+         * instead. Leave `qrOn` out and the code renders on the card, as
+         * before. `qrIntro` is the line above it in that dialog. */
+        qrOn: 'desktop',
+        qrIntro: 'במחשב אין אפליקציה שתיפתח. סרקו את הקוד מהטלפון וביט ייפתח ישירות על השם שלי.',
         logo: 'assets/img/logo-bit.webp',
         icon: 'bit',
         accent: '#44e2ed', // the cyan of bit's own wordmark
       },
       // A public PayBox group, so this is a join link rather than my number.
-      // Same reasoning as Bit above for the QR: the link opens the app on a
-      // phone, and a visitor on a desktop scans instead.
+      // No `qr` here, unlike Bit: PayBox's own landing page already shows a
+      // code to scan when it is opened on a desktop, so ours would be a second
+      // code for the same thing.
       {
         id: 'paybox',
         kind: 'link',
@@ -441,9 +446,6 @@ const SITE_CONTENT = {
         label: 'הצטרפות לקבוצה',
         note: 'השימוש פייבוקס חינם!\nמחכים לך בקבוצת "בירה למפתח".',
         url: 'https://links.payboxapp.com/VLnsA59Rv5b',
-        qr: 'assets/img/paybox-qr.webp',
-        qrAlt: 'קוד QR להצטרפות לקבוצת "בירה למפתח" ב‑PayBox',
-        qrNote: 'סריקה מהנייד להצטרפות',
         logo: 'assets/img/logo-paybox.webp',
         icon: 'paybox',
         accent: '#009ceb', // PayBox's own blue, from the app icon

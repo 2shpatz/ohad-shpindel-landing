@@ -2104,9 +2104,11 @@
   padding-block: 30px;
   /* Cards keep the grid's default stretch, so every card in a row is the same
      height. `.s-note` below takes `flex: 1` and swallows the difference, which
-     lines the buttons, QRs and captions up across cards no matter how long each
-     note runs. This only reads well while the cards hold comparable content —
-     one card with a QR next to one without leaves a visible void instead. */
+     puts every card's button on the same line no matter how long each note
+     runs. That holds only while the cards hold comparable content, which is why
+     no card renders a QR inline any more: PayPal's codes live in its amount
+     picker and Bit's behind its button, so one card with a code next to one
+     without can no longer leave a visible void. */
   /* --accent comes from content.js per platform. */
   border-color: color-mix(in srgb, var(--accent, var(--accent-primary)) 26%, transparent);
 }
@@ -2161,7 +2163,7 @@
 
 /* For a `kind: 'handle'` option — something with no working web link at all, so
    we surface the number itself with a copy button rather than a dead link. No
-   option uses it right now; Bit and PayBox both moved to real links + a QR. */
+   option uses it right now; Bit and PayBox both moved to real links. */
 .handle-box {
   display: flex;
   align-items: center;

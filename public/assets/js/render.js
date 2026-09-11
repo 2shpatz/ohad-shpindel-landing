@@ -783,6 +783,82 @@ const Render = (() => {
     modal.querySelector('.amount-chip[aria-pressed="true"]')?.focus();
   }
 
+  /* ---------- the desktop QR dialog ----------
+   * For an option with `qrOn: 'desktop'` (see content.js). Its link opens an
+   * app, which only means something on a phone - on a desktop the same click
+   * opens the code here instead, to be scanned with a phone.
+   *
+   * The test is the browser's own report of the pointing device, not a
+   * user-agent string: a coarse pointer is a finger, and a finger means there
+   * is an app to open. A touchscreen laptop still reports `fine` for its
+   * primary pointer, so it gets the dialog, which is what we want. */
+
+  const isTouchPointer = () => window.matchMedia?.('(pointer: coarse)')?.matches ?? false;
+
+  let qrModalTrigger = null;
+
+  function closeQrModal() {
+    const modal = document.getElementById('qr-modal');
+    if (!modal || modal.hidden) return false;
+    // Focus first, hide second - same reason as closeAmountModal.
+    qrModalTrigger?.focus?.();
+    modal.hidden = true;
+    qrModalTrigger = null;
+    return true;
+  }
+
+  function ensureQrModal() {
+    if (document.getElementById('qr-modal')) return;
+
+    // The chrome is shared with the amount picker - same panel, same backdrop,
+    // same close button - so those class names are reused as-is and only the
+    // ids differ.
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="amount-modal qr-modal" id="qr-modal" hidden>
+        <div class="amount-backdrop" data-close-qr></div>
+        <div class="amount-panel" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
+          <button class="amount-close" type="button" aria-label="סגירה" data-close-qr>×</button>
+          <div class="amount-head">
+            <span class="amount-logo" id="qr-modal-logo"></span>
+            <h3 id="qr-modal-title"></h3>
+          </div>
+          <p class="amount-note" id="qr-modal-note"></p>
+          <figure class="qr-box">
+            <img id="qr-modal-img" alt="" width="164" height="164" decoding="async">
+          </figure>
+        </div>
+      </div>`);
+
+    document.getElementById('qr-modal')
+      .querySelectorAll('[data-close-qr]')
+      .forEach((el) => el.addEventListener('click', closeQrModal));
+  }
+
+  function openQrModal(option, trigger) {
+    if (!has(option?.qr)) return;
+    ensureQrModal();
+
+    const modal = document.getElementById('qr-modal');
+    qrModalTrigger = trigger;
+
+    modal.querySelector('.amount-panel').style.setProperty('--accent', option.accent || 'var(--accent-primary)');
+    document.getElementById('qr-modal-logo').innerHTML = has(option.logo)
+      ? `<img src="${esc(option.logo)}" alt="" width="34" height="34" loading="lazy" decoding="async">`
+      : icon(option.icon);
+    document.getElementById('qr-modal-title').textContent = option.label || option.platform;
+
+    const note = document.getElementById('qr-modal-note');
+    note.innerHTML = has(option.qrIntro) ? rich(option.qrIntro) : '';
+    note.hidden = !has(option.qrIntro);
+
+    const img = document.getElementById('qr-modal-img');
+    img.src = option.qr;
+    img.alt = option.qrAlt || `קוד QR ל${option.platform}`;
+
+    modal.hidden = false;
+    modal.querySelector('.amount-close').focus();
+  }
+
   /* Escape closes whichever overlay is open. Both were click-only until now,
    * which left a keyboard user with no way out of them. */
   document.addEventListener('keydown', (event) => {
@@ -795,6 +871,7 @@ const Render = (() => {
       download.hidden = true;
       download.dataset.pendingUrl = '';
     }
+    if (closeQrModal()) return;
     closeAmountModal();
   });
 
@@ -1228,13 +1305,18 @@ const Render = (() => {
                 // button is what opens that picker, not the link itself.
                 ? (o.amounts?.presets?.length
                   ? `<button class="btn btn-ghost" type="button" data-amounts="${esc(o.id)}">${esc(o.label)}</button>`
+                  // `qrOn: 'desktop'` stays a real link - the href is what a
+                  // phone follows, and only a desktop click is intercepted.
                   : `<a class="btn btn-ghost" href="${esc(o.url)}" target="_blank"
-                        rel="noopener noreferrer">${esc(o.label)}</a>`)
+                        rel="noopener noreferrer"
+                        ${o.qrOn === 'desktop' && has(o.qr) ? `data-qr-desktop="${esc(o.id)}"` : ''}>${esc(o.label)}</a>`)
                 : ''}
             ${/* A QR next to the link: tapping works on a phone, but a visitor on
                   a desktop has no app to open — they scan this with their phone
-                  instead. Purely additive, so any option can carry one. */''}
-            ${has(o.qr) ? `
+                  instead. Purely additive, so any option can carry one.
+                  `qrOn: 'desktop'` moves it off the card and behind the button;
+                  the dialog renders it there instead. */''}
+            ${has(o.qr) && o.qrOn !== 'desktop' ? `
               <figure class="qr-box">
                 <img src="${esc(o.qr)}" alt="${esc(o.qrAlt || `קוד QR ל${o.platform}`)}"
                      width="164" height="164" loading="lazy" decoding="async">
@@ -1261,6 +1343,16 @@ const Render = (() => {
     document.querySelectorAll('#view-support [data-amounts]').forEach((btn) => {
       btn.addEventListener('click', () => {
         openAmountModal(live.find((o) => o.id === btn.dataset.amounts), btn);
+      });
+    });
+
+    document.querySelectorAll('#view-support [data-qr-desktop]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        // On a phone the link is left alone: it opens the app, which is the
+        // whole point. Only a pointer that cannot scan gets the code.
+        if (isTouchPointer()) return;
+        event.preventDefault();
+        openQrModal(live.find((o) => o.id === link.dataset.qrDesktop), link);
       });
     });
   }
