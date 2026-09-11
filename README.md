@@ -17,10 +17,10 @@ same conventions as the other sites under `landing_pages/`.
 | מה | איפה ב‑`content.js` | איך משיגים |
 |---|---|---|
 | מפתח לטופס יצירת קשר | `contact.web3formsKey` | נכנסים ל‑[web3forms.com](https://web3forms.com), מקלידים אימייל, מקבלים מפתח. ללא הרשמה, 30 שניות. |
-| חלון בחירת סכום | `support.options[].amounts` | לא חובה. עם הבלוק הזה הכפתור בכרטיס פותח חלון בחירת סכום במקום לקפוץ ישר לקישור: `presets` הם הסכומים המוצעים, `defaultAmount` הסכום המסומן מראש, ו‑`urlTemplate` הוא הקישור שנבנה - `{amount}` מוחלף במספר (למשל `https://www.paypal.com/donate/?business=<merchant-id>&currency_code=ILS&amount={amount}`). בלי הבלוק הכפתור נשאר קישור רגיל ל‑`url`. |
+| חלון בחירת סכום | `support.options[].amounts` | לא חובה. עם הבלוק הזה הכפתור בכרטיס פותח חלון בחירת סכום במקום לקפוץ ישר לקישור: `presets` הם הסכומים המוצעים, `defaultAmount` הסכום המסומן מראש, ו‑`urlTemplate` הוא הקישור שנבנה - `{amount}` מוחלף במספר (למשל `/pay/{amount}ILS`). בלי הבלוק הכפתור נשאר קישור רגיל ל‑`url`. |
 | קבוצות וואטסאפ | `contact.whatsapp.groups` | שורה לכל אפליקציה: `app`, `note`, וקישור הצטרפות `chat.whatsapp.com`. שורה עם `url` ריק פשוט לא מוצגת. אם לאפליקציה יש קהילה שמפוצלת לכמה קבוצות - `url` הוא קישור **הקהילה**, ומוסיפים לה `groups: []` פנימי באותו מבנה (`app`, `note`, `url`) לקבוצות שבתוכה. |
 | אימייל | `meta.email` | |
-| PayPal | `support.options[paypal].url` | קישור תרומה: `https://www.paypal.com/donate/?business=<merchant-id>&currency_code=ILS`. את ה‑`merchant-id` (מזהה ציבורי, לא אימייל) אפשר לשלוף מדף ה‑PayPal.Me: `curl -sL https://paypal.me/<slug> | grep -o '"payerId":"[^"]*"'`. **לא** להחזיר קישור `paypal.me/...`: הוא רשום אצל אפליקציית PayPal כ‑app link על כל הנתיבים, ולכן בנייד עם האפליקציה מותקנת הדף לעולם לא נפתח - האפליקציה קופצת, מתעלמת מהסכום ונשארת במסך הבית. `/donate` לא נמצא ברשימה הזו, נפתח בדפדפן עם הסכום והנמען מוכנים, ותומך גם בתשלום בכרטיס בלי חשבון PayPal. |
+| PayPal | `support.options[paypal].url` + `public/_redirects` | הקישור בכרטיס הוא `/pay` - נתיב **אצלנו**, ש‑`public/_redirects` מפנה ממנו ל‑`https://www.paypal.com/paypalme/<slug>`. להחלפת החשבון עורכים את שתי השורות ב‑`_redirects`, לא את `content.js`. **לא** לשים קישור `paypal.me/...` ישירות: אפליקציית PayPal רשומה כבעלת כל הנתיבים של `paypal.me` (וגם של `www.paypal.com/paypalme/*`), ולכן בנייד עם האפליקציה מותקנת הדף לעולם לא נפתח - האפליקציה קופצת, מתעלמת מהסכום ונשארת במסך הבית. ההפניה שוברת את החטיפה הזו: דפדפן מוסר קישור לאפליקציה רק כשמקישים עליו ישירות, לא כשמגיעים אליו דרך 302 - אז הדפדפן נשאר אצלו וטוען את דף ה‑PayPal.Me האמיתי, שבו הסכום כבר מלא ונעול מעל כפתור Send. (נבדק גם מסלול `paypal.com/donate` עם מזהה הסוחר: הוא נופל על "This organization can't accept donations right now", כנראה כי תרומות לא זמינות לחשבונות בישראל.) |
 | Buy Me a Coffee | `support.options[bmc].url` | קישור מהפרופיל שלך |
 | ביט / PayBox | `support.options[bit/paybox].handle` | מספר הטלפון שאליו מעבירים |
 | טקסט "קצת עלי" | `about.paragraphs` | כל מחרוזת = פסקה |
@@ -219,6 +219,17 @@ cd public && python3 -m http.server 8099
 ואז לוודא: מעבר בין כל הטאבים, `#projects/<id>` בטעינה ישירה, כפתור אחורה,
 hash לא מוכר → "עליי", הטופס עם שדות ריקים ועם אימייל לא תקין,
 ו‑"הפחתת תנועה" בהגדרות מערכת ההפעלה.
+
+ל‑PayPal צריך שרת שקורא `_redirects`, כלומר `npx wrangler dev` ולא
+`python3 -m http.server` (שם `/pay` יחזיר 404):
+
+```bash
+npx wrangler dev
+curl -sI http://127.0.0.1:8787/pay/50ILS   # → 302 ל‑www.paypal.com/paypalme/<slug>/50ILS
+```
+
+ואת הבדיקה האמיתית עושים **מהנייד, עם אפליקציית PayPal מותקנת**: בחירת סכום
+צריכה לפתוח דף PayPal **בדפדפן** עם הסכום כבר בפנים, לא את האפליקציה.
 
 ולקרוסלת התמונות: חצים ונקודות, לחיצה על תמונה בצד (מביאה אותה למרכז) לעומת
 לחיצה על המרכזית (פותחת אותה על מסך מלא), חצי המקלדת וגם Escape בתוך התצוגה

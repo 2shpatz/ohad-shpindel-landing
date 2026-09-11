@@ -1,0 +1,24 @@
+# ---------------------------------------------------------------------------
+# /pay -> PayPal.Me, on purpose and not as a plain link.
+#
+# The PayPal app claims paypal.me as an app link on EVERY path
+# (paypal.me/.well-known/apple-app-site-association is `"NOT /pools/*", "/*"`,
+# and www.paypal.com claims `/paypalme/*` as well). So on a phone with the app
+# installed, tapping a paypal.me link never reaches a web page at all: the OS
+# hands the URL to the app, the app ignores the /<amount>ILS segment, and it
+# lands on its own home screen. That is the "nothing happens" bug.
+#
+# A redirect breaks that handoff. iOS Safari and Chrome only hand a URL to an
+# app when the user taps it directly - arriving at the same URL through a 302
+# keeps the navigation in the browser. The browser then loads the real
+# PayPal.Me page, which does honour the amount: it renders a readonly field
+# already filled with the sum and the ₪, above a Send button.
+#
+# Keep the chain at exactly one hop - point at www.paypal.com/paypalme/...,
+# not at paypal.me/..., which would add its own 301 on top.
+#
+# NOTE: only Cloudflare applies this file. `python3 -m http.server` in public/
+# serves a 404 for /pay, so test this flow with `npx wrangler dev`.
+# ---------------------------------------------------------------------------
+/pay    https://www.paypal.com/paypalme/ohadshpindel           302
+/pay/*  https://www.paypal.com/paypalme/ohadshpindel/:splat    302

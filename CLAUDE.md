@@ -114,6 +114,24 @@ failing. `api.web3forms.com` is allowlisted in `_headers` under `connect-src` an
 `form-action` — the CSP is strict `default-src 'self'`, so any new external endpoint
 needs a `_headers` change too.
 
+### PayPal links go through `_redirects`, not straight out
+
+`public/_redirects` maps `/pay` and `/pay/*` to `www.paypal.com/paypalme/...`, and
+`content.js` links to `/pay/<amount>ILS` rather than to PayPal directly. This is not
+cosmetic: the PayPal app claims **every** `paypal.me` path as an app link (its
+`apple-app-site-association` is `"NOT /pools/*", "/*"`, and `www.paypal.com` claims
+`/paypalme/*` too), so on a phone with the app installed a direct link never reaches a
+web page — the app opens and drops the amount. Browsers only hand a URL to an app when
+the user taps it directly, so the extra 302 keeps the navigation in the browser, where
+the PayPal.Me page does render the amount (readonly field, pre-filled, above Send).
+
+`_redirects` is a Cloudflare file like `_headers`: `python3 -m http.server` ignores it
+and 404s on `/pay`. Use `npx wrangler dev` to exercise that flow.
+
+(`paypal.com/donate?business=<merchant-id>` was tried first and is a dead end — the page
+server-renders correctly but the client flow fails with "This organization can't accept
+donations right now".)
+
 ### Separate pages
 
 `public/privacy-policy.html` is standalone (its own markup, `tokens.css` +
