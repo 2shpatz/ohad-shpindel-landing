@@ -2,8 +2,8 @@
  * The pile of prints at the foot of the About tab.
  *
  * The whole model is DOM order: first child is the top of the pile, and the
- * CSS positions every card by :nth-child. Browsing is therefore one operation —
- * move the top node to the end — and the transition on `transform` animates
+ * CSS positions every card by :nth-child. Browsing is therefore one operation -
+ * move the top node to the end - and the transition on `transform` animates
  * every other card into its new place for free. There is no current-index to
  * keep in sync with anything, and a re-render of the view costs nothing.
  *

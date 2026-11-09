@@ -11,7 +11,7 @@
  *   #F5D5E0  light     body text
  *
  * The page background is assets/img/background.jpg, filling the screen (`cover`)
- * and UNSCRIMMED, by request — the photo as shot.
+ * and UNSCRIMMED, by request - the photo as shot.
  *
  * What that costs, measured: the lightning peaks at luminance 0.997, so light
  * text crossing a streak falls to ~1.1:1, far under the 4.5:1 AA floor. Text over
@@ -23,7 +23,7 @@
  * between #C874B2 and #F5D5E0 and both jobs need one:
  *   --text-secondary / --text-muted  #F5D5E0 blended toward #210535
  *   --accent-primary #d691c0         #C874B2 lifted 30% toward #F5D5E0, because
- *                                    #C874B2 itself is 3.75:1 over the photo —
+ *                                    #C874B2 itself is 3.75:1 over the photo -
  *                                    fine for fills, short of AA for text. */
 
 :root {
@@ -43,7 +43,7 @@
    * The scrim is back on. It is the single dial for legibility: unscrimmed, text
    * crossing the bright lightning measured ~1.1:1, with 5.6% of the desktop frame
    * under the 4.5:1 AA floor. 0.84 is the LOWEST value that clears AA for all
-   * four text tones across every pixel of both photos — 0.78 still left the muted
+   * four text tones across every pixel of both photos - 0.78 still left the muted
    * and accent tones short (3.9:1), so don't lower it without re-measuring. */
   --bg-image: url('../img/background.jpg');
   --bg-scrim: rgba(33, 5, 53, 0.60);
@@ -68,7 +68,7 @@
   --accent-tertiary: var(--plum-mid);
 
   /* Filled controls stay inside the BRIGHT end of the palette and carry dark ink.
-     The alternative — a dark #430d4b..#7b337d fill with light ink — reads at only
+     The alternative - a dark #430d4b..#7b337d fill with light ink - reads at only
      2.3:1 against the page, so the button loses its edge; this way it sits at
      5.8:1 and the ink is 5.1-7.6:1 across every stop. */
   --gradient-primary: linear-gradient(135deg, #d691c0 0%, #c874b2 55%, #bc6aaa 100%);
@@ -76,7 +76,7 @@
   /* Headings: light end, so the gradient text stays readable over the photo. */
   --gradient-text: linear-gradient(100deg, #f5d5e0 0%, #e6b0cf 45%, #c874b2 100%);
 
-  /* Ink on those fills — dark, since they are the light end of the palette. */
+  /* Ink on those fills - dark, since they are the light end of the palette. */
   --on-accent: #210535;
 
   /* ---- Light overlays ----
@@ -105,7 +105,7 @@
   --notice-soft: rgba(255, 193, 130, 0.1);
   --notice-border: rgba(255, 193, 130, 0.3);
 
-  /* Brand colours owned by other companies — deliberately not palette-shifted. */
+  /* Brand colours owned by other companies - deliberately not palette-shifted. */
   --brand-whatsapp: #25d366;
   --brand-whatsapp-ink: #08331a;
 
@@ -169,7 +169,7 @@
    NOTE for the next time this artwork changes: /assets/img/* is cached for a week
    by public/_headers, so replacing a file in place does NOT reach anyone who has
    already visited. Either change the filename, or bump a query string here
-   (…/background_pc.webp?v=2) — that is enough to make it a new URL. */
+   (…/background_pc.webp?v=2) - that is enough to make it a new URL. */
 @media (min-width: 861px) {
   :root {
     --bg-image: url('../img/background_pc.webp');

@@ -32,7 +32,7 @@ const Motion = (() => {
     observeAll();
   }
 
-  // Called again after each view switch — new nodes need observing.
+  // Called again after each view switch - new nodes need observing.
   function observeAll(root = document) {
     if (reduced) {
       root.querySelectorAll('.reveal:not(.visible)').forEach((el) => el.classList.add('visible'));
@@ -165,7 +165,7 @@ const Motion = (() => {
     let i = 0;
     clearInterval(rotatorTimer);
     rotatorTimer = setInterval(() => {
-      // Pause while the About tab is hidden — no point animating offscreen.
+      // Pause while the About tab is hidden - no point animating offscreen.
       if (!document.getElementById('view-about').classList.contains('active')) return;
       if (document.hidden) return;
 
@@ -193,7 +193,7 @@ const Motion = (() => {
     // Ignore taps while one is already running, or they cut each other off.
     if (host.dataset.fxPlaying) return;
 
-    // Never repeat the previous one — back-to-back duplicates read as a bug.
+    // Never repeat the previous one - back-to-back duplicates read as a bug.
     let fx;
     do {
       fx = PORTRAIT_FX[Math.floor(Math.random() * PORTRAIT_FX.length)];
@@ -244,7 +244,7 @@ const Motion = (() => {
     try {
       return localStorage.getItem(BUBBLE_KEY) === '1';
     } catch {
-      return false; // storage blocked — better a bubble than a broken page
+      return false; // storage blocked - better a bubble than a broken page
     }
   };
 

@@ -64,7 +64,7 @@
    Its own background fills the inset, so tile and artwork read as one piece.
    The square comes from aspect-ratio: as a centred grid item a percentage height
    doesn't resolve, and `height: auto` is needed to beat the img's own height
-   attribute — without either the box ends up taller than the tile, and the logo
+   attribute - without either the box ends up taller than the tile, and the logo
    spills out over the frame. */
 .brand-logo {
   display: block;
@@ -114,7 +114,7 @@
   font-weight: 700;
 }
 
-/* One shared pill that slides between tabs (FLIP — see router.js).
+/* One shared pill that slides between tabs (FLIP - see router.js).
    Cheaper and smoother than animating a border on each tab. */
 .tab-indicator {
   position: absolute;
@@ -242,7 +242,7 @@
 
 /* An icon dropped into a sentence (`:joy:` in content copy). Sized in em so it
  * tracks the text around it, and inline-block against the global `svg { display:
- * block }` — otherwise it would break the line it is meant to sit in. */
+ * block }` - otherwise it would break the line it is meant to sit in. */
 .inline-icon {
   display: inline-block;
   width: 1.15em;

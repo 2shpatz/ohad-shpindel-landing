@@ -4,7 +4,7 @@
  *     behind tabs and cards, and turn to look at the visitor or at a click
  *   - a hammer tool that smashes words into pixels, and puts them back
  *
- * All sprites are ORIGINAL art stored as pixel grids in this file — no image
+ * All sprites are ORIGINAL art stored as pixel grids in this file - no image
  * files, no external requests, and no trademarked game characters.
  *
  * Two canvases:
@@ -12,7 +12,7 @@
  *   .arcade-fx  z-index 400 hammer debris, painted above everything
  *
  * prefers-reduced-motion: the whole feature is motion, so it is not built at
- * all — no canvases, no controls, no loop.
+ * all - no canvases, no controls, no loop.
  * ================================================ */
 
 const Arcade = (() => {
@@ -30,7 +30,7 @@ const Arcade = (() => {
   /* ---------- the cast ----------
    * Familiar arcade archetypes from the late 70s / early 80s, hand-drawn here
    * as pixel grids. Each row is one pixel row; every character indexes `pal`,
-   * '0' = transparent. Rows must all be `w` characters long — buildSprite()
+   * '0' = transparent. Rows must all be `w` characters long - buildSprite()
    * throws on a mismatch rather than drawing something broken.
    *
    * NOTE: these designs are recognisable on purpose, at the site owner's
@@ -42,7 +42,7 @@ const Arcade = (() => {
    * between four tabs and three, which is what makes them look like they're
    * flowing rather than sliding. The pupils sit on the right of each eye, so
    * mirroring the sprite for a leftward walk also makes them look where they're
-   * going — no separate per-direction frames needed. */
+   * going - no separate per-direction frames needed. */
   const GHOST_BODY = [
     '00011111000',
     '00111111100',
@@ -61,7 +61,7 @@ const Arcade = (() => {
   ];
 
   const SPRITES = {
-    // Maze-chase ghosts — same shape, two colourways.
+    // Maze-chase ghosts - same shape, two colourways.
     ghostPink: { w: 11, h: 10, pal: ['', '#ff7ab8', '#ffffff', '#2b2b6b'], frames: GHOST_FRAMES },
     ghostCyan: { w: 11, h: 10, pal: ['', '#69e0ef', '#ffffff', '#2b2b6b'], frames: GHOST_FRAMES },
 
@@ -74,7 +74,7 @@ const Arcade = (() => {
     muncher: {
       w: 13, h: 11, pal: ['', '#ffd93d'],
       frames: [
-        [ // 0 — shut
+        [ // 0 - shut
           '0000111110000',
           '0001111111000',
           '0011111111100',
@@ -87,7 +87,7 @@ const Arcade = (() => {
           '0001111111000',
           '0000111110000',
         ],
-        [ // 1 — half open
+        [ // 1 - half open
           '0000111110000',
           '0001111111000',
           '0011111111100',
@@ -100,7 +100,7 @@ const Arcade = (() => {
           '0001111111000',
           '0000111110000',
         ],
-        [ // 2 — wide open
+        [ // 2 - wide open
           '0000111110000',
           '0001111111000',
           '0011111110000',
@@ -113,7 +113,7 @@ const Arcade = (() => {
           '0001111111000',
           '0000111110000',
         ],
-        [ // 3 — death: the mouth swings up and the crown splits
+        [ // 3 - death: the mouth swings up and the crown splits
           '0000000000000',
           '0001100011000',
           '0011110111100',
@@ -126,7 +126,7 @@ const Arcade = (() => {
           '0001111111000',
           '0000111110000',
         ],
-        [ // 4 — death: gap widening, horns shrinking
+        [ // 4 - death: gap widening, horns shrinking
           '0000000000000',
           '0000000000000',
           '0011000001100',
@@ -139,7 +139,7 @@ const Arcade = (() => {
           '0001111111000',
           '0000111110000',
         ],
-        [ // 5 — death: horns almost gone
+        [ // 5 - death: horns almost gone
           '0000000000000',
           '0000000000000',
           '0000000000000',
@@ -152,7 +152,7 @@ const Arcade = (() => {
           '0001111111000',
           '0000111110000',
         ],
-        [ // 6 — death: opened past itself, a flat crescent
+        [ // 6 - death: opened past itself, a flat crescent
           '0000000000000',
           '0000000000000',
           '0000000000000',
@@ -165,7 +165,7 @@ const Arcade = (() => {
           '0001111111000',
           '0000111110000',
         ],
-        [ // 7 — death: a sliver
+        [ // 7 - death: a sliver
           '0000000000000',
           '0000000000000',
           '0000000000000',
@@ -178,7 +178,7 @@ const Arcade = (() => {
           '0001111111000',
           '0000111110000',
         ],
-        [ // 8 — death: the spark it goes out on
+        [ // 8 - death: the spark it goes out on
           '0000000000000',
           '0000000000000',
           '0000000000000',
@@ -194,7 +194,7 @@ const Arcade = (() => {
       ],
     },
 
-    // Descending crab alien. Two frames, arms down then arms up — the invaders
+    // Descending crab alien. Two frames, arms down then arms up - the invaders
     // flip on every step of the march rather than animating smoothly.
     invader: {
       w: 11, h: 8, pal: ['', '#7ee081'],
@@ -227,7 +227,7 @@ const Arcade = (() => {
      * refitted (scale 3.96) and each cell resampled: the result is the GIF's own
      * 15x21 art and its own 9 colours, not a redraw. The GIF holds just two
      * poses, 120ms each, so it becomes two frames alternating at that rate.
-     * Frame 2 sits two rows higher — that lift is in the GIF, not a mistake. */
+     * Frame 2 sits two rows higher - that lift is in the GIF, not a mistake. */
     plumber: {
       w: 15, h: 21,
       pal: ['', '#000000', '#f8e1d8', '#885718', '#f58567', '#315a90', '#500101', '#b02960', '#f84170', '#7fd7c8'],
@@ -281,7 +281,7 @@ const Arcade = (() => {
       ],
     },
 
-    // Top-row squid — the small, fast one. Its legs tuck in and splay out.
+    // Top-row squid - the small, fast one. Its legs tuck in and splay out.
     invaderSquid: {
       w: 8, h: 8, pal: ['', '#69e0ef'],
       frames: [
@@ -308,7 +308,7 @@ const Arcade = (() => {
       ],
     },
 
-    // Bottom-row octopus — the wide, slow one. Its tentacles swing in and out.
+    // Bottom-row octopus - the wide, slow one. Its tentacles swing in and out.
     invaderOcto: {
       w: 12, h: 8, pal: ['', '#ffb066'],
       frames: [
@@ -381,13 +381,13 @@ const Arcade = (() => {
     // ---- ground crew: these always patrol the bottom of the page ----
 
     // The alley cat. These five grids were traced automatically from the
-    // game's own walk/sit frames (the source JPEGs were deleted once traced —
+    // game's own walk/sit frames (the source JPEGs were deleted once traced -
     // the grids below are the only copy). The cat was the only black in those
     // images, so an "all channels low" test isolated the silhouette; a
     // luminance test does not, since the magenta background sits at ~82.
     // All frames share one scale and are bottom/right-aligned, so the head
     // stays put while the legs and tail move and the cat never changes size.
-    // Orange rather than the original's black, by request — and it reads far
+    // Orange rather than the original's black, by request - and it reads far
     // better than black would on the dark #210535 background.
     // Frames 0-2 walk, 3-4 sit.
     cat: {
@@ -459,13 +459,13 @@ const Arcade = (() => {
     //
     // All ten frames share one 9x14 grid, bottom-aligned: the walker occupies
     // the lower ten rows and the top four are empty, which is exactly where the
-    // canopy unfolds — so opening the umbrella never moves the body.
+    // canopy unfolds - so opening the umbrella never moves the body.
     // Colours are the sheet's own (green, skin, blue); the canopy is the site's
     // yellow rather than the sheet's pure #ffff00, which glares at this size.
     lemming: {
       w: 9, h: 14, pal: ['', '#00b000', '#f0d0d1', '#4040e0', '#ffd93d'],
       frames: [
-        [ // 0 — walk
+        [ // 0 - walk
           '000000000',
           '000000000',
           '000000000',
@@ -481,7 +481,7 @@ const Arcade = (() => {
           '000220000',
           '000000000',
         ],
-        [ // 1 — walk
+        [ // 1 - walk
           '000000000',
           '000000000',
           '000000000',
@@ -497,7 +497,7 @@ const Arcade = (() => {
           '002200000',
           '000000000',
         ],
-        [ // 2 — walk
+        [ // 2 - walk
           '000000000',
           '000000000',
           '000000000',
@@ -513,7 +513,7 @@ const Arcade = (() => {
           '022002200',
           '000000000',
         ],
-        [ // 3 — walk
+        [ // 3 - walk
           '000000000',
           '000000000',
           '000000000',
@@ -529,7 +529,7 @@ const Arcade = (() => {
           '020022000',
           '000000000',
         ],
-        [ // 4 — walk
+        [ // 4 - walk
           '000000000',
           '000000000',
           '000000000',
@@ -545,7 +545,7 @@ const Arcade = (() => {
           '000220000',
           '000000000',
         ],
-        [ // 5 — walk
+        [ // 5 - walk
           '000000000',
           '000000000',
           '000000000',
@@ -561,7 +561,7 @@ const Arcade = (() => {
           '002200000',
           '000000000',
         ],
-        [ // 6 — walk
+        [ // 6 - walk
           '000000000',
           '000000000',
           '000000000',
@@ -577,7 +577,7 @@ const Arcade = (() => {
           '022002200',
           '000000000',
         ],
-        [ // 7 — walk
+        [ // 7 - walk
           '000000000',
           '000000000',
           '000000000',
@@ -593,11 +593,11 @@ const Arcade = (() => {
           '020022000',
           '000000000',
         ],
-        [ // 8 — float: canopy open, legs apart
+        [ // 8 - float: canopy open, legs apart
           '000444000',
           '044444440',
           '444444444',
-          '000030000',   // shaft — the gap that stops the canopy reading as a hat
+          '000030000',   // shaft - the gap that stops the canopy reading as a hat
           '000232000',   // hands gripping it
           '001111000',   // hair
           '001122000',
@@ -609,7 +609,7 @@ const Arcade = (() => {
           '000303000',
           '002202200',
         ],
-        [ // 9 — float: canopy flexed, tips curled, legs swung
+        [ // 9 - float: canopy flexed, tips curled, legs swung
           '000444000',
           '004444400',
           '444444444',
@@ -628,7 +628,7 @@ const Arcade = (() => {
       ],
     },
 
-    /* The janitor. Nobody drives it and it has no face — it is a prop that
+    /* The janitor. Nobody drives it and it has no face - it is a prop that
      * walks, summoned by restoreAll() once the text has gone home, to clear the
      * debris that has no home to go to. Two frames: the head wags left, then
      * right, and the bristle tips change their gaps between them, so a pass
@@ -636,7 +636,7 @@ const Arcade = (() => {
     broom: {
       w: 11, h: 16, pal: ['', '#c9c9c9', '#8f8f8f'],
       frames: [
-        [ // 0 — head planted, handle leaning back
+        [ // 0 - head planted, handle leaning back
           '00000001100',
           '00000011100',
           '00000011000',
@@ -654,7 +654,7 @@ const Arcade = (() => {
           '11111111110',
           '11011011010',   // bristle tips
         ],
-        [ // 1 — head swung forward, tips splayed the other way
+        [ // 1 - head swung forward, tips splayed the other way
           '00000011000',
           '00000111000',
           '00000110000',
@@ -683,7 +683,7 @@ const Arcade = (() => {
   // instead of walking the floor, so it gets its own keeper below. Both lists
   // are kept out of the pool the wanderers are drawn from.
   const ALWAYS_ON = [...GROUND_CREW, 'muncher', 'lemming'];
-  // Summoned by name for one job and gone again — never a wanderer, never a
+  // Summoned by name for one job and gone again - never a wanderer, never a
   // hammer target, so it stays out of the pool spawn() draws from.
   const SUMMONED = ['broom'];
   const NAMES = Object.keys(SPRITES)
@@ -763,7 +763,7 @@ const Arcade = (() => {
   const PLUMBER_WALK_FPS = 1 / 0.12;   // the GIF holds each pose for 120ms
   const PLUMBER_AIR_FRAME = 1;   // legs apart reads as a jump
 
-  // Shut, half, wide, half — a mouth that opens and closes, not one that snaps
+  // Shut, half, wide, half - a mouth that opens and closes, not one that snaps
   // back to shut from wide.
   const CHOMP = [0, 1, 2, 1];
   const CHOMP_FPS = 11;
@@ -937,15 +937,15 @@ const Arcade = (() => {
   /* ---------- the lemmings ----------
    * These walk along real page elements. Each one is put down on top of one of
    * the platforms the cat uses, walks until the ground under its feet runs out,
-   * then opens its umbrella and floats down to whatever is below — another
-   * element, or the floor — and carries on walking there. They turn at the
+   * then opens its umbrella and floats down to whatever is below - another
+   * element, or the floor - and carries on walking there. They turn at the
    * viewport edges rather than leaving, so a pair is always somewhere on screen.
    *
    * Nothing here tracks which element it is standing on: support is re-derived
    * from the live platform list every frame, exactly as the cat's landing is, so
    * an element that scrolls away or reflows simply drops whoever was on it. */
 
-  const LEM_SPEED = 26;         // px/s — a deliberate plod
+  const LEM_SPEED = 26;         // px/s - a deliberate plod
   const LEM_FALL = 58;          // px/s under the umbrella
   const LEM_DRIFT = 10;         // px/s sideways while floating
 
@@ -1001,7 +1001,7 @@ const Arcade = (() => {
     };
 
     if (roll < 0.34) {
-      // fall — drift down from above with a slow sway
+      // fall - drift down from above with a slow sway
       sprite.state = 'fall';
       sprite.x = 40 + Math.random() * (innerWidth - 120);
       sprite.y = -sprite.h - Math.random() * 120;
@@ -1009,7 +1009,7 @@ const Arcade = (() => {
       sprite.sway = 0.6 + Math.random() * 0.8;
       sprite.swayT = Math.random() * 6;
     } else if (roll < 0.7) {
-      // peek — hide behind an anchor and lean out over its top edge
+      // peek - hide behind an anchor and lean out over its top edge
       const list = anchors();
       if (!list.length) return;
       const a = list[(Math.random() * list.length) | 0].getBoundingClientRect();
@@ -1022,7 +1022,7 @@ const Arcade = (() => {
       sprite.hold = 1.6 + Math.random() * 2.2;
       sprite.face = Math.random() < 0.5 ? 1 : -1;
     } else {
-      // stroll — walk across a random band
+      // stroll - walk across a random band
       sprite.state = 'stroll';
       const dir = Math.random() < 0.5 ? 1 : -1;
       sprite.face = dir;
@@ -1039,8 +1039,8 @@ const Arcade = (() => {
     for (let i = cast.length - 1; i >= 0; i--) {
       const s = cast[i];
 
-      // Dying freezes it where it stands — no walking, no bob, no looking at
-      // the cursor — and the collapse plays out on its own clock.
+      // Dying freezes it where it stands - no walking, no bob, no looking at
+      // the cursor - and the collapse plays out on its own clock.
       if (s.dying) {
         s.dieT += dt;
         if (s.dieT >= DIE_DUR) {
@@ -1084,7 +1084,7 @@ const Arcade = (() => {
 
         // Pick something to climb and walk toward it. Without this the cat only
         // jumps when a platform happens to be overhead, which almost never
-        // lines up — airtime is ~1s and it drifts barely 30px sideways.
+        // lines up - airtime is ~1s and it drifts barely 30px sideways.
         // Sit / walk cycle. While sitting it holds still and does not climb.
         s.sitT -= dt;
         if (s.sitT <= 0) {
@@ -1181,7 +1181,7 @@ const Arcade = (() => {
               // restore the pace on landing.
               s.jumping = true;
               s.vx = Math.sign(s.vx || 1) * 10;
-              s.seek = null;                 // climbed it — pick a new goal next
+              s.seek = null;                 // climbed it - pick a new goal next
               s.seekT = 3 + Math.random() * 3;
             } else {
               s.vy = -(280 + Math.random() * 150);
@@ -1257,7 +1257,7 @@ const Arcade = (() => {
       } else if (s.state === 'munch') {
         s.x += s.vx * dt;
         // It starts off the edge, so the turn-at-the-wall rule only applies once
-        // it is fully on screen — otherwise it would bounce off its own entrance.
+        // it is fully on screen - otherwise it would bounce off its own entrance.
         if (!s.entered && s.x > 4 && s.x < innerWidth - s.w - 4) s.entered = true;
         if (s.entered) {
           if (s.x <= 4) { s.x = 4; s.vx = Math.abs(s.vx); s.lane = laneY(s.h); }
@@ -1289,7 +1289,7 @@ const Arcade = (() => {
       }
 
       // Look toward the cursor while idle (fine pointers only). Anyone on a
-      // fixed heading is excluded — they must face the way they travel, or they
+      // fixed heading is excluded - they must face the way they travel, or they
       // moonwalk (and a muncher would be chomping backwards).
       if (finePointer && pointer.x > -1e3 &&
           s.state !== 'ground' && s.state !== 'cat' &&
@@ -1345,7 +1345,7 @@ const Arcade = (() => {
 
   // Breaking the line about breaking rules throws the rules themselves out:
   // spinning 90s WordArt חוק, one per hit. Matched on the text so the copy in
-  // content.js stays plain strings — reword it and this keeps working as long
+  // content.js stays plain strings - reword it and this keeps working as long
   // as "לשבור חוקים" survives.
   const RULE_LINE = /לשבור\s+חוקים/;
 
@@ -1375,7 +1375,7 @@ const Arcade = (() => {
         }
       }
     } catch {
-      // getImageData unavailable — fall back to filling the character box
+      // getImageData unavailable - fall back to filling the character box
       for (let y = 0; y < chh; y += step) {
         for (let x = 0; x < cw; x += step) pts.push([x, y]);
       }
@@ -1452,7 +1452,7 @@ const Arcade = (() => {
    * Deliberately the ugliest thing on the site: rainbow gradient, fake extrude,
    * fat outline. It is a joke about 1997, so it should look like 1997.
    *
-   * Unlike the pixel debris these do NOT fall — they drift around the viewport
+   * Unlike the pixel debris these do NOT fall - they drift around the viewport
    * and bounce off its edges, because they are targets: the whole point is to
    * chase one down with the hammer and break the rule yourself. They live in
    * viewport space (no scroll offset) so scrolling never carries them away. */
@@ -1589,7 +1589,7 @@ const Arcade = (() => {
     try {
       data = g.getImageData(0, 0, cw, ch).data;
     } catch {
-      data = null; // canvas tainted or unavailable — fall back to a spark burst
+      data = null; // canvas tainted or unavailable - fall back to a spark burst
     }
 
     if (data) {
@@ -1624,14 +1624,14 @@ const Arcade = (() => {
 
   /* ---------- smashing a character ----------
    * The sprite grid is already pixel data, so its own pixels become the
-   * debris — a hit looks like the character coming apart, not a generic burst.
+   * debris - a hit looks like the character coming apart, not a generic burst.
    * These particles are marked transient: they tween home like everything else
    * on restore, but there is no element to un-hide, so they simply clear. */
 
   function hitTestCast(x, y) {
     for (let i = cast.length - 1; i >= 0; i--) {
       const s = cast[i];
-      // One that is already coming apart shouldn't keep swallowing clicks —
+      // One that is already coming apart shouldn't keep swallowing clicks -
       // let them through to whatever is behind it.
       if (s.dying) continue;
       if (x >= s.x - 6 && x <= s.x + s.w + 6 &&
@@ -1641,7 +1641,7 @@ const Arcade = (() => {
   }
 
   /* A hammer blow on the muncher plays its own death animation instead of
-   * bursting into debris — that collapse is the character's signature, and the
+   * bursting into debris - that collapse is the character's signature, and the
    * spark burst at the end still pays the hit off. Everyone else explodes. */
   function hitCast(index, x, y) {
     const s = cast[index];
@@ -1729,7 +1729,7 @@ const Arcade = (() => {
       fxCtx.globalAlpha = 1 - k;
       fxCtx.strokeStyle = LIGHT;
       fxCtx.lineWidth = 3;
-      // Square ring rather than a circle — reads as pixel art, not a bubble.
+      // Square ring rather than a circle - reads as pixel art, not a bubble.
       fxCtx.strokeRect(Math.round(s.x - r), Math.round(s.y - r), Math.round(r * 2), Math.round(r * 2));
       fxCtx.globalAlpha = 1;
     }
@@ -1761,7 +1761,7 @@ const Arcade = (() => {
   }
 
   /* ---------- the broom ----------
-   * Only the text pixels have somewhere to be — they came out of a word and
+   * Only the text pixels have somewhere to be - they came out of a word and
    * they go back into it. Sprite debris, WordArt shards and sparks never had a
    * home, so tweening them "back" was a lie the eye could read: they'd fly to
    * a spot and vanish. They stay on the floor instead, and this comes to clear
@@ -1769,10 +1769,10 @@ const Arcade = (() => {
    * along ahead of the bristles until it goes off the edge.
    *
    * The pass lives in page coordinates like the debris does, on the line where
-   * the debris actually settled — not on the current viewport floor, which the
+   * the debris actually settled - not on the current viewport floor, which the
    * visitor may have scrolled somewhere else entirely. */
 
-  const SWEEP_SPEED = 300;   // px/s the broom walks — a brisk pass, not a stroll
+  const SWEEP_SPEED = 300;   // px/s the broom walks - a brisk pass, not a stroll
   const SWEEP_FPS = 7;       // the head's wag
   const SWEEP_REACH = 46;    // how far above the line the bristles still catch
 
@@ -1823,8 +1823,8 @@ const Arcade = (() => {
     }
 
     if (sweep.x <= sweep.end) {
-      // Whatever never made it under the bristles — litter on some other
-      // screenful — goes with the broom rather than outliving it.
+      // Whatever never made it under the bristles - litter on some other
+      // screenful - goes with the broom rather than outliving it.
       for (let i = particles.length - 1; i >= 0; i--) {
         if (isLitter(particles[i])) particles.splice(i, 1);
       }
@@ -1905,7 +1905,7 @@ const Arcade = (() => {
 
   /* ---------- the hammer's bubble ----------
    * It lives next to the button rather than on the logo, because the hammer can
-   * be picked up from any tab and the logo is only on one of them — a nag about
+   * be picked up from any tab and the logo is only on one of them - a nag about
    * tidying up should be where the mess is being made.
    *
    * It shows on every pick-up (that is the joke), but leaves on its own after a
@@ -1922,7 +1922,7 @@ const Arcade = (() => {
     try {
       return localStorage.getItem(HAMMER_BUBBLE_KEY) === '1';
     } catch {
-      return false; // storage blocked — a bubble beats a broken control
+      return false; // storage blocked - a bubble beats a broken control
     }
   };
 
@@ -2007,7 +2007,7 @@ const Arcade = (() => {
     hammerBtn.addEventListener('click', () => {
       hammerOn = !hammerOn;
       syncHammer();
-      // Picking the hammer back up sends the janitor away mid-pass — it is here
+      // Picking the hammer back up sends the janitor away mid-pass - it is here
       // to clean up after you, not to sweep under an active hammer. Whatever it
       // hadn't reached stays on the floor until the next time you put it down.
       if (hammerOn) sweep = null;
@@ -2110,9 +2110,9 @@ const Arcade = (() => {
       // The floor moved, and on mobile the tab bar changes the clearance.
       for (const s of cast) {
         if (s.state === 'lemming') {
-          // The layout just moved under it. Nothing to reposition — the support
+          // The layout just moved under it. Nothing to reposition - the support
           // check re-derives from the new platform list next frame and it either
-          // keeps walking or opens the umbrella — but it must stay on screen.
+          // keeps walking or opens the umbrella - but it must stay on screen.
           s.x = Math.max(2, Math.min(s.x, innerWidth - s.w - 2));
           s.y = Math.min(s.y, groundY(s.h));
           continue;
@@ -2183,7 +2183,7 @@ const Arcade = (() => {
 
     document.addEventListener('visibilitychange', kick);
     ready = true;
-    // Only when the layer is actually on — otherwise a visitor who switched
+    // Only when the layer is actually on - otherwise a visitor who switched
     // the characters off still gets the bottom crew back on every reload.
     if (arcadeOn) {
       refreshPlatforms();

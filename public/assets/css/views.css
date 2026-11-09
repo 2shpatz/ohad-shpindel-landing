@@ -31,7 +31,7 @@
 }
 
 /* View Transitions API: cross-fade the whole page, slide the new one in.
-   RTL-aware — new content enters from the inline-start edge. */
+   RTL-aware - new content enters from the inline-start edge. */
 ::view-transition-old(page) {
   animation: vt-out var(--dur-med) var(--ease-in-out) both;
 }
@@ -137,7 +137,7 @@
 /* ---- Portrait ---- */
 
 /* The logo and its speech bubble as one column. `.hero-portrait` keeps its own
- * box untouched — motion.js finds it by that class for the tap animations, and
+ * box untouched - motion.js finds it by that class for the tap animations, and
  * the arcade peeks characters out from behind it. */
 .hero-portrait-col {
   display: grid;
@@ -177,7 +177,7 @@
   border-color: var(--accent-primary);
 }
 
-/* The dismiss hint. Decoration — the whole bubble is the target, and the
+/* The dismiss hint. Decoration - the whole bubble is the target, and the
  * button's accessible name is the message itself. */
 .bubble-x {
   position: absolute;
@@ -359,7 +359,7 @@
   80% { transform: rotate(-4deg); }
 }
 
-/* On phones the portrait leads — it's what makes the page feel like a person.
+/* On phones the portrait leads - it's what makes the page feel like a person.
    Everything else tightens so the CTA still clears the bottom nav.
    Must stay after the rules above: media queries add no specificity, so a
    later equal-specificity rule would otherwise win. */
@@ -368,7 +368,7 @@
     padding-block: 4px 0;
     gap: 26px;
   }
-  /* The grid item is the column, not the portrait inside it — `order` on the
+  /* The grid item is the column, not the portrait inside it - `order` on the
      inner element only sorts it against the bubble and leaves the whole block
      below the copy. */
   .hero-portrait-col { order: -1; }
@@ -488,7 +488,7 @@
   justify-items: center;
 }
 
-/* One shape for every card, whatever the photo's own proportions — a pile of
+/* One shape for every card, whatever the photo's own proportions - a pile of
  * prints is a pile of prints. 3:4 rather than the phone's own 9:16, which would
  * be a very tall column on a desktop; each photo's `focus` decides what the
  * crop keeps. */
@@ -527,7 +527,7 @@
   -webkit-user-drag: none;
 }
 
-/* The three depths. Deliberately asymmetric angles — a neat fan reads as a
+/* The three depths. Deliberately asymmetric angles - a neat fan reads as a
  * carousel, a crooked one reads as a pile someone put down. */
 .photo-card:nth-child(1) {
   z-index: 3;
@@ -605,7 +605,7 @@
 }
 
 /* No transitions to run, so the pile cuts from one arrangement to the next.
- * Dragging is not attached at all in that mode — the button is the way. */
+ * Dragging is not attached at all in that mode - the button is the way. */
 @media (prefers-reduced-motion: reduce) {
   .photo-card,
   .photo-card.is-leaving { transition: none; }
@@ -669,8 +669,8 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
-/* Every card is laid out on the SAME five rows — thumb, title, blurb, tags,
- * "more" — so a title that runs to three lines in one card does not push its
+/* Every card is laid out on the SAME five rows - thumb, title, blurb, tags,
+ * "more" - so a title that runs to three lines in one card does not push its
  * blurb below the neighbour's. `subgrid` makes each card borrow the grid's
  * rows, which are sized once per band from the tallest card in it; the fallback
  * below keeps the old per-card stacking where subgrid is unsupported. */
@@ -721,7 +721,7 @@
   opacity: 0.9;
 }
 
-/* The body is only a wrapper for the four text rows — its children have to be
+/* The body is only a wrapper for the four text rows - its children have to be
  * grid items of the card itself, so its padding moves onto them. */
 .project-body {
   display: contents;
@@ -793,7 +793,7 @@
 /* RTL: the "read more" arrow points right-to-left. */
 .project-card:hover .project-more svg { transform: translateX(-4px); }
 
-/* The line after a break in a title is a subtitle, not a second headline —
+/* The line after a break in a title is a subtitle, not a second headline -
  * sized off the heading it sits in (em, not rem) so it stays in proportion on
  * the card's h3 and the detail page's h2 alike. */
 .title-sub {
@@ -1634,7 +1634,7 @@
   overflow: hidden; /* keeps the ::before ribbon inside the rounded corner */
 }
 
-/* A coloured rule along the card's top edge — the fastest read of "these two
+/* A coloured rule along the card's top edge - the fastest read of "these two
  * are different things" before a word is parsed. */
 .plan-card::before {
   content: '';
@@ -2135,7 +2135,7 @@
 
 /* Official app-icon artwork brings its own brand colour and its own rounded
    corners (transparent outside them), so the tinted plate and border would only
-   show as a halo behind it — drop both and let the artwork be the tile. */
+   show as a halo behind it - drop both and let the artwork be the tile. */
 .support-icon.is-logo {
   background: none;
   border: none;
@@ -2161,7 +2161,7 @@
 
 .support-card .btn { width: 100%; }
 
-/* For a `kind: 'handle'` option — something with no working web link at all, so
+/* For a `kind: 'handle'` option - something with no working web link at all, so
    we surface the number itself with a copy button rather than a dead link. No
    option uses it right now; Bit and PayBox both moved to real links. */
 .handle-box {
@@ -2188,7 +2188,7 @@
 .handle-box svg { width: 17px; height: 17px; opacity: 0.7; }
 
 /* The QR art is pure black-on-white, so it needs its own light plate to stay
-   scannable on the dark theme — tinting or inverting it breaks phone cameras. */
+   scannable on the dark theme - tinting or inverting it breaks phone cameras. */
 .qr-box {
   display: flex;
   flex-direction: column;
@@ -2201,10 +2201,10 @@
 /* Every QR under assets/img is generated on the same grid: 41 modules (a
    version-4 code's 33, plus a 4-module quiet zone each side) at 24px, i.e. a
    984px square. 164px here is those 41 modules at 4px, so the downscale is an
-   exact 1:6 — and 2x/3x screens land on 1:3 and 1:2. Whole pixels per module is
+   exact 1:6 - and 2x/3x screens land on 1:3 and 1:2. Whole pixels per module is
    what keeps the code readable by a phone; an off-grid size smears the modules
    and scanners fail. Add a new QR at 984px/41 modules, and leave
-   image-rendering at its default (smooth) — `pixelated` drops module rows when
+   image-rendering at its default (smooth) - `pixelated` drops module rows when
    the browser scales down. */
 .qr-box img {
   width: 164px;
@@ -2447,7 +2447,7 @@
 }
 
 /* `qr-box` already styles the image; this only gives it room. The explicit
-   [hidden] rule is not redundant — `.qr-box` sets `display: flex`, and an
+   [hidden] rule is not redundant - `.qr-box` sets `display: flex`, and an
    author rule beats the browser's own `[hidden] { display: none }`. */
 .amount-qr {
   margin-block-start: 16px;
@@ -2476,7 +2476,7 @@
   .contact-layout {
     grid-template-columns: 1.15fr 0.85fr;
   }
-  /* No contact details configured yet — don't leave an empty column. */
+  /* No contact details configured yet - don't leave an empty column. */
   .contact-layout.no-aside {
     grid-template-columns: minmax(0, 760px);
     justify-content: center;
@@ -2506,7 +2506,7 @@
   margin-block-end: 18px;
 }
 
-/* One row per app group. A plain link — the target is a public join link, so
+/* One row per app group. A plain link - the target is a public join link, so
    unlike the old personal number there is nothing to keep out of the markup. */
 .wa-groups {
   display: grid;
@@ -2739,12 +2739,12 @@
   display: inline-block;
 }
 
-/* ==================== PROJECT DETAIL — MOBILE ====================
+/* ==================== PROJECT DETAIL - MOBILE ====================
  * The project page's type scale was authored for a wide screen and none of it
  * was conditional, so a 390px phone got the desktop sizes verbatim.
  *
  * The fix is NOT to shrink everything uniformly. What makes the desktop page
- * read well is that its headings sit at 2em — double their surrounding copy —
+ * read well is that its headings sit at 2em - double their surrounding copy -
  * and that ratio is what carries the eye down the page. Those `em` sizes are
  * already responsive (they track `--fs-body`, which drops on a phone), so the
  * headings are left alone here on purpose. Only sizes that were *absolute*
@@ -2754,8 +2754,8 @@
 
   /* ---- Headline: the app name, as large as fits on one line ---- */
 
-  /* Measured in the shipped face at weight 800: "שפכו ת'לב" — the wider of the
-   * two headline lines — takes 463px per 100px of font-size. The container
+  /* Measured in the shipped face at weight 800: "שפכו ת'לב" - the wider of the
+   * two headline lines - takes 463px per 100px of font-size. The container
    * leaves `100vw - 2 × clamp(18px, 5vw, 40px)`, so the largest size that still
    * sets on one line is about (100vw - 40px) / 4.63. The divisor is rounded up
    * to 4.75, which holds the headline at ~95% of the space it could fill: the
@@ -2766,7 +2766,7 @@
     font-size: min(calc((100vw - 44px) / 4.75), 6rem);
     line-height: 1.06;
     /* The headline's two lines are split by a <br>. nowrap keeps each of them
-     * whole — the subtitle opts back out just below, since it is a sentence and
+     * whole - the subtitle opts back out just below, since it is a sentence and
      * is supposed to wrap. */
     white-space: nowrap;
   }
@@ -2879,7 +2879,7 @@
   .body-carousel-card { padding: 16px; }
   .plans-note { gap: 12px; padding: 15px; }
 
-  /* The flip cards keep their desktop look — same faces, same flip — but the
+  /* The flip cards keep their desktop look - same faces, same flip - but the
    * 88px inline padding is desktop breathing room. On a phone it squeezes the
    * lead into a two-word column and re-wraps lines the content already broke by
    * hand ("מחיר קבוע / לתמיד"), so the copy runs the card's full width here. */
@@ -2919,7 +2919,7 @@
   .plan-tagline { font-size: var(--fs-xs); }
 
   /* `nowrap` on the unit kept "לשנה ללא כל התחייבות" on one line beside a 3rem
-     number — together wider than the card. */
+     number - together wider than the card. */
   .plan-price { flex-wrap: wrap; }
   .plan-price-num { font-size: clamp(2rem, 8vw, 2.55rem); }
   .plan-price-unit { font-size: var(--fs-sm); white-space: normal; }
@@ -2935,7 +2935,7 @@
 
   /* The glowing pill and the "✨ • ✨" runs flanking it are what the card is
    * for. They are absolutely positioned outside the pill on both sides, so they
-   * only need to be scaled to the narrower screen — not dropped. */
+   * only need to be scaled to the narrower screen - not dropped. */
   .personal-note .text-link { font-size: 1.35em; }
 
   .personal-note .text-link::before,

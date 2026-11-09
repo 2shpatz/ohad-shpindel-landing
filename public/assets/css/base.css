@@ -2,7 +2,7 @@
  * Reset, fonts, RTL foundations, motion policy.
  * ============================================== */
 
-/* Tel Aviv Eclectic — the site's face, split across two files.
+/* Tel Aviv Eclectic - the site's face, split across two files.
  *
  * THE `unicode-range` LINES BELOW ARE LOAD-BEARING. Each file claims the other
  * script's codepoints in its cmap and maps them to BLANK glyphs, so a browser
@@ -10,16 +10,16 @@
  *   - the Latin file draws 'אוהד שפינדל' with 0 ink but 105px of advance
  *   - the Hebrew file draws 'Ohad ABC'   with 0 ink
  * Drop either range and half the site's text silently turns invisible while
- * still taking up space — it reads as a broken layout, not a missing font.
+ * still taking up space - it reads as a broken layout, not a missing font.
  * The two ranges are kept disjoint so there is no ambiguity about which file
  * serves a given character. Re-test both scripts after touching this.
  *
- * Both are declared `font-weight: 400` — a single static weight each, with no
+ * Both are declared `font-weight: 400` - a single static weight each, with no
  * variable axis. Declaring `100 900` would tell the browser every weight
  * already exists and it would stop synthesising bold, flattening every
  * heading (measured: 0% extra ink at 800, vs +23% when declared honestly). */
 
-/* Hebrew — all body copy, headings and navigation. */
+/* Hebrew - all body copy, headings and navigation. */
 @font-face {
   font-family: 'Tel Aviv Eclectic';
   font-style: normal;
@@ -29,7 +29,7 @@
   unicode-range: U+0590-05FF, U+20AA, U+FB1D-FB4F;
 }
 
-/* Latin, digits and punctuation — emails, URLs, numbers. */
+/* Latin, digits and punctuation - emails, URLs, numbers. */
 @font-face {
   font-family: 'Tel Aviv Eclectic';
   font-style: normal;
@@ -185,14 +185,14 @@ ul, ol { list-style: none; }
   pointer-events: none;
 
   /* The photo lives on this fixed layer rather than on <body> with
-     background-attachment: fixed — iOS Safari does not honour that with a scaled
+     background-attachment: fixed - iOS Safari does not honour that with a scaled
      background and reflows it on every scroll. Here it simply never moves.
 
      `cover`: the photo fills the screen edge to edge. It is portrait (736x1308),
      so a landscape viewport shows a centre band of it rather than the whole
-     frame — `contain` showed all of it but left the sides empty, which read worse.
+     frame - `contain` showed all of it but left the sides empty, which read worse.
 
-     The scrim is OFF by request — the photo is meant to be seen as it is. Be
+     The scrim is OFF by request - the photo is meant to be seen as it is. Be
      aware of what that costs: the lightning peaks at luminance 0.997, so text
      crossing a streak sits at ~1.1:1 against it. Set --bg-scrim back to
      rgba(33, 5, 53, 0.84) to restore AA everywhere. */
@@ -219,7 +219,7 @@ ul, ol { list-style: none; }
 }
 
 /* Spotlights: dark purple pools that drift over the photo. They sit ABOVE the
-   scrim, so they only ever deepen the background — they never lift it back
+   scrim, so they only ever deepen the background - they never lift it back
    toward the bright end and undo the contrast the scrim just bought. */
 .orb-1 {
   width: 62vmax; height: 62vmax;
@@ -276,7 +276,7 @@ ul, ol { list-style: none; }
 
 /* ==================== MOTION POLICY ====================
  * Nothing above is load-bearing for comprehension, so when the OS asks for
- * less motion we cut all of it — not just soften it. motion.js checks the
+ * less motion we cut all of it - not just soften it. motion.js checks the
  * same query and never attaches its listeners.
  * ======================================================= */
 

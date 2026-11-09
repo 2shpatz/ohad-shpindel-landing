@@ -3,17 +3,17 @@
  * This is the ONLY file you need to edit to change the site.
  * Everything the visitor reads lives here. No HTML editing required.
  *
- * Anything marked TODO_ is a placeholder — replace it.
+ * Anything marked TODO_ is a placeholder - replace it.
  *
  * Quick guide:
- *   meta      — your name, tagline, photo, contact details
- *   about     — the "About me" tab
- *   projects  — the "My projects" tab (each array item becomes a sub-tab)
- *   support   — the "Support me" tab
- *   contact   — the "Contact me" tab + the form
+ *   meta      - your name, tagline, photo, contact details
+ *   about     - the "About me" tab
+ *   projects  - the "My projects" tab (each array item becomes a sub-tab)
+ *   support   - the "Support me" tab
+ *   contact   - the "Contact me" tab + the form
  *
  * Hebrew text goes in quotes as-is. To add a line break inside a paragraph,
- * just start a new string in the array — each string is its own paragraph.
+ * just start a new string in the array - each string is its own paragraph.
  * ==================================================== */
 
 const SITE_CONTENT = {
@@ -32,9 +32,9 @@ const SITE_CONTENT = {
     photo: 'assets/img/ohad_logo.webp',
 
     // How the photo sits inside the blob shape:
-    //   'cover'   — fills the whole shape, crops the edges. Best for a square
+    //   'cover'   - fills the whole shape, crops the edges. Best for a square
     //               photo, or any photo where the face is centered with room around it.
-    //   'contain' — shows the entire image, no cropping. Best for a cut-out or
+    //   'contain' - shows the entire image, no cropping. Best for a cut-out or
     //               logo on a flat background (the shape fills with `photoBg`).
     photoFit: 'contain',
     photoBg: '#000',
@@ -42,14 +42,14 @@ const SITE_CONTENT = {
     initials: 'א״ש',
 
     // A speech bubble under the logo. It points at the arcade layer's remote
-    // button, so it is shown only while that layer is actually on — under
+    // button, so it is shown only while that layer is actually on - under
     // "reduced motion", or with `arcade.enabled: false` below, there is no
     // button and no bubble. Set to null to hide it anyway.
     //
     // `:joy:` draws the joystick icon that is on that button, inline in the text.
     photoBubble: 'יותר מדי בלגן בעיניים?\nלחיצה על כפתור הארקייד :joy: תעלים את הדמויות',
 
-    // No personal WhatsApp number here on purpose — contact goes through the
+    // No personal WhatsApp number here on purpose - contact goes through the
     // form, the email below, or a per-app WhatsApp group (see `contact.whatsapp`).
     email: 'shpatz.apps@gmail.com',
 
@@ -66,7 +66,7 @@ const SITE_CONTENT = {
     greeting: 'אהלן!',
 
     // Each string here is one paragraph. Add as many as you like.
-    // Write like you talk — this is the part that makes people feel they know you.
+    // Write like you talk - this is the part that makes people feel they know you.
     // Use \n inside a string for a line break without starting a new paragraph.
     // For a link, write [the clickable text](https://the-url.com).
     paragraphs: [
@@ -102,7 +102,7 @@ const SITE_CONTENT = {
     ],
 
     /* A pile of photos at the foot of the tab, browsed by dragging the top one
-     * aside — or clicking it, or the button under it. The first one in the list
+     * aside - or clicking it, or the button under it. The first one in the list
      * is the one on top. `alt` is what a screen reader reads out, so describe
      * the picture. Delete the whole array to hide the pile.
      *
@@ -124,16 +124,16 @@ const SITE_CONTENT = {
    * Each object here becomes a card AND a sub-tab with its own page.
    * To add a project: copy one block, change the id, done.
    *
-   *   id       — unique, English, no spaces. Becomes the link (#projects/my-id)
-   *   image    — path under assets/img/, or null for a gradient placeholder
-   *   imageFit — 'cover' (default, fills and crops) or 'contain' (whole image,
-   *              no cropping — right for a logo or any artwork with edges)
-   *   imageBg  — background behind a 'contain' image
-   *   tags     — small labels on the card
-   *   body     — the full description, one string per paragraph
-   *   download — the install file. See the block below; leave `file: null`
+   *   id       - unique, English, no spaces. Becomes the link (#projects/my-id)
+   *   image    - path under assets/img/, or null for a gradient placeholder
+   *   imageFit - 'cover' (default, fills and crops) or 'contain' (whole image,
+   *              no cropping - right for a logo or any artwork with edges)
+   *   imageBg  - background behind a 'contain' image
+   *   tags     - small labels on the card
+   *   body     - the full description, one string per paragraph
+   *   download - the install file. See the block below; leave `file: null`
    *              and the button shows as "בקרוב" instead of a dead link.
-   *   links    — buttons on the project page
+   *   links    - buttons on the project page
    * -------------------------------------- */
   projects: [
     {
@@ -192,14 +192,14 @@ const SITE_CONTENT = {
         'מדריכת הורים\n🗓️ נהלי יומן מפגשים מסודר עבור כל משפחה, עם תקצירים ותוצרים, ידנית או באמצעות תמלול המפגשים ושימוש בכלי בינה מלאכותית שיוסיף עוד המון ערך לתהליך, ערך שאולי עד היום היה חסר.\n🎯 הכיני את עצמך למפגש הבא עם המשפחה בלחיצת כפתור.\n🫡 שמרי על מוטיבציית ההורים ועל מחויבותם לתהליך ע"י דו"חות מפגשים אינטרקטיבים, אפשרי להם לחיות את התהליך ולהמשיך לדווח אירועים לקראת המפגש הבא באמצעות הודעות קוליות או טקסט לוואטסאפ בקבוצה המשותפת או בדוח עצמו שנשלח להורים.\n📊 כל המידע שנאסף מוצג על מגוון גרפים שמסייעים בהבנת התהליך.\n🤖 אפשרות חדשה של סוכן בינה מלאכותית אישי המספק תובנות על התהליך של כל משפחה.',
         'יועצת שינה\n🛏️ נהלי יומן שינה מסודר עבור כל משפחה, עם גרפים, דוחות שינה אינטרקטיביים.\n📱 דיווחי מחזורי שינה באמצעות קובץ אקסל קלאסי או משותף דרך Google Sheets, דיווחי טקסט או קוליים מקבוצת הוואטסאפ המקושרת, הכל מתורגם לגרפים מלאי מידע.\n📄 ולקינוח, הנפקת דוח להורים על המצב בטון מחזק ומעודד, בסיוע בינה מלאכותית עם גרפים אינטרקטיביים הניתנים לבחירה.. ',
         // The free/paid sentence that used to close this paragraph now lives in
-        // the `plans` table below, in full — no point saying it twice.
+        // the `plans` table below, in full - no point saying it twice.
         '🖥️ התוכנה בעברית ובאנגלית, מתואמת למערכת הפעלה ווינדווס Windows.\n🔒 מותקנת מקומית על המחשב (ולא ברשת), עם אפשרות שימוש במנוע בינה מלאכותית (AI) מקומי או חיצוני עם הסתרה של פרטי הלקוחות לשמירה מקסימלית על חיסיון המידע של התהליכים.',
         '🤗 אז... מה שנותר להורים לעשות זה פשוט לשפוך את אשר על לבם',
       ],
 
       /* The free/paid split, copied from the app's own terms (legal/terms-he.md
        * §3), which state it "for version 2.0" with a promise that a later change
-       * won't apply retroactively — so it is a contractual list, not marketing
+       * won't apply retroactively - so it is a contractual list, not marketing
        * copy. If the app's split changes, change it there first and copy again.
        * Delete the whole `plans` block to hide the table. */
       plans: {
@@ -257,7 +257,7 @@ const SITE_CONTENT = {
       },
 
       // The installer. Drop the file in public/assets/files/ and put its path
-      // in `file` — until then the page shows `soonLabel` on a dead button
+      // in `file` - until then the page shows `soonLabel` on a dead button
       // rather than a link that 404s.
       download: {
         file: 'assets/files/installers/SpillItOut-Web-Setup.exe',
@@ -297,7 +297,7 @@ const SITE_CONTENT = {
       title: 'שפאץ!\nניהול העסק, מעקב לקוחות והנפקת חשבוניות',
       blurb: 'לקוחות, סדרות טיפולים וחשבוניות במקום אחד: מפיקים מסמך, שולחים במייל, וממשיכים לעבוד.',
       tags: ['אפליקציית דפדפן', 'לקוחות וחשבוניות', 'בקרוב'],
-      // No artwork yet — null shows the gradient placeholder rather than a
+      // No artwork yet - null shows the gradient placeholder rather than a
       // broken image. Drop a logo in assets/img/ and point here when there is one.
       image: null,
       body: [
@@ -310,7 +310,7 @@ const SITE_CONTENT = {
 
       // A web app, so there is nothing to download: the same block carries the
       // "not yet" button. When it goes live, the address belongs in `links`
-      // below as a normal button — not in `file`, which renders a download.
+      // below as a normal button - not in `file`, which renders a download.
       download: {
         file: null,
         label: 'כניסה לאפליקציה',
@@ -326,17 +326,17 @@ const SITE_CONTENT = {
   ],
 
   /* ---------- Tab: Support me ----------
-   * kind: 'link'   — a normal button that opens a URL
-   *       'handle' — a phone number / handle to copy, for anything with no
+   * kind: 'link'   - a normal button that opens a URL
+   *       'handle' - a phone number / handle to copy, for anything with no
    *                  working web link at all
    *
-   * logo   — the platform's real app icon, under assets/img/. It becomes the
+   * logo   - the platform's real app icon, under assets/img/. It becomes the
    *          card's tile as-is (own colour, own rounded corners).
-   * icon   — fallback glyph from the ICONS map in render.js, drawn in `accent`.
+   * icon   - fallback glyph from the ICONS map in render.js, drawn in `accent`.
    *          Only used when there is no `logo`.
-   * accent — tints the card border, glow and QR frame. Set it to a colour from
+   * accent - tints the card border, glow and QR frame. Set it to a colour from
    *          the logo so the two agree.
-   * qr     — optional scannable code, for links that only open in an app.
+   * qr     - optional scannable code, for links that only open in an app.
    *          Must be 984px / 41 modules; see the .qr-box note in views.css.
    * amounts- optional. With it, the button opens a small amount picker instead
    *          of going straight to `url`. Without it, nothing changes.
@@ -355,7 +355,7 @@ const SITE_CONTENT = {
         // below, one per sum, so the card stays a single button.
         logo: 'assets/img/logo-paypal.webp',
         icon: 'paypal',
-        // PayPal Blue, not the icon's navy — the accent tints the card border and
+        // PayPal Blue, not the icon's navy - the accent tints the card border and
         // glow, and #003087 all but disappears against the dark background.
         accent: '#0070e0',
         /* The amount picker. `urlTemplate` is what a choice turns into -
@@ -366,7 +366,7 @@ const SITE_CONTENT = {
          * Only PayPal has one: bit's and PayBox's links open their app on the
          * profile and have no documented way to carry an amount.
          *
-         * Both links are /pay, our own path, NOT paypal.me — see public/_redirects
+         * Both links are /pay, our own path, NOT paypal.me - see public/_redirects
          * for why. Short version: the PayPal app claims every paypal.me path as
          * an app link, so a direct link never reaches the web page on a phone;
          * it opens the app, which drops the amount. Going through a 302 keeps
@@ -381,7 +381,7 @@ const SITE_CONTENT = {
           submit: 'מעבר ל‑PayPal',
           urlTemplate: '/pay/{amount}ILS',
           /* Optional: a code per choice, shown under the button. Keys are the
-           * preset numbers, plus `custom` for the "סכום אחר" chip — that one has
+           * preset numbers, plus `custom` for the "סכום אחר" chip - that one has
            * no fixed sum, so it points at the bare profile and the payer types
            * the amount on PayPal's side. A preset with no entry here simply
            * shows no code.
@@ -455,7 +455,7 @@ const SITE_CONTENT = {
     intro: 'שאלות? תמיכה טכנית? רעיונות?\nאני פה בשבילך ובמגוון דרכים.',
     responseNote: 'בדרך כלל אני חוזר תוך יום-יומיים.',
 
-    // Get a free key in 30 seconds at https://web3forms.com — no account needed,
+    // Get a free key in 30 seconds at https://web3forms.com - no account needed,
     // just type your email and they send you the key. Paste it here.
     // Until you do, the form shows a friendly notice instead of failing silently.
     web3formsKey: '394d57e8-328e-43c4-9831-28ae84fa03e3',
@@ -476,7 +476,7 @@ const SITE_CONTENT = {
 
     /* Per-app WhatsApp groups, instead of a link to my personal number.
      * Each app gets its own group, so questions land where the other users of
-     * that app already are — and the answer helps all of them at once.
+     * that app already are - and the answer helps all of them at once.
      *
      * Add an app by adding a line: `app` is the name shown, `note` is the small
      * grey line under it (optional), `url` is the chat.whatsapp.com join link.
@@ -515,7 +515,7 @@ const SITE_CONTENT = {
 
     // A closing picture at the foot of the tab. Set `image` to null to hide it.
     // `alt` is what a screen reader reads out, so it describes the picture;
-    // `caption` is optional visible text under it — leave it empty for none.
+    // `caption` is optional visible text under it - leave it empty for none.
     image: 'assets/img/contact-devops.webp',
     imageAlt: 'איור בסגנון קריקטורה: אני יושב מול מסכים שמציגים "Deployment Failed", שרתים בוערים מסביב, ומפתח ברגים ביד',
     imageCaption: '',
@@ -537,12 +537,12 @@ const SITE_CONTENT = {
    * דמויות פיקסל שמסתובבות בעמוד, מציצות מאחורי לשוניות וכרטיסים,
    * ונופלות לאט מלמעלה. בנוסף יש פטיש ששובר מילים לפיקסלים.
    *
-   * enabled — false מכבה את כל השכבה לגמרי.
-   * density — כמה דמויות יכולות להופיע בו-זמנית:
+   * enabled - false מכבה את כל השכבה לגמרי.
+   * density - כמה דמויות יכולות להופיע בו-זמנית:
    *           'calm' = 2, 'normal' = 4, 'busy' = 6  (במובייל תמיד פחות)
    *
    * הערה: מי שהגדיר במערכת ההפעלה "הפחתת תנועה" לא יראה את השכבה בכלל,
-   * וגם לא את הכפתורים — כל הרעיון כאן הוא תנועה.
+   * וגם לא את הכפתורים - כל הרעיון כאן הוא תנועה.
    * -------------------------------------------- */
   arcade: {
     enabled: true,
@@ -557,7 +557,7 @@ const SITE_CONTENT = {
 
     // A speech bubble beside the hammer button, shown each time the hammer is
     // picked up. It goes away when the hammer is put down, after a few seconds,
-    // or when clicked — and a click means "don't show me this again". Set to
+    // or when clicked - and a click means "don't show me this again". Set to
     // null for no bubble at all.
     hammerBubble: 'כשאתם מסיימים עם הפטיש תחזירו אותו למקום!\nאין לי כח לאסוף אחריכם כל היום',
   },

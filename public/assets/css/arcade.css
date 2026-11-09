@@ -6,7 +6,7 @@
 
 /* The cast sits at z-index -1: above the background orbs, but BELOW all page
  * text and any positioned element (cards, header, nav). That ordering is what
- * makes characters appear to hide behind things — no masking required.
+ * makes characters appear to hide behind things - no masking required.
  * Painting order note: a positioned element at z-index 0 would paint ABOVE
  * in-flow text, which is why this has to be negative. */
 .arcade-bg {
@@ -235,7 +235,7 @@ body.hammer-on .arcade-ctl * {
   cursor: pointer !important;
 }
 
-/* A smashed word keeps its box and stays in the accessibility tree — only its
+/* A smashed word keeps its box and stays in the accessibility tree - only its
  * ink disappears. `visibility: hidden` or `display: none` would collapse the
  * layout and hide the text from screen readers; this does neither, so the
  * page never shifts and restoring is exact.

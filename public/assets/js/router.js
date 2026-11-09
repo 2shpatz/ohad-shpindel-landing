@@ -29,7 +29,7 @@
     const tab = list?.querySelector(`.tab[data-route="${route}"]`);
     if (!indicator || !tab) return;
 
-    // Desktop nav is display:none under 861px — measuring then would give 0.
+    // Desktop nav is display:none under 861px - measuring then would give 0.
     if (!tab.offsetParent) {
       indicator.classList.remove('ready');
       return;
@@ -38,7 +38,7 @@
     const listRect = list.getBoundingClientRect();
     const tabRect = tab.getBoundingClientRect();
     // Offset is measured from the inline-start edge, which is the RIGHT edge
-    // in RTL — so we measure from the right and translate negatively.
+    // in RTL - so we measure from the right and translate negatively.
     const offset = listRect.right - tabRect.right;
 
     indicator.style.width = `${tabRect.width}px`;

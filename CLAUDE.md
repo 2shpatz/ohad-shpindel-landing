@@ -14,22 +14,22 @@ arcade layer's behavior. Read it before touching `content.js` or `arcade.js`.
 ## Commands
 
 ```bash
-# Local dev — plain static server (fastest loop)
+# Local dev - plain static server (fastest loop)
 cd public && python3 -m http.server 8099        # → http://localhost:8099
 
-# Local dev — with Cloudflare `_headers` (CSP, cache) applied
+# Local dev - with Cloudflare `_headers` (CSP, cache) applied
 npx wrangler pages dev public                   # → http://localhost:8788
 
 # Deploy
 npx wrangler deploy                             # first time: npx wrangler login
 ```
 
-No linter, no test framework. Verification is manual — see the "בדיקות" section at the
+No linter, no test framework. Verification is manual - see the "בדיקות" section at the
 end of `README.md` for the checklist (tab switching, deep links, back button, unknown
 hash, form validation, reduced-motion).
 
 In Cloudflare's git-connected build settings, the deploy command must be
-`npx wrangler deploy`, **not** `wrangler pages deploy` — the injected build token is
+`npx wrangler deploy`, **not** `wrangler pages deploy` - the injected build token is
 scoped to Workers, and Pages deploys fail with `Authentication error [code: 10000]`.
 
 ## Architecture
@@ -39,7 +39,7 @@ scoped to Workers, and Pages deploys fail with `Authentication error [code: 1000
 Every JS file is a classic script (no `type="module"`) wrapping an IIFE that assigns to a
 single global const: `Render`, `Contact`, `Motion`, `Photos`, `Arcade`. `content.js`
 exposes the plain object `SITE_CONTENT`. **Load order in `index.html` is the dependency
-graph** — `content.js` first, `router.js` last, because `router.js` is the boot entry
+graph** - `content.js` first, `router.js` last, because `router.js` is the boot entry
 point and calls everything else's `init()`.
 
 There is no bundler, so adding a file means adding a `<script>` tag in the right position.
@@ -64,7 +64,7 @@ Two conventions `render.js` enforces on content values:
 plus header/footer placeholders. `render.js` fills them once at boot; `router.js` then
 only toggles visibility.
 
-- Routes are derived from `SITE_CONTENT.nav` — `const ROUTES = SITE_CONTENT.nav.map(n => n.id)`.
+- Routes are derived from `SITE_CONTENT.nav` - `const ROUTES = SITE_CONTENT.nav.map(n => n.id)`.
   Adding a tab means adding a nav entry, a `view-<id>` section, and a render function.
 - Hash shape is `#<route>` or `#projects/<id>`. Unknown hashes fall back to the first route.
 - Uses the View Transitions API where available, with a CSS fallback.
@@ -79,7 +79,7 @@ DOM elements and jumps onto them. Density and on/off come from `SITE_CONTENT.arc
 user toggle persists in `localStorage` (`arcade:on`).
 
 Two constraints to preserve:
-- Under `prefers-reduced-motion` the layer is not created at all — no canvas, no buttons,
+- Under `prefers-reduced-motion` the layer is not created at all - no canvas, no buttons,
   no animation loop. Same for `motion.js`, which skips attaching listeners entirely.
 - The cat's platform list is refreshed on a ~0.4s timer, not per frame. Calling
   `getBoundingClientRect` on dozens of elements at 60fps forced layout recalculation.
@@ -87,7 +87,7 @@ Two constraints to preserve:
 ### Fonts: the `unicode-range` trap
 
 The site uses Tel Aviv Eclectic no.2 as two files (Hebrew, Latin). **Each file's cmap
-falsely claims coverage of the *other* script and maps it to empty glyphs** — so without
+falsely claims coverage of the *other* script and maps it to empty glyphs** - so without
 the non-overlapping `unicode-range` declarations in `base.css`, the browser never falls
 back and half the text renders as zero-width-but-space-consuming blanks. This looks like
 a layout bug, not a missing font. Both faces are `font-weight: 400` (single static
@@ -98,11 +98,11 @@ Any change to font declarations must be verified in **both** scripts.
 ### RTL
 
 Done structurally via CSS logical properties (`margin-inline-start`, etc.), never
-`left`/`right`. New CSS should follow this — direction correctness then comes for free.
+`left`/`right`. New CSS should follow this - direction correctness then comes for free.
 
 ### CSS layering
 
-`tokens.css` (colors, spacing, timing — change here) → `base.css` (reset, fonts, RTL,
+`tokens.css` (colors, spacing, timing - change here) → `base.css` (reset, fonts, RTL,
 reduced-motion) → `components.css` (nav, buttons, cards, form) → `views.css` (per-tab
 layout) → `arcade.css`.
 
@@ -111,7 +111,7 @@ layout) → `arcade.css`.
 `contact.js` posts to web3forms (`SITE_CONTENT.contact.web3formsKey`). When the key is
 absent or `TODO_`, the form explicitly states it isn't connected rather than silently
 failing. `api.web3forms.com` is allowlisted in `_headers` under `connect-src` and
-`form-action` — the CSP is strict `default-src 'self'`, so any new external endpoint
+`form-action` - the CSP is strict `default-src 'self'`, so any new external endpoint
 needs a `_headers` change too.
 
 ### PayPal links go through `_redirects`, not straight out
@@ -121,14 +121,14 @@ needs a `_headers` change too.
 cosmetic: the PayPal app claims **every** `paypal.me` path as an app link (its
 `apple-app-site-association` is `"NOT /pools/*", "/*"`, and `www.paypal.com` claims
 `/paypalme/*` too), so on a phone with the app installed a direct link never reaches a
-web page — the app opens and drops the amount. Browsers only hand a URL to an app when
+web page - the app opens and drops the amount. Browsers only hand a URL to an app when
 the user taps it directly, so the extra 302 keeps the navigation in the browser, where
 the PayPal.Me page does render the amount (readonly field, pre-filled, above Send).
 
 `_redirects` is a Cloudflare file like `_headers`: `python3 -m http.server` ignores it
 and 404s on `/pay`. Use `npx wrangler dev` to exercise that flow.
 
-(`paypal.com/donate?business=<merchant-id>` was tried first and is a dead end — the page
+(`paypal.com/donate?business=<merchant-id>` was tried first and is a dead end - the page
 server-renders correctly but the client flow fails with "This organization can't accept
 donations right now".)
 
@@ -142,7 +142,7 @@ donations right now".)
 `public/assets/files/reports/*.html` are self-contained artifacts users download; their
 chart code, images and fonts are all **inlined** in the HTML, so the file keeps working
 after a parent saves it to their desktop. Each report is exported from the app and
-replaced whole — edit the `.html`, never a copy of its script. (There used to be sibling
+replaced whole - edit the `.html`, never a copy of its script. (There used to be sibling
 `*.js` copies of the inline script for readability; nothing loaded them and they went
 stale the first time the reports were re-exported, so they were removed.)
 

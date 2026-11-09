@@ -1,6 +1,6 @@
 /* ==================== RENDER ====================
  * Turns SITE_CONTENT into DOM. Nothing here needs editing to change
- * the site's text — edit content.js instead.
+ * the site's text - edit content.js instead.
  * ================================================ */
 
 const Render = (() => {
@@ -31,7 +31,7 @@ const Render = (() => {
   );
 
   /* `:joy:` and friends inside copy become that icon, sitting inline with the
-   * text — for a sentence that names a control and wants to show the very glyph
+   * text - for a sentence that names a control and wants to show the very glyph
    * on it. Runs on already-escaped text, after nl2br so the svg's own line
    * breaks survive, and only known names are touched: a stray pair of colons in
    * Hebrew copy stays exactly as it was written. */
@@ -47,7 +47,7 @@ const Render = (() => {
     '<strong class="summary-free">🤑 לגמרי בחינם!</strong>',
   );
 
-  /* A title may carry a deliberate break — 'Spill It Out\nלמדריכות הורים'. What
+  /* A title may carry a deliberate break - 'Spill It Out\nלמדריכות הורים'. What
    * follows it is a subtitle rather than a second headline, so it gets its own
    * line and its own size instead of the heading's. In an attribute or the
    * browser's tab title a newline has nowhere to go, so it collapses to a space
@@ -56,7 +56,7 @@ const Render = (() => {
    * A headline that needs a break of its own ("שפכו ת'לב" over "Spill It Out")
    * separates itself from the subtitle with a BLANK line; single newlines
    * before it are then breaks inside the headline. With no blank line the old
-   * rule still holds — first line is the headline, the rest is the subtitle —
+   * rule still holds - first line is the headline, the rest is the subtitle -
    * so two-line titles written the original way are unaffected. */
   const titleHtml = (s) => {
     const raw = String(s ?? '');
@@ -243,13 +243,13 @@ const Render = (() => {
     bit: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 10h4a2 2 0 0 1 0 4H9h4a2 2 0 0 1 0 4H9"/>',
     paybox: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/>',
     // The real WhatsApp mark, which is a solid glyph rather than a line drawing
-    // like the rest of this set — hence the fill/stroke override on the path:
+    // like the rest of this set - hence the fill/stroke override on the path:
     // it beats the stroked bubble-and-squiggle that used to stand in for it.
     whatsapp: '<path fill="currentColor" stroke="none" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>',
     linkedin: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>',
     github: '<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-1-2.6c3.1-.3 6.4-1.5 6.4-7A5.4 5.4 0 0 0 20 4.8 5 5 0 0 0 19.9 1S18.7.6 16 2.5a13.4 13.4 0 0 0-7 0C6.3.6 5.1 1 5.1 1A5 5 0 0 0 5 4.8a5.4 5.4 0 0 0-1.4 3.8c0 5.4 3.3 6.6 6.4 7A3.4 3.4 0 0 0 9 18.1V22"/>',
     instagram: '<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/>',
-    // The arcade layer's joystick, same path as arcade.js's ICON.joy — copy that
+    // The arcade layer's joystick, same path as arcade.js's ICON.joy - copy that
     // points at that button shows the glyph that is actually on it. If one is
     // ever redrawn, redraw both.
     joy: '<rect x="3" y="9" width="18" height="11" rx="3"/><path d="M8 14h3M9.5 12.5v3M16 14h.01M18 16h.01M12 9V6a3 3 0 0 1 3-3"/>',
@@ -320,7 +320,7 @@ const Render = (() => {
 
   /* ---------- view: about ---------- */
 
-  /* A pile of prints, top one first. Depth is DOM order and nothing else — the
+  /* A pile of prints, top one first. Depth is DOM order and nothing else - the
    * CSS positions each card by :nth-child, so browsing is Photos.js moving one
    * node to the end of the list and letting the transition play. No index to
    * keep in sync, and it survives a re-render of the view. */
@@ -486,7 +486,7 @@ const Render = (() => {
 
   /* The install file, or an honest placeholder for it. A button that is plainly
    * "not yet" beats a link that downloads a 404 page, so with no `file` the
-   * same block renders disabled — the visitor still learns the app exists and
+   * same block renders disabled - the visitor still learns the app exists and
    * what it needs to run. */
   function getDownloadWarningContent() {
     const isWindows = /Windows/i.test(navigator.userAgent || '') || /Windows/i.test(navigator.platform || '');
@@ -906,7 +906,7 @@ const Render = (() => {
   }
 
   /* The free/paid comparison. Two columns rather than a ✓/✗ matrix, because the
-   * source in the app's terms is two lists — inventing a row per feature would
+   * source in the app's terms is two lists - inventing a row per feature would
    * mean inventing the "no" side of it.
    *
    * The ticks and stars are emoji from content.js rather than glyphs from ICONS:
@@ -1284,7 +1284,7 @@ const Render = (() => {
             ${/* The real app icon when we have one: it is already a coloured,
                   rounded tile, so it replaces the tinted plate instead of
                   sitting inside it. `icon` stays as the fallback glyph for any
-                  option without artwork. alt is empty on purpose — the platform
+                  option without artwork. alt is empty on purpose - the platform
                   name is the <h3> directly below, so a description here would
                   just be read out twice. */''}
             ${has(o.logo)
@@ -1312,7 +1312,7 @@ const Render = (() => {
                         ${o.qrOn === 'desktop' && has(o.qr) ? `data-qr-desktop="${esc(o.id)}"` : ''}>${esc(o.label)}</a>`)
                 : ''}
             ${/* A QR next to the link: tapping works on a phone, but a visitor on
-                  a desktop has no app to open — they scan this with their phone
+                  a desktop has no app to open - they scan this with their phone
                   instead. Purely additive, so any option can carry one.
                   `qrOn: 'desktop'` moves it off the card and behind the button;
                   the dialog renders it there instead. */''}
@@ -1395,7 +1395,7 @@ const Render = (() => {
       </a>`;
 
     // With no groups and no direct details, the aside would be an
-    // empty column — collapse to one column instead of leaving dead space.
+    // empty column - collapse to one column instead of leaving dead space.
     const hasAside = waGroups.length > 0 || direct.length > 0;
 
     document.getElementById('view-contact').innerHTML = `

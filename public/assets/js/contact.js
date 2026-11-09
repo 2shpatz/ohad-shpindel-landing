@@ -1,6 +1,6 @@
 /* ==================== CONTACT ====================
  * Validation, Web3Forms submit, copy-to-clipboard.
- * Every path reports the real outcome — a failed send says so.
+ * Every path reports the real outcome - a failed send says so.
  * ================================================= */
 
 const Contact = (() => {
@@ -95,7 +95,7 @@ const Contact = (() => {
 
     if (!validateForm(form)) return;
 
-    // No key configured yet — say so plainly instead of firing a request
+    // No key configured yet - say so plainly instead of firing a request
     // that would 400.
     if (!hasKey()) {
       setStatus('error',
@@ -138,7 +138,7 @@ const Contact = (() => {
         throw new Error(data.message || `HTTP ${res.status}`);
       }
     } catch (err) {
-      // Real failure — never fake a success here.
+      // Real failure - never fake a success here.
       setStatus('error',
         `${Render.esc(C.contact.form.error)} ${fallbackContacts()}`);
       console.error('[contact] send failed:', err);
