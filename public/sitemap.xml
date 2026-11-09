@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hash routes (#projects, #support...) are one document to a crawler, so only
+     real URLs belong here. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://ohad-shpindel.shpatzappz.link/</loc>
+  </url>
+  <url>
+    <loc>https://ohad-shpindel.shpatzappz.link/privacy-policy</loc>
+  </url>
+</urlset>

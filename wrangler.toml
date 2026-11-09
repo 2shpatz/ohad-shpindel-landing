@@ -1,6 +1,15 @@
 name = "ohad-shpindel"
 compatibility_date = "2026-08-01"
 
+# Production hostname. Declared here (not only in the dashboard) so a deploy
+# always re-asserts it. The domain is also hardcoded in public/index.html
+# (canonical/og), robots.txt, sitemap.xml and inside the PayPal QR images -
+# changing it means updating all of those (see README).
+# Must stay above [assets]: in TOML, keys after a table header belong to it.
+routes = [
+  { pattern = "ohad-shpindel.shpatzappz.link", custom_domain = true }
+]
+
 # Static-assets-only Worker: no `main` entrypoint, so every request is served
 # straight from ./public. `_headers` in that directory is applied by Cloudflare.
 [assets]

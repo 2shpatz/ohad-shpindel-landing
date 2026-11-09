@@ -72,21 +72,28 @@ loadImage('public/assets/img/<שם>-qr.webp').then(img=>{
 **כשמשנים את מה שקוד מקודד - נותנים לו שם קובץ חדש.** `_headers` מחזיק תמונות
 שבוע (`max-age=604800`), אז החלפת תמונה תחת אותו שם משאירה גולשים חוזרים עם הקוד
 הישן, ובנתיב תשלום זה אומר סריקה שמובילה ליעד שכבר לא רלוונטי. זו הסיבה ש‑PayPal
-עבר מ‑`paypal-qr.webp` ל‑`paypal-qr-pay.webp` במקום להידרס במקום.
+עבר מ‑`paypal-qr.webp` ל‑`paypal-qr-pay.webp`, ואחר כך (במעבר לדומיין החדש) ל‑`paypal-qr-<סכום>ils.webp` / `paypal-qr-any.webp`, במקום להידרס במקום.
 
 ל‑PayPal יש ארבעה קודים, והם יושבים ב‑`amounts.qr` ולא על הכרטיס: אחד לכל סכום
-מוצע ואחד ל‑`custom`. כולם מצביעים על `https://<הדומיין-של-האתר>/pay[/<סכום>ILS]`
+מוצע ואחד ל‑`custom`. כולם מצביעים על `https://ohad-shpindel.shpatzappz.link/pay[/<סכום>ILS]`
 ולא על `paypal.me` - מאותה סיבה בדיוק שהכפתור מצביע על `/pay`, ראה את השורה של
 PayPal בטבלה למעלה.
 
 | קובץ | מקודד |
 |---|---|
-| `paypal-qr-20.webp` | `…/pay/20ILS` |
-| `paypal-qr-50.webp` | `…/pay/50ILS` |
-| `paypal-qr-100.webp` | `…/pay/100ILS` |
-| `paypal-qr-pay.webp` | `…/pay` (ללא סכום, ל‑"סכום אחר") |
+| `paypal-qr-20ils.webp` | `…/pay/20ILS` |
+| `paypal-qr-50ils.webp` | `…/pay/50ILS` |
+| `paypal-qr-100ils.webp` | `…/pay/100ILS` |
+| `paypal-qr-any.webp` | `…/pay` (ללא סכום, ל‑"סכום אחר") |
 
-**הדומיין צרוב בתוך הקודים.** אם כתובת האתר משתנה, כל ארבעתם צריכים להיווצר מחדש.
+**הדומיין צרוב בתוך הקודים.** אם כתובת האתר משתנה, כל ארבעתם צריכים להיווצר מחדש
+(בשמות קבצים חדשים). וזה לא המקום היחיד - הדומיין כתוב גם ב:
+
+- `public/index.html` - `canonical`, `og:url`, `og:image`, `twitter:image` וה‑JSON-LD
+  (כתובות מלאות בכוונה: סורקי WhatsApp/Facebook לא פותרים כתובות יחסיות).
+- `public/privacy-policy.html` - `canonical`.
+- `public/robots.txt` ו‑`public/sitemap.xml`.
+- `wrangler.toml` - `routes` (הדומיין המותאם של ה‑Worker).
 
 ### להוסיף פרויקט
 

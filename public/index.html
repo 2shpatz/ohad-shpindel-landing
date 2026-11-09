@@ -12,8 +12,19 @@
 <meta property="og:locale" content="he_IL">
 <meta property="og:title" content="אוהד שפינדל">
 <meta property="og:description" content="האתר האישי של אוהד שפינדל - קצת עלי, הפרויקטים שלי, ואיך יוצרים איתי קשר.">
-<meta property="og:image" content="assets/img/og.png">
+<!-- Crawlers (WhatsApp, Facebook, X) don't resolve relative URLs here, and a
+     missing file is served as index.html with a 200 - keep these absolute and
+     pointing at a file that exists. Domain change = update every URL below,
+     plus robots.txt, sitemap.xml and the PayPal QR codes (see README). -->
+<link rel="canonical" href="https://ohad-shpindel.shpatzappz.link/">
+<meta property="og:url" content="https://ohad-shpindel.shpatzappz.link/">
+<meta property="og:site_name" content="אוהד שפינדל">
+<meta property="og:image" content="https://ohad-shpindel.shpatzappz.link/assets/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="אוהד שפינדל">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ohad-shpindel.shpatzappz.link/assets/img/og.jpg">
 
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
@@ -31,6 +42,8 @@
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "אוהד שפינדל",
+  "url": "https://ohad-shpindel.shpatzappz.link/",
+  "image": "https://ohad-shpindel.shpatzappz.link/assets/img/og.jpg",
   "description": "האתר האישי של אוהד שפינדל"
 }
 </script>

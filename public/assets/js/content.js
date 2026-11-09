@@ -391,10 +391,10 @@ const SITE_CONTENT = {
            * under the same filename keeps sending returning visitors to the old
            * destination. Change what a code encodes -> give it a new filename. */
           qr: {
-            20: 'assets/img/paypal-qr-20.webp',
-            50: 'assets/img/paypal-qr-50.webp',
-            100: 'assets/img/paypal-qr-100.webp',
-            custom: 'assets/img/paypal-qr-pay.webp',
+            20: 'assets/img/paypal-qr-20ils.webp',
+            50: 'assets/img/paypal-qr-50ils.webp',
+            100: 'assets/img/paypal-qr-100ils.webp',
+            custom: 'assets/img/paypal-qr-any.webp',
           },
           qrNote: 'או סריקה מהנייד',
         },
